@@ -38,20 +38,20 @@ export const SOUND_DATA = {
 // Preset scenarios (velocities in m/s)
 export const SCENARIOS = {
   SOURCE_TOWARD_OBSERVER: {
-    sourceVelocity: { x: 5, y: 0 }, // Source moves right at 5 m/s
+    sourceVelocity: { x: 60, y: 0 }, // Source moves right at 60 m/s
     observerVelocity: { x: 0, y: 0 } // Observer stationary
   },
   OBSERVER_TOWARD_SOURCE: {
     sourceVelocity: { x: 0, y: 0 }, // Source stationary
-    observerVelocity: { x: -5, y: 0 } // Observer moves left at 5 m/s
+    observerVelocity: { x: -60, y: 0 } // Observer moves left at 60 m/s
   },
   MOVING_APART: {
-    sourceVelocity: { x: -5, y: 0 }, // Source moves left at 5 m/s
-    observerVelocity: { x: 5, y: 0 } // Observer moves right at 5 m/s
+    sourceVelocity: { x: -60, y: 0 }, // Source moves left at 60 m/s
+    observerVelocity: { x: 60, y: 0 } // Observer moves right at 60 m/s
   },
   PERPENDICULAR: {
-    sourceVelocity: { x: 0, y: 3 }, // Source moves up at 3 m/s
-    observerVelocity: { x: 0, y: -3 } // Observer moves down at 3 m/s
+    sourceVelocity: { x: 0, y: 60 }, // Source moves up at 60 m/s
+    observerVelocity: { x: 0, y: -60 } // Observer moves down at 60 m/s
   }
 } as const;
 
