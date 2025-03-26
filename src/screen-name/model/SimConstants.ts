@@ -16,7 +16,8 @@ export const PHYSICS = {
   FREQ_MIN: 0.1, // Minimum allowable frequency (Hz)
   FREQ_MAX_FACTOR: 5, // Maximum frequency as factor of emitted (unitless)
   VELOCITY_DECAY: 0.5, // Decay factor for velocity when not dragging (unitless)
-  MIN_VELOCITY_MAG: 0.01 // Minimum velocity magnitude to display vector (m/s)
+  MIN_VELOCITY_MAG: 0.01, // Minimum velocity magnitude to display vector (m/s)
+  MAX_SPEED: 100.0 // Maximum speed for source and observer (m/s)
 } as const;
 
 // Wave properties
@@ -70,7 +71,7 @@ export const MODEL_VIEW = {
     TIME_SCALE: 0.10,
     // Velocity visualization scaling
     // This scales the velocity vectors to make them more visible on screen
-    // 1 m/s in model space = 20 pixels/s in view space
-    VELOCITY_VECTOR_SCALE: 20
+    // 
+    VELOCITY_VECTOR_SCALE: 0.2
   }
 } as const; 

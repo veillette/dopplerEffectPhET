@@ -453,9 +453,11 @@ export class SimScreenView extends ScreenView {
    * Add drag handlers to source and observer nodes
    */
   private addDragHandlers(): void {
-    // Store previous positions for movement calculation
+    // Store previous positions and target positions for movement calculation
     let previousSourcePos = new Vector2(0, 0);
     let previousObserverPos = new Vector2(0, 0);
+    let targetSourcePos = new Vector2(0, 0);
+    let targetObserverPos = new Vector2(0, 0);
     
     // Source drag handler
     const sourceDragListener = new DragListener({
@@ -465,6 +467,7 @@ export class SimScreenView extends ScreenView {
         this.selectedObject = 'source';
         this.updateSelectionHighlight();
         previousSourcePos = this.model.sourcePositionProperty.value.copy();
+        targetSourcePos = this.model.sourcePositionProperty.value.copy();
         
         // Store the initial offset between pointer and source position
         const sourceViewPos = this.modelToView(this.model.sourcePositionProperty.value);
@@ -474,16 +477,21 @@ export class SimScreenView extends ScreenView {
         // Convert view coordinates to model coordinates, accounting for initial offset
         const viewPoint = event.pointer.point.plus((sourceDragListener as any).dragOffset);
         const modelPoint = this.viewToModel(viewPoint);
-        this.model.sourcePositionProperty.value = modelPoint;
         
-        // Calculate velocity vector from movement
-        const movement = this.model.sourcePositionProperty.value.minus(previousSourcePos);
-        previousSourcePos = this.model.sourcePositionProperty.value.copy();
+        // Update target position
+        targetSourcePos = modelPoint;
         
-        if (movement.magnitude > 0) {
-          this.model.sourceVelocityProperty.value = movement.timesScalar(5); // Scale factor for velocity
-          this.model.sourceMovingProperty.value = true;
+        // Calculate desired velocity (direction to target)
+        const desiredVelocity = targetSourcePos.minus(this.model.sourcePositionProperty.value);
+        
+        // Limit velocity to maximum speed
+        if (desiredVelocity.magnitude > PHYSICS.MAX_SPEED) {
+          desiredVelocity.normalize().timesScalar(PHYSICS.MAX_SPEED);
         }
+        
+        // Apply velocity
+        this.model.sourceVelocityProperty.value = desiredVelocity;
+        this.model.sourceMovingProperty.value = true;
       },
       end: () => {
         // Keep current velocity when drag ends
@@ -499,6 +507,7 @@ export class SimScreenView extends ScreenView {
         this.selectedObject = 'observer';
         this.updateSelectionHighlight();
         previousObserverPos = this.model.observerPositionProperty.value.copy();
+        targetObserverPos = this.model.observerPositionProperty.value.copy();
         
         // Store the initial offset between pointer and observer position
         const observerViewPos = this.modelToView(this.model.observerPositionProperty.value);
@@ -508,16 +517,21 @@ export class SimScreenView extends ScreenView {
         // Convert view coordinates to model coordinates, accounting for initial offset
         const viewPoint = event.pointer.point.plus((observerDragListener as any).dragOffset);
         const modelPoint = this.viewToModel(viewPoint);
-        this.model.observerPositionProperty.value = modelPoint;
         
-        // Calculate velocity vector from movement
-        const movement = this.model.observerPositionProperty.value.minus(previousObserverPos);
-        previousObserverPos = this.model.observerPositionProperty.value.copy();
+        // Update target position
+        targetObserverPos = modelPoint;
         
-        if (movement.magnitude > 0) {
-          this.model.observerVelocityProperty.value = movement.timesScalar(5); // Scale factor for velocity
-          this.model.observerMovingProperty.value = true;
+        // Calculate desired velocity (direction to target)
+        const desiredVelocity = targetObserverPos.minus(this.model.observerPositionProperty.value);
+        
+        // Limit velocity to maximum speed
+        if (desiredVelocity.magnitude > PHYSICS.MAX_SPEED) {
+          desiredVelocity.normalize().timesScalar(PHYSICS.MAX_SPEED);
         }
+        
+        // Apply velocity
+        this.model.observerVelocityProperty.value = desiredVelocity;
+        this.model.observerMovingProperty.value = true;
       },
       end: () => {
         // Keep current velocity when drag ends
