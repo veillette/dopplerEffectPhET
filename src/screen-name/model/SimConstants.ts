@@ -12,7 +12,6 @@
 // Physical constants in SI units
 export const PHYSICS = {
   SOUND_SPEED: 343.0, // Speed of sound in air (m/s) at room temperature
-  REAL_TIME_FACTOR: 0.5, // Slows down real-time for better visualization (unitless)
   EMITTED_FREQ: 4, // Base frequency of emitted sound (Hz)
   FREQ_MIN: 0.1, // Minimum allowable frequency (Hz)
   FREQ_MAX_FACTOR: 5, // Maximum frequency as factor of emitted (unitless)
@@ -71,7 +70,7 @@ export const MODEL_VIEW = {
     // 1 meter in model space = 5 pixels in view space
     // This means a 200m wide model space will be 1000 pixels wide in view
     PIXELS_PER_METER: 5,
-    // Time scaling: 1 second in model time = 0.5 seconds in real time (due to REAL_TIME_FACTOR)
+    // Time scaling: 1 second in model time = 0.5 seconds in real time
     TIME_SCALE: 0.5,
     // Velocity visualization scaling
     // This scales the velocity vectors to make them more visible on screen
