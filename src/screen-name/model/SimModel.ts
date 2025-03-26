@@ -33,10 +33,9 @@ export class SimModel {
   public readonly observerMovingProperty: BooleanProperty;
   
   // Properties for simulation state
-  public readonly simulationTimeProperty: Property<number>;
+  public readonly simulationTimeProperty: NumberProperty; // Time in seconds
   public readonly observedFrequencyProperty: NumberProperty; // Frequency in Hz
-  public readonly pausedProperty: Property<boolean>;
-  public readonly realTimeFactorProperty: Property<number>;
+  public readonly pausedProperty: BooleanProperty;
   
   // Wave collection - each wave contains:
   // - position: Vector2 (meters)
@@ -84,10 +83,9 @@ export class SimModel {
     this.observerMovingProperty = new BooleanProperty(false);
     
     // Initialize simulation state
-    this.simulationTimeProperty = new Property(0);
+    this.simulationTimeProperty = new NumberProperty(0);
     this.observedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
-    this.pausedProperty = new Property(false);
-    this.realTimeFactorProperty = new Property(1.0);
+    this.pausedProperty = new BooleanProperty(false);
     
     // Initialize waves array
     this.waves = createObservableArray<{
@@ -125,9 +123,9 @@ export class SimModel {
     this.observerMovingProperty.value = false;
     
     // Reset simulation state
-    this.simulationTimeProperty.value = 0;
-    this.pausedProperty.value = false;
-    this.realTimeFactorProperty.value = 1.0;
+    this.simulationTimeProperty.reset();
+    this.observedFrequencyProperty.value = PHYSICS.EMITTED_FREQ;
+    this.pausedProperty.reset();
     
     // Clear waves
     this.waves.clear();
@@ -153,8 +151,9 @@ export class SimModel {
   public step(dt: number): void {
     if (this.pausedProperty.value) return;
     
-    // Apply real time factor to time step
-    const modelDt = dt * this.realTimeFactorProperty.value;
+    // Apply time scaling to convert real time to model time
+    // This ensures that 1 second of real time = 0.5 seconds of model time
+    const modelDt = dt * MODEL_VIEW.SCALE.TIME_SCALE;
     
     // Update simulation time (in model seconds)
     this.simulationTimeProperty.value += modelDt;

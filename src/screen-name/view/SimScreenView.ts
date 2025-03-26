@@ -76,14 +76,7 @@ export class SimScreenView extends ScreenView {
     GRAPH_HEIGHT: 100,
     GRAPH_WIDTH: 300,
     GRAPH_MARGIN: 20,
-    GRAPH_SPACING: 40,
-    PLAY_PAUSE_BUTTON_SIZE: 40,
-    PLAY_PAUSE_BUTTON_COLOR: new Color(0, 128, 0),
-    PLAY_PAUSE_BUTTON_HOVER_COLOR: new Color(0, 160, 0),
-    SPEED_BUTTON_SIZE: 30,
-    SPEED_BUTTON_COLOR: new Color(100, 100, 100),
-    SPEED_BUTTON_HOVER_COLOR: new Color(120, 120, 120),
-    BUTTON_SPACING: 10
+    GRAPH_SPACING: 40
   };
   
   // Selection tracking
@@ -94,14 +87,6 @@ export class SimScreenView extends ScreenView {
   
   // Wave nodes map for tracking
   private waveNodesMap: Map<any, Circle> = new Map();
-  
-  // Add new properties for play/pause controls
-  private readonly playPauseButton: Rectangle;
-  private readonly playPauseIcon: Path;
-  private readonly speedButtons: Rectangle[];
-  private readonly speedTexts: Text[];
-  private readonly speedOptions = [0.05, 0.1, 0.2, 0.5, 1.0];
-  private currentSpeedIndex = 4; // Start at 1.0x speed (last index)
   
   /**
    * Constructor for the Doppler Effect SimScreenView
@@ -199,62 +184,6 @@ export class SimScreenView extends ScreenView {
     });
     this.controlLayer.addChild(resetAllButton);
 
-    // Create play/pause button
-    this.playPauseButton = new Rectangle(0, 0, this.UI.PLAY_PAUSE_BUTTON_SIZE, this.UI.PLAY_PAUSE_BUTTON_SIZE, {
-      fill: this.UI.PLAY_PAUSE_BUTTON_COLOR,
-      cornerRadius: 5,
-      cursor: 'pointer'
-    });
-
-    // Create play icon (triangle)
-    this.playPauseIcon = new Path(new Shape()
-      .moveTo(0, 0)
-      .lineTo(0, 20)
-      .lineTo(20, 10)
-      .close(), {
-      fill: Color.WHITE
-    });
-    this.playPauseIcon.center = this.playPauseButton.center;
-    this.playPauseButton.addChild(this.playPauseIcon);
-
-    // Create speed buttons
-    this.speedButtons = [];
-    this.speedTexts = [];
-    
-    this.speedOptions.forEach((speed, index) => {
-      const button = new Rectangle(0, 0, this.UI.SPEED_BUTTON_SIZE, this.UI.SPEED_BUTTON_SIZE, {
-        fill: index === this.currentSpeedIndex ? this.UI.SPEED_BUTTON_HOVER_COLOR : this.UI.SPEED_BUTTON_COLOR,
-        cornerRadius: 5,
-        cursor: 'pointer'
-      });
-
-      const text = new Text(speed + 'x', {
-        font: '14px Arial',
-        fill: Color.WHITE,
-        centerX: button.centerX,
-        centerY: button.centerY
-      });
-      button.addChild(text);
-
-      this.speedButtons.push(button);
-      this.speedTexts.push(text);
-    });
-
-    // Add play/pause button to control layer
-    this.controlLayer.addChild(this.playPauseButton);
-
-    // Add speed buttons to control layer
-    this.speedButtons.forEach(button => {
-      this.controlLayer.addChild(button);
-    });
-
-    // Position the controls
-    this.updateControlPositions();
-
-    // Add input listeners
-    this.addPlayPauseListeners();
-    this.addSpeedButtonListeners();
-    
     // Setup keyboard handlers
     this.addKeyboardListeners();
     
@@ -1188,97 +1117,5 @@ export class SimScreenView extends ScreenView {
    */
   private viewToModelDelta(viewDelta: Vector2): Vector2 {
     return this.modelViewTransform.viewToModelDelta(viewDelta);
-  }
-
-  /**
-   * Update positions of play/pause and speed controls
-   */
-  private updateControlPositions(): void {
-    // Position play/pause button at bottom center
-    this.playPauseButton.centerX = this.layoutBounds.centerX;
-    this.playPauseButton.bottom = this.layoutBounds.maxY - 20;
-
-    // Position speed buttons to the right of play/pause button
-    let currentX = this.playPauseButton.right + this.UI.BUTTON_SPACING;
-    this.speedButtons.forEach(button => {
-      button.centerX = currentX;
-      button.bottom = this.playPauseButton.bottom;
-      currentX += this.UI.SPEED_BUTTON_SIZE + this.UI.BUTTON_SPACING;
-    });
-  }
-
-  /**
-   * Add input listeners for play/pause button
-   */
-  private addPlayPauseListeners(): void {
-    this.playPauseButton.addInputListener({
-      mouseover: () => {
-        this.playPauseButton.fill = this.UI.PLAY_PAUSE_BUTTON_HOVER_COLOR;
-      },
-      mouseout: () => {
-        this.playPauseButton.fill = this.UI.PLAY_PAUSE_BUTTON_COLOR;
-      },
-      up: () => {
-        this.model.pausedProperty.value = !this.model.pausedProperty.value;
-        this.updatePlayPauseIcon();
-      }
-    });
-  }
-
-  /**
-   * Add input listeners for speed buttons
-   */
-  private addSpeedButtonListeners(): void {
-    this.speedButtons.forEach((button, index) => {
-      button.addInputListener({
-        mouseover: () => {
-          button.fill = this.UI.SPEED_BUTTON_HOVER_COLOR;
-        },
-        mouseout: () => {
-          if (index !== this.currentSpeedIndex) {
-            button.fill = this.UI.SPEED_BUTTON_COLOR;
-          }
-        },
-        up: () => {
-          this.setSimulationSpeed(index);
-        }
-      });
-    });
-  }
-
-  /**
-   * Set the simulation speed
-   */
-  private setSimulationSpeed(index: number): void {
-    // Update button colors
-    this.speedButtons[this.currentSpeedIndex].fill = this.UI.SPEED_BUTTON_COLOR;
-    this.speedButtons[index].fill = this.UI.SPEED_BUTTON_HOVER_COLOR;
-    
-    // Update current speed index
-    this.currentSpeedIndex = index;
-    
-    // Update model's real time factor
-    this.model.realTimeFactorProperty.value = this.speedOptions[index];
-  }
-
-  /**
-   * Update the play/pause icon based on simulation state
-   */
-  private updatePlayPauseIcon(): void {
-    if (this.model.pausedProperty.value) {
-      // Show play icon (triangle)
-      this.playPauseIcon.shape = new Shape()
-        .moveTo(0, 0)
-        .lineTo(0, 20)
-        .lineTo(20, 10)
-        .close();
-    } else {
-      // Show pause icon (two rectangles)
-      this.playPauseIcon.shape = new Shape()
-        .moveTo(5, 0)
-        .lineTo(5, 20)
-        .moveTo(15, 0)
-        .lineTo(15, 20);
-    }
   }
 }
