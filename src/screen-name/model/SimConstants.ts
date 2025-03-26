@@ -66,7 +66,7 @@ export const MODEL_VIEW = {
   },
   // Scale factors for converting between model and view coordinates
   SCALE: {
-    // Time scaling: 1 second in model time = 0.5 seconds in real time
+    // Time scaling: 1 second in model time = 0.1 seconds in real time
     TIME_SCALE: 0.10,
     // Velocity visualization scaling
     // This scales the velocity vectors to make them more visible on screen
