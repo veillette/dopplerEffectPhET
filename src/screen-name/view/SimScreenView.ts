@@ -807,7 +807,7 @@ export class SimScreenView extends ScreenView {
    */
   private updateSourcePosition(): void {
     const sourcePos = this.model.sourcePositionProperty.value;
-    this.sourceNode.center = sourcePos;
+    this.sourceNode.center = this.modelToView(sourcePos);
   }
 
   /**
@@ -815,7 +815,7 @@ export class SimScreenView extends ScreenView {
    */
   private updateObserverPosition(): void {
     const observerPos = this.model.observerPositionProperty.value;
-    this.observerNode.center = observerPos;
+    this.observerNode.center = this.modelToView(observerPos);
   }
 
   /**
@@ -864,15 +864,21 @@ export class SimScreenView extends ScreenView {
       return;
     }
     
-    // Create scaled velocity vector
+    // Convert model coordinates to view coordinates
+    const viewPosition = this.modelToView(position);
+    
+    // Create scaled velocity vector (scale in model space)
     const scaledVelocity = velocity.timesScalar(this.UI.VECTOR_SCALE);
+    
+    // Convert the scaled velocity to view space
+    const viewVelocity = this.modelToViewDelta(scaledVelocity);
     
     // Create line for vector
     const line = new Line(
-      position.x, 
-      position.y,
-      position.x + scaledVelocity.x,
-      position.y + scaledVelocity.y,
+      viewPosition.x, 
+      viewPosition.y,
+      viewPosition.x + viewVelocity.x,
+      viewPosition.y + viewVelocity.y,
       {
         stroke: color,
         lineWidth: this.UI.VELOCITY_STROKE_WEIGHT
@@ -893,10 +899,10 @@ export class SimScreenView extends ScreenView {
     
     // Position and rotate arrowhead
     arrowhead.center = new Vector2(
-      position.x + scaledVelocity.x,
-      position.y + scaledVelocity.y
+      viewPosition.x + viewVelocity.x,
+      viewPosition.y + viewVelocity.y
     );
-    arrowhead.rotation = Math.atan2(scaledVelocity.y, scaledVelocity.x);
+    arrowhead.rotation = Math.atan2(viewVelocity.y, viewVelocity.x);
     
     node.addChild(arrowhead);
   }
@@ -907,11 +913,11 @@ export class SimScreenView extends ScreenView {
   private updateSelectionHighlight(): void {
     if (this.selectedObject === 'source') {
       this.selectionHighlight.radius = this.UI.SOURCE_RADIUS + 5;
-      this.selectionHighlight.center = this.model.sourcePositionProperty.value;
+      this.selectionHighlight.center = this.modelToView(this.model.sourcePositionProperty.value);
       this.statusTexts.selectedObject.string = 'Selected: Source';
     } else {
       this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
-      this.selectionHighlight.center = this.model.observerPositionProperty.value;
+      this.selectionHighlight.center = this.modelToView(this.model.observerPositionProperty.value);
       this.statusTexts.selectedObject.string = 'Selected: Observer';
     }
   }
@@ -965,11 +971,15 @@ export class SimScreenView extends ScreenView {
     const sourcePos = this.model.sourcePositionProperty.value;
     const observerPos = this.model.observerPositionProperty.value;
     
+    // Convert model coordinates to view coordinates
+    const viewSourcePos = this.modelToView(sourcePos);
+    const viewObserverPos = this.modelToView(observerPos);
+    
     this.connectingLine.setLine(
-      sourcePos.x, 
-      sourcePos.y, 
-      observerPos.x, 
-      observerPos.y
+      viewSourcePos.x, 
+      viewSourcePos.y, 
+      viewObserverPos.x, 
+      viewObserverPos.y
     );
   }
 
@@ -1010,11 +1020,12 @@ export class SimScreenView extends ScreenView {
   private updateWaveNode(wave: any): void {
     const waveNode = this.waveNodesMap.get(wave);
     if (waveNode) {
-      // Update position to match wave's origin
-      waveNode.center = wave.position;
+      // Update position to match wave's origin (convert to view coordinates)
+      waveNode.center = this.modelToView(wave.position);
       
-      // Update radius to match wave's propagation
-      waveNode.radius = wave.radius;
+      // Update radius to match wave's propagation (convert to view coordinates)
+      const viewRadius = this.modelToViewDelta(new Vector2(wave.radius, 0)).x;
+      waveNode.radius = viewRadius;
       
       // Update opacity based on age
       const maxAge = WAVE.MAX_AGE;
