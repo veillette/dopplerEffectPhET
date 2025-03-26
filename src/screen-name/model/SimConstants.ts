@@ -16,8 +16,7 @@ export const PHYSICS = {
   FREQ_MIN: 0.1, // Minimum allowable frequency (Hz)
   FREQ_MAX_FACTOR: 5, // Maximum frequency as factor of emitted (unitless)
   VELOCITY_DECAY: 0.5, // Decay factor for velocity when not dragging (unitless)
-  MIN_VELOCITY_MAG: 0.01, // Minimum velocity magnitude to display vector (m/s)
-  TIME_STEP_MAX: 0.05, // Maximum time step (seconds) to prevent jumps
+  MIN_VELOCITY_MAG: 0.01 // Minimum velocity magnitude to display vector (m/s)
 } as const;
 
 // Wave properties
@@ -67,9 +66,6 @@ export const MODEL_VIEW = {
   },
   // Scale factors for converting between model and view coordinates
   SCALE: {
-    // 1 meter in model space = 5 pixels in view space
-    // This means a 200m wide model space will be 1000 pixels wide in view
-    PIXELS_PER_METER: 5,
     // Time scaling: 1 second in model time = 0.5 seconds in real time
     TIME_SCALE: 0.5,
     // Velocity visualization scaling
