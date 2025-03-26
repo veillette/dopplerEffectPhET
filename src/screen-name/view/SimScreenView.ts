@@ -1,5 +1,5 @@
 import { Node, Circle, Line, Path, Text, 
-  Rectangle, Vector2, Color, Shape, DragListener, KeyboardUtils, SceneryEvent } from 'scenerystack';
+  Rectangle, Vector2, Color, Shape, DragListener, KeyboardUtils, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
 import { ResetAllButton } from 'scenerystack/scenery-phet';
 import { SimModel } from '../model/SimModel';
 import  { Property } from 'scenerystack/axon'; 
@@ -8,6 +8,9 @@ import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
 export class SimScreenView extends ScreenView {
   // Model reference
   private readonly model: SimModel;
+  
+  // Model-view transform
+  private readonly modelViewTransform: ModelViewTransform2;
   
   // Display layers
   private readonly waveLayer: Node;
@@ -78,6 +81,14 @@ export class SimScreenView extends ScreenView {
     super(options);
     
     this.model = model;
+    
+    // Create model-view transform
+    // Model space: -100 to 100 in both dimensions
+    // View space: layoutBounds
+    this.modelViewTransform = ModelViewTransform2.createRectangleMapping(
+      new Bounds2(-100, -100, 100, 100), // model bounds
+      this.layoutBounds                   // view bounds
+    );
     
     // Create display layers
     this.waveLayer = new Node();
@@ -423,6 +434,10 @@ export class SimScreenView extends ScreenView {
    * Add drag handlers to source and observer nodes
    */
   private addDragHandlers(): void {
+    // Store previous positions for movement calculation
+    let previousSourcePos = new Vector2(0, 0);
+    let previousObserverPos = new Vector2(0, 0);
+    
     // Source drag handler
     const sourceDragListener = new DragListener({
       targetNode: this.sourceNode,
@@ -430,17 +445,17 @@ export class SimScreenView extends ScreenView {
       start: () => {
         this.selectedObject = 'source';
         this.updateSelectionHighlight();
+        previousSourcePos = this.model.sourcePositionProperty.value.copy();
       },
       drag: (event) => {
-        // Update model position from drag
-        const point = event.pointer.point;
-        this.model.sourcePositionProperty.value = new Vector2(point.x, point.y);
+        // Convert view coordinates to model coordinates
+        const modelPoint = this.viewToModel(event.pointer.point);
+        this.model.sourcePositionProperty.value = modelPoint;
         
         // Calculate velocity vector from movement
-        const movement = new Vector2(
-          point.x - this.model.sourcePositionProperty.value.x,
-          point.y - this.model.sourcePositionProperty.value.y
-        );
+        const movement = this.model.sourcePositionProperty.value.minus(previousSourcePos);
+        previousSourcePos = this.model.sourcePositionProperty.value.copy();
+        
         if (movement.magnitude > 0) {
           this.model.sourceVelocityProperty.value = movement.timesScalar(5); // Scale factor for velocity
           this.model.sourceMovingProperty.value = true;
@@ -459,17 +474,17 @@ export class SimScreenView extends ScreenView {
       start: () => {
         this.selectedObject = 'observer';
         this.updateSelectionHighlight();
+        previousObserverPos = this.model.observerPositionProperty.value.copy();
       },
       drag: (event) => {
-        // Update model position from drag
-        const point = event.pointer.point;
-        this.model.observerPositionProperty.value = new Vector2(point.x, point.y);
+        // Convert view coordinates to model coordinates
+        const modelPoint = this.viewToModel(event.pointer.point);
+        this.model.observerPositionProperty.value = modelPoint;
         
         // Calculate velocity vector from movement
-        const movement = new Vector2(
-          point.x - this.model.observerPositionProperty.value.x,
-          point.y - this.model.observerPositionProperty.value.y
-        );
+        const movement = this.model.observerPositionProperty.value.minus(previousObserverPos);
+        previousObserverPos = this.model.observerPositionProperty.value.copy();
+        
         if (movement.magnitude > 0) {
           this.model.observerVelocityProperty.value = movement.timesScalar(5); // Scale factor for velocity
           this.model.observerMovingProperty.value = true;
@@ -1044,5 +1059,33 @@ export class SimScreenView extends ScreenView {
     }
 
     this.observedWaveform.shape = observedShape;
+  }
+
+  /**
+   * Convert model coordinates to view coordinates
+   */
+  private modelToView(modelPoint: Vector2): Vector2 {
+    return this.modelViewTransform.modelToViewPosition(modelPoint);
+  }
+
+  /**
+   * Convert view coordinates to model coordinates
+   */
+  private viewToModel(viewPoint: Vector2): Vector2 {
+    return this.modelViewTransform.viewToModelPosition(viewPoint);
+  }
+
+  /**
+   * Convert model distance to view distance
+   */
+  private modelToViewDelta(modelDelta: Vector2): Vector2 {
+    return this.modelViewTransform.modelToViewDelta(modelDelta);
+  }
+
+  /**
+   * Convert view distance to model distance
+   */
+  private viewToModelDelta(viewDelta: Vector2): Vector2 {
+    return this.modelViewTransform.viewToModelDelta(viewDelta);
   }
 }
