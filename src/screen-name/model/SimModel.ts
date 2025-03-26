@@ -1,30 +1,11 @@
 import { Vector2, Property, NumberProperty, BooleanProperty } from 'scenerystack';
 import { ObservableArray } from 'scenerystack/axon';
 import { createObservableArray } from 'scenerystack/axon';
+import { PHYSICS, WAVE, INITIAL_POSITIONS, SOUND_DATA, SCENARIOS } from './SimConstants';
 /**
  * Model for the Doppler Effect simulation
  */
 export class SimModel {
-  // CONSTANTS
-  public readonly CONSTANTS = {
-    // Physical constants in SI units
-    PHYSICS: {
-      SOUND_SPEED: 343.0, // Speed of sound in air (m/s) at room temperature
-      REAL_TIME_FACTOR: 0.5, // Slows down real-time for better visualization
-      EMITTED_FREQ: 4, // Base frequency of emitted sound (Hz)
-      FREQ_MIN: 0.1, // Minimum allowable frequency (Hz)
-      FREQ_MAX_FACTOR: 5, // Maximum frequency as factor of emitted
-      VELOCITY_DECAY: 0.5, // Decay factor for velocity when not dragging
-      MIN_VELOCITY_MAG: 0.01, // Minimum velocity magnitude to display vector (m/s)
-      TIME_STEP_MAX: 0.05, // Maximum time step (seconds) to prevent jumps
-    },
-    
-    // Wave properties
-    WAVE: {
-      MAX_AGE: 10, // Maximum age of a wave in seconds
-    }
-  };
-  
   // Properties for physics simulation
   public readonly soundSpeedProperty: NumberProperty;
   public readonly emittedFrequencyProperty: NumberProperty;
@@ -70,23 +51,24 @@ export class SimModel {
    */
   public constructor() {
     // Initialize physics properties
-    this.soundSpeedProperty = new NumberProperty(this.CONSTANTS.PHYSICS.SOUND_SPEED);
-    this.emittedFrequencyProperty = new NumberProperty(this.CONSTANTS.PHYSICS.EMITTED_FREQ);
+    this.soundSpeedProperty = new NumberProperty(PHYSICS.SOUND_SPEED);
+    this.emittedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
     
     // Initialize source properties
-    this.sourcePositionProperty = new Property<Vector2>(new Vector2(100, 300));
+    this.sourcePositionProperty = new Property<Vector2>(new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y));
     this.sourceVelocityProperty = new Property<Vector2>(new Vector2(0, 0));
     this.sourceMovingProperty = new BooleanProperty(false);
     
     // Initialize observer properties
-    this.observerPositionProperty = new Property<Vector2>(new Vector2(500, 300));
+    this.observerPositionProperty = new Property<Vector2>(new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y));
     this.observerVelocityProperty = new Property<Vector2>(new Vector2(0, 0));
     this.observerMovingProperty = new BooleanProperty(false);
     
     // Initialize simulation state
     this.simulationTimeProperty = new NumberProperty(0);
-    this.observedFrequencyProperty = new NumberProperty(this.CONSTANTS.PHYSICS.EMITTED_FREQ);
+    this.observedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
     this.pausedProperty = new BooleanProperty(false);
+    
     // Initialize waves array
     this.waves = createObservableArray<{
       position: Vector2;
@@ -98,7 +80,7 @@ export class SimModel {
     }>([]);
     
     // Initialize sound data arrays
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < SOUND_DATA.ARRAY_SIZE; i++) {
       this.emittedSoundData.push(0);
       this.observedSoundData.push(0);
     }
@@ -113,18 +95,18 @@ export class SimModel {
     this.emittedFrequencyProperty.reset();
     
     // Reset source properties
-    this.sourcePositionProperty.value = new Vector2(100, 300);
+    this.sourcePositionProperty.value = new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y);
     this.sourceVelocityProperty.value = new Vector2(0, 0);
     this.sourceMovingProperty.value = false;
     
     // Reset observer properties
-    this.observerPositionProperty.value = new Vector2(500, 300);
+    this.observerPositionProperty.value = new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y);
     this.observerVelocityProperty.value = new Vector2(0, 0);
     this.observerMovingProperty.value = false;
     
     // Reset simulation state
     this.simulationTimeProperty.reset();
-    this.observedFrequencyProperty.value = this.CONSTANTS.PHYSICS.EMITTED_FREQ;
+    this.observedFrequencyProperty.value = PHYSICS.EMITTED_FREQ;
     this.pausedProperty.reset();
     
     // Clear waves
@@ -152,7 +134,7 @@ export class SimModel {
     if (this.pausedProperty.value) return;
     
     // Apply time factor
-    const scaledDt = dt * this.CONSTANTS.PHYSICS.REAL_TIME_FACTOR;
+    const scaledDt = dt * PHYSICS.REAL_TIME_FACTOR;
     
     // Update simulation time
     this.simulationTimeProperty.value += scaledDt;
@@ -183,13 +165,13 @@ export class SimModel {
       this.sourcePositionProperty.value = sourcePos.plus(sourceVel.timesScalar(dt));
       
       // Check if velocity is too small
-      if (sourceVel.magnitude < this.CONSTANTS.PHYSICS.MIN_VELOCITY_MAG) {
+      if (sourceVel.magnitude < PHYSICS.MIN_VELOCITY_MAG) {
         this.sourceMovingProperty.value = false;
       }
     } else if (!this.sourceMovingProperty.value && this.sourceVelocityProperty.value.magnitude > 0) {
       // Apply velocity decay when not actively moving
       const sourceVel = this.sourceVelocityProperty.value;
-      this.sourceVelocityProperty.value = sourceVel.timesScalar(this.CONSTANTS.PHYSICS.VELOCITY_DECAY);
+      this.sourceVelocityProperty.value = sourceVel.timesScalar(PHYSICS.VELOCITY_DECAY);
     }
     
     // Update observer position if moving
@@ -201,13 +183,13 @@ export class SimModel {
       this.observerPositionProperty.value = observerPos.plus(observerVel.timesScalar(dt));
       
       // Check if velocity is too small
-      if (observerVel.magnitude < this.CONSTANTS.PHYSICS.MIN_VELOCITY_MAG) {
+      if (observerVel.magnitude < PHYSICS.MIN_VELOCITY_MAG) {
         this.observerMovingProperty.value = false;
       }
     } else if (!this.observerMovingProperty.value && this.observerVelocityProperty.value.magnitude > 0) {
       // Apply velocity decay when not actively moving
       const observerVel = this.observerVelocityProperty.value;
-      this.observerVelocityProperty.value = observerVel.timesScalar(this.CONSTANTS.PHYSICS.VELOCITY_DECAY);
+      this.observerVelocityProperty.value = observerVel.timesScalar(PHYSICS.VELOCITY_DECAY);
     }
   }
   
@@ -250,7 +232,7 @@ export class SimModel {
       wave.radius = age * this.soundSpeedProperty.value;
       
       // Remove waves that are too old
-      if (age > this.CONSTANTS.WAVE.MAX_AGE) {
+      if (age > WAVE.MAX_AGE) {
         this.waves.remove(wave);
       }
     }
@@ -347,10 +329,10 @@ export class SimModel {
     
     // Constrain to reasonable limits
     return Math.max(
-      this.CONSTANTS.PHYSICS.FREQ_MIN,
+      PHYSICS.FREQ_MIN,
       Math.min(
         observedFreq,
-        wave.sourceFrequency * this.CONSTANTS.PHYSICS.FREQ_MAX_FACTOR
+        wave.sourceFrequency * PHYSICS.FREQ_MAX_FACTOR
       )
     );
   }
@@ -360,8 +342,8 @@ export class SimModel {
    */
   public setupScenario1(): void {
     this.reset();
-    this.sourceVelocityProperty.value = new Vector2(5, 0);
-    this.observerVelocityProperty.value = new Vector2(0, 0);
+    this.sourceVelocityProperty.value = new Vector2(SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity.x, SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity.y);
+    this.observerVelocityProperty.value = new Vector2(SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity.x, SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity.y);
     this.sourceMovingProperty.value = true;
     this.observerMovingProperty.value = false;
   }
@@ -371,8 +353,8 @@ export class SimModel {
    */
   public setupScenario2(): void {
     this.reset();
-    this.sourceVelocityProperty.value = new Vector2(0, 0);
-    this.observerVelocityProperty.value = new Vector2(-5, 0);
+    this.sourceVelocityProperty.value = new Vector2(SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity.x, SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity.y);
+    this.observerVelocityProperty.value = new Vector2(SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity.x, SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity.y);
     this.sourceMovingProperty.value = false;
     this.observerMovingProperty.value = true;
   }
@@ -382,8 +364,8 @@ export class SimModel {
    */
   public setupScenario3(): void {
     this.reset();
-    this.sourceVelocityProperty.value = new Vector2(-5, 0);
-    this.observerVelocityProperty.value = new Vector2(5, 0);
+    this.sourceVelocityProperty.value = new Vector2(SCENARIOS.MOVING_APART.sourceVelocity.x, SCENARIOS.MOVING_APART.sourceVelocity.y);
+    this.observerVelocityProperty.value = new Vector2(SCENARIOS.MOVING_APART.observerVelocity.x, SCENARIOS.MOVING_APART.observerVelocity.y);
     this.sourceMovingProperty.value = true;
     this.observerMovingProperty.value = true;
   }
@@ -393,8 +375,8 @@ export class SimModel {
    */
   public setupScenario4(): void {
     this.reset();
-    this.sourceVelocityProperty.value = new Vector2(0, 3);
-    this.observerVelocityProperty.value = new Vector2(0, -3);
+    this.sourceVelocityProperty.value = new Vector2(SCENARIOS.PERPENDICULAR.sourceVelocity.x, SCENARIOS.PERPENDICULAR.sourceVelocity.y);
+    this.observerVelocityProperty.value = new Vector2(SCENARIOS.PERPENDICULAR.observerVelocity.x, SCENARIOS.PERPENDICULAR.observerVelocity.y);
     this.sourceMovingProperty.value = true;
     this.observerMovingProperty.value = true;
   }

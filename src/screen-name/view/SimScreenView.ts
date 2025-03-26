@@ -2,6 +2,7 @@ import { Node, Circle, Line, Path, Text,
   Rectangle, Vector2, Color, Shape, DragListener, KeyboardUtils, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
 import { ResetAllButton } from 'scenerystack/scenery-phet';
 import { SimModel } from '../model/SimModel';
+import { PHYSICS, WAVE } from '../model/SimConstants';
 import  { Property } from 'scenerystack/axon'; 
 import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
 
@@ -809,7 +810,7 @@ export class SimScreenView extends ScreenView {
       this.model.sourcePositionProperty.value,
       velocity,
       this.UI.SOURCE_COLOR,
-      this.model.CONSTANTS.PHYSICS.MIN_VELOCITY_MAG
+      PHYSICS.MIN_VELOCITY_MAG
     );
   }
 
@@ -823,7 +824,7 @@ export class SimScreenView extends ScreenView {
       this.model.observerPositionProperty.value,
       velocity,
       this.UI.OBSERVER_COLOR,
-      this.model.CONSTANTS.PHYSICS.MIN_VELOCITY_MAG
+      PHYSICS.MIN_VELOCITY_MAG
     );
   }
 
@@ -998,7 +999,7 @@ export class SimScreenView extends ScreenView {
       waveNode.radius = wave.radius;
       
       // Update opacity based on age
-      const maxAge = this.model.CONSTANTS.WAVE.MAX_AGE;
+      const maxAge = WAVE.MAX_AGE;
       const age = this.model.simulationTimeProperty.value - wave.birthTime;
       const opacity = 0.7 * (1 - age / maxAge);
       
