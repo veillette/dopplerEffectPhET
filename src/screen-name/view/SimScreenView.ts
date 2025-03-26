@@ -1,6 +1,6 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, KeyboardUtils, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
-import { ResetAllButton } from 'scenerystack/scenery-phet';
+import { ResetAllButton, ArrowNode } from 'scenerystack/scenery-phet';
 import { SimModel } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
 import  { Property } from 'scenerystack/axon'; 
@@ -897,38 +897,23 @@ export class SimScreenView extends ScreenView {
     const scaledVelocity = velocity.timesScalar(MODEL_VIEW.SCALE.VELOCITY_VECTOR_SCALE);
     const viewVelocity = this.modelToViewDelta(scaledVelocity);
     
-    // Create line for vector
-    const line = new Line(
-      viewPosition.x, 
+    // Create arrow node
+    const arrow = new ArrowNode(
+      viewPosition.x,
       viewPosition.y,
       viewPosition.x + viewVelocity.x,
       viewPosition.y + viewVelocity.y,
       {
+        fill: color,
         stroke: color,
-        lineWidth: this.UI.VELOCITY_STROKE_WEIGHT
-      }
-    );
-    node.addChild(line);
-    
-    // Create arrowhead for vector
-    const arrowhead = new Path(new Shape()
-      .moveTo(0, 0)
-      .lineTo(-10, 5)
-      .lineTo(-10, -5)
-      .close(),
-      {
-        fill: color
+        lineWidth: this.UI.VELOCITY_STROKE_WEIGHT,
+        headWidth: 15,
+        headHeight: 15,
+        tailWidth: 3
       }
     );
     
-    // Position and rotate arrowhead
-    arrowhead.center = new Vector2(
-      viewPosition.x + viewVelocity.x,
-      viewPosition.y + viewVelocity.y
-    );
-    arrowhead.rotation = Math.atan2(viewVelocity.y, viewVelocity.x);
-    
-    node.addChild(arrowhead);
+    node.addChild(arrow);
   }
 
   /**
