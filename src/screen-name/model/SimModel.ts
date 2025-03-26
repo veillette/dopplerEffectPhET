@@ -146,19 +146,20 @@ export class SimModel {
   
   /**
    * Update the simulation state based on elapsed time
-   * @param dt - elapsed time in seconds
+   * @param dt - elapsed time in seconds (real time)
    */
   public step(dt: number): void {
     if (this.pausedProperty.value) return;
     
-    // Apply time factor
-    const scaledDt = dt * PHYSICS.REAL_TIME_FACTOR;
+    // Apply time scaling to convert real time to model time
+    // This ensures that 1 second of real time = 0.5 seconds of model time
+    const modelDt = dt * MODEL_VIEW.SCALE.TIME_SCALE;
     
-    // Update simulation time
-    this.simulationTimeProperty.value += scaledDt;
+    // Update simulation time (in model seconds)
+    this.simulationTimeProperty.value += modelDt;
     
     // Update positions based on velocities
-    this.updatePositions(scaledDt);
+    this.updatePositions(modelDt);
     
     // Generate new waves
     this.generateWaves();
@@ -167,11 +168,12 @@ export class SimModel {
     this.updateWaves();
     
     // Calculate Doppler effect
-    this.calculateDopplerEffect(scaledDt);
+    this.calculateDopplerEffect(modelDt);
   }
   
   /**
    * Update source and observer positions based on velocities
+   * @param dt - elapsed time in model seconds
    */
   private updatePositions(dt: number): void {
     // Update source position if moving
@@ -179,7 +181,7 @@ export class SimModel {
       const sourcePos = this.sourcePositionProperty.value;
       const sourceVel = this.sourceVelocityProperty.value;
       
-      // Update position based on velocity
+      // Update position based on velocity (in model space)
       this.sourcePositionProperty.value = sourcePos.plus(sourceVel.timesScalar(dt));
       
       // Check if velocity is too small
@@ -197,7 +199,7 @@ export class SimModel {
       const observerPos = this.observerPositionProperty.value;
       const observerVel = this.observerVelocityProperty.value;
       
-      // Update position based on velocity
+      // Update position based on velocity (in model space)
       this.observerPositionProperty.value = observerPos.plus(observerVel.timesScalar(dt));
       
       // Check if velocity is too small
@@ -215,7 +217,7 @@ export class SimModel {
    * Generate new waves based on emitted frequency
    */
   private generateWaves(): void {
-    // Calculate wave interval based on emitted frequency
+    // Calculate wave interval based on emitted frequency (in model seconds)
     const waveInterval = 1.0 / this.emittedFrequencyProperty.value;
     
     // Check if it's time to emit a new wave
@@ -243,10 +245,10 @@ export class SimModel {
     for (let i = this.waves.length - 1; i >= 0; i--) {
       const wave = this.waves.get(i);
       
-      // Calculate age
+      // Calculate age (in model seconds)
       const age = this.simulationTimeProperty.value - wave.birthTime;
       
-      // Update radius based on age and sound speed
+      // Update radius based on age and sound speed (in model meters)
       wave.radius = age * this.soundSpeedProperty.value;
       
       // Remove waves that are too old
@@ -258,9 +260,10 @@ export class SimModel {
   
   /**
    * Calculate Doppler effect for the observer
+   * @param dt - elapsed time in model seconds
    */
   private calculateDopplerEffect(dt: number): void {
-    // Calculate emitted waveform
+    // Calculate emitted waveform (in model time)
     this.emittedPhase += this.emittedFrequencyProperty.value * dt * Math.PI * 2;
     
     // Update emitted sound data
@@ -273,12 +276,12 @@ export class SimModel {
     for (let i = 0; i < this.waves.length; i++) {
       const wave = this.waves.get(i);
       
-      // Calculate distance from wave origin to observer
+      // Calculate distance from wave origin to observer (in model meters)
       const distanceToObserver = wave.position.distance(this.observerPositionProperty.value);
       
       // Check if wave has reached observer
       if (wave.radius >= distanceToObserver) {
-        // Calculate arrival time
+        // Calculate arrival time (in model seconds)
         const travelTime = distanceToObserver / this.soundSpeedProperty.value;
         const arrivalTime = wave.birthTime + travelTime;
         
@@ -303,7 +306,7 @@ export class SimModel {
     const currentWave = wavesAtObserver[0].wave;
     const arrivalTime = wavesAtObserver[0].arrivalTime;
     
-    // Calculate time since wave arrival
+    // Calculate time since wave arrival (in model seconds)
     const timeSinceArrival = this.simulationTimeProperty.value - arrivalTime;
     
     // Get phase at arrival from original wave
@@ -315,7 +318,7 @@ export class SimModel {
     // Update the property
     this.observedFrequencyProperty.value = observedFrequency;
     
-    // Calculate additional phase based on observed frequency
+    // Calculate additional phase based on observed frequency (in model time)
     const additionalPhase = timeSinceArrival * observedFrequency * Math.PI * 2;
     this.observedPhase = phaseAtArrival + additionalPhase;
     

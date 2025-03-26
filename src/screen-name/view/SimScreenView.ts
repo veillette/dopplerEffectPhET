@@ -867,10 +867,10 @@ export class SimScreenView extends ScreenView {
     // Convert model coordinates to view coordinates
     const viewPosition = this.modelToView(position);
     
-    // Create scaled velocity vector (scale in model space)
-    const scaledVelocity = velocity.timesScalar(this.UI.VECTOR_SCALE);
-    
-    // Convert the scaled velocity to view space
+    // Scale velocity vector for visualization
+    // First scale by the model-view transform to convert m/s to pixels/s
+    // Then scale by VELOCITY_VECTOR_SCALE to make it more visible
+    const scaledVelocity = velocity.timesScalar(MODEL_VIEW.SCALE.VELOCITY_VECTOR_SCALE);
     const viewVelocity = this.modelToViewDelta(scaledVelocity);
     
     // Create line for vector

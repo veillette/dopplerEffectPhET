@@ -70,6 +70,12 @@ export const MODEL_VIEW = {
   SCALE: {
     // 1 meter in model space = 5 pixels in view space
     // This means a 200m wide model space will be 1000 pixels wide in view
-    PIXELS_PER_METER: 5
+    PIXELS_PER_METER: 5,
+    // Time scaling: 1 second in model time = 0.5 seconds in real time (due to REAL_TIME_FACTOR)
+    TIME_SCALE: 0.5,
+    // Velocity visualization scaling
+    // This scales the velocity vectors to make them more visible on screen
+    // 1 m/s in model space = 20 pixels/s in view space
+    VELOCITY_VECTOR_SCALE: 20
   }
 } as const; 
