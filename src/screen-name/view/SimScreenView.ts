@@ -86,12 +86,15 @@ export class SimScreenView extends ScreenView {
     this.graphLayer = new Node();
     this.instructionLayer = new Node();
     
-    // Add layers to the view
+    // Add layers to the view in correct order (waves behind objects)
     this.addChild(this.waveLayer);
     this.addChild(this.objectLayer);
     this.addChild(this.graphLayer);
     this.addChild(this.instructionLayer);
     this.addChild(this.controlLayer);
+    
+    // Ensure wave layer is visible
+    this.waveLayer.visible = true;
     
     // Create source and observer nodes
     this.sourceNode = new Circle(this.UI.SOURCE_RADIUS, {
@@ -659,6 +662,7 @@ export class SimScreenView extends ScreenView {
     this.updateSoundSpeedText();
     this.updateWaveforms();
     this.updateConnectingLine();
+    this.updateWaves();
   }
 
   /**
@@ -840,7 +844,9 @@ export class SimScreenView extends ScreenView {
       stroke: this.UI.WAVE_COLOR,
       fill: null,
       lineWidth: 2,
-      opacity: 0.7
+      opacity: 0.7,
+      pickable: false,
+      visible: true // Ensure wave node is visible
     });
     
     this.waveLayer.addChild(waveNode);
@@ -873,64 +879,67 @@ export class SimScreenView extends ScreenView {
       // Update radius to match wave's propagation
       waveNode.radius = wave.radius;
       
-// Update opacity based on age
-const maxAge = this.model.CONSTANTS.WAVE.MAX_AGE;
-const age = this.model.simulationTimeProperty.value - wave.birthTime;
-const opacity = 0.7 * (1 - age / maxAge);
+      // Update opacity based on age
+      const maxAge = this.model.CONSTANTS.WAVE.MAX_AGE;
+      const age = this.model.simulationTimeProperty.value - wave.birthTime;
+      const opacity = 0.7 * (1 - age / maxAge);
+      
+      waveNode.opacity = Math.max(0, opacity);
+      
+      // Ensure the wave is visible
+      waveNode.visible = true;
+    }
+  }
 
-waveNode.opacity = Math.max(0, opacity);
-}
-}
+  /**
+   * Update all wave nodes to match model
+   */
+  private updateWaves(): void {
+    // Update each wave node
+    this.model.waves.forEach(wave => {
+      this.updateWaveNode(wave);
+    });
+  }
 
-/**
-* Update all wave nodes to match model
-*/
-private updateWaves(): void {
-// Update each wave node
-this.model.waves.forEach(wave => {
-this.updateWaveNode(wave);
-});
-}
+  /**
+   * Update waveforms in the graph displays
+   */
+  private updateWaveforms(): void {
+    // Update emitted sound waveform
+    const emittedShape = new Shape();
+    const graphX = this.emittedGraph.left;
+    const graphY = this.emittedGraph.centerY;
+    const graphWidth = this.emittedGraph.width;
 
-/**
-* Update waveforms in the graph displays
-*/
-private updateWaveforms(): void {
-// Update emitted sound waveform
-const emittedShape = new Shape();
-const graphX = this.emittedGraph.left;
-const graphY = this.emittedGraph.centerY;
-const graphWidth = this.emittedGraph.width;
+    // Start at left edge
+    emittedShape.moveToPoint(new Vector2(graphX, graphY));
 
-// Start at left edge
-emittedShape.moveToPoint(new Vector2(graphX, graphY));
+    // Draw waveform for emitted sound
+    const emittedData = this.model.emittedSoundData;
+    for (let i = 0; i < emittedData.length; i++) {
+      const x = graphX + (i / emittedData.length) * graphWidth;
+      const y = graphY - emittedData[i];
+      emittedShape.lineToPoint(new Vector2(x, y));
+    }
 
-// Draw waveform for emitted sound
-const emittedData = this.model.emittedSoundData;
-for (let i = 0; i < emittedData.length; i++) {
-const x = graphX + (i / emittedData.length) * graphWidth;
-const y = graphY - emittedData[i];
-emittedShape.lineToPoint(new Vector2(x, y));
-}
+    this.emittedWaveform.shape = emittedShape;
 
-this.emittedWaveform.shape = emittedShape;
+    // Update observed sound waveform
+    const observedShape = new Shape();
+    const obsGraphX = this.observedGraph.left;
+    const obsGraphY = this.observedGraph.centerY;
 
-// Update observed sound waveform
-const observedShape = new Shape();
-const obsGraphX = this.observedGraph.left;
-const obsGraphY = this.observedGraph.centerY;
+    // Start at left edge
+    observedShape.moveToPoint(new Vector2(obsGraphX, obsGraphY));
 
-// Start at left edge
-observedShape.moveToPoint(new Vector2(obsGraphX, obsGraphY));
+    // Draw waveform for observed sound
+    const observedData = this.model.observedSoundData;
+    for (let i = 0; i < observedData.length; i++) {
+      const x = obsGraphX + (i / observedData.length) * graphWidth;
+      const y = obsGraphY - observedData[i];
+      observedShape.lineToPoint(new Vector2(x, y));
+    }
 
-// Draw waveform for observed sound
-const observedData = this.model.observedSoundData;
-for (let i = 0; i < observedData.length; i++) {
-const x = obsGraphX + (i / observedData.length) * graphWidth;
-const y = obsGraphY - observedData[i];
-observedShape.lineToPoint(new Vector2(x, y));
-}
-
-this.observedWaveform.shape = observedShape;
-}
+    this.observedWaveform.shape = observedShape;
+  }
 }
