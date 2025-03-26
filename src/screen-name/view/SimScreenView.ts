@@ -461,14 +461,19 @@ export class SimScreenView extends ScreenView {
     const sourceDragListener = new DragListener({
       targetNode: this.sourceNode,
       dragBoundsProperty: new Property(this.layoutBounds),
-      start: () => {
+      start: (event) => {
         this.selectedObject = 'source';
         this.updateSelectionHighlight();
         previousSourcePos = this.model.sourcePositionProperty.value.copy();
+        
+        // Store the initial offset between pointer and source position
+        const sourceViewPos = this.modelToView(this.model.sourcePositionProperty.value);
+        (sourceDragListener as any).dragOffset = sourceViewPos.minus(event.pointer.point);
       },
       drag: (event) => {
-        // Convert view coordinates to model coordinates
-        const modelPoint = this.viewToModel(event.pointer.point);
+        // Convert view coordinates to model coordinates, accounting for initial offset
+        const viewPoint = event.pointer.point.plus((sourceDragListener as any).dragOffset);
+        const modelPoint = this.viewToModel(viewPoint);
         this.model.sourcePositionProperty.value = modelPoint;
         
         // Calculate velocity vector from movement
@@ -490,14 +495,19 @@ export class SimScreenView extends ScreenView {
     const observerDragListener = new DragListener({
       targetNode: this.observerNode,
       dragBoundsProperty: new Property(this.layoutBounds),
-      start: () => {
+      start: (event) => {
         this.selectedObject = 'observer';
         this.updateSelectionHighlight();
         previousObserverPos = this.model.observerPositionProperty.value.copy();
+        
+        // Store the initial offset between pointer and observer position
+        const observerViewPos = this.modelToView(this.model.observerPositionProperty.value);
+        (observerDragListener as any).dragOffset = observerViewPos.minus(event.pointer.point);
       },
       drag: (event) => {
-        // Convert view coordinates to model coordinates
-        const modelPoint = this.viewToModel(event.pointer.point);
+        // Convert view coordinates to model coordinates, accounting for initial offset
+        const viewPoint = event.pointer.point.plus((observerDragListener as any).dragOffset);
+        const modelPoint = this.viewToModel(viewPoint);
         this.model.observerPositionProperty.value = modelPoint;
         
         // Calculate velocity vector from movement
