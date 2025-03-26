@@ -489,7 +489,6 @@ export class SimScreenView extends ScreenView {
     // Add key listeners to the view
     const keydownListener = {
       keydown: (event: SceneryEvent<KeyboardEvent>) => {
-        const moveStep = 60.0;
         if (!event.domEvent) return;
         const key = event.domEvent.key.toLowerCase();
         
@@ -522,17 +521,17 @@ export class SimScreenView extends ScreenView {
           const velocity = new Vector2(0, 0);
           
           if (key === 'arrowleft') {
-            velocity.x = -moveStep;
+            velocity.x = -60.0;
           }
           else if (key === 'arrowright') {
-            velocity.x = moveStep;
+            velocity.x = 60.0;
           }
           
           if (key === 'arrowup') {
-            velocity.y = -moveStep;
+            velocity.y = -60.0;
           }
           else if (key === 'arrowdown') {
-            velocity.y = moveStep;
+            velocity.y = 60.0;
           }
           
           // Apply velocity if any keys were pressed
@@ -593,7 +592,111 @@ export class SimScreenView extends ScreenView {
       }
     };
     
+    // Add the keyboard listener to the view
     this.addInputListener(keydownListener);
+    
+    // Also add a global keyboard listener to ensure we catch all keyboard events
+    window.addEventListener('keydown', (event) => {
+      const key = event.key.toLowerCase();
+      
+      // Handle object selection
+      if (key === 's') {
+        this.selectedObject = 'source';
+        this.updateSelectionHighlight();
+      }
+      else if (key === 'o') {
+        this.selectedObject = 'observer';
+        this.updateSelectionHighlight();
+      }
+      
+      // Handle arrow key movement
+      if (!this.model.pausedProperty.value) {
+        let targetPos, targetVel, isMoving;
+        
+        // Determine which object to control
+        if (this.selectedObject === 'source') {
+          targetPos = this.model.sourcePositionProperty;
+          targetVel = this.model.sourceVelocityProperty;
+          isMoving = this.model.sourceMovingProperty;
+        } else {
+          targetPos = this.model.observerPositionProperty;
+          targetVel = this.model.observerVelocityProperty;
+          isMoving = this.model.observerMovingProperty;
+        }
+        
+        // Set velocity based on key
+        const velocity = new Vector2(0, 0);
+        
+        if (key === 'arrowleft') {
+          velocity.x = -60.0;
+        }
+        else if (key === 'arrowright') {
+          velocity.x = 60.0;
+        }
+        
+        if (key === 'arrowup') {
+          velocity.y = -60.0;
+        }
+        else if (key === 'arrowdown') {
+          velocity.y = 60.0;
+        }
+        
+        // Apply velocity if any keys were pressed
+        if (velocity.magnitude > 0) {
+          targetVel.value = velocity;
+          isMoving.value = true;
+        }
+      }
+      
+      // Handle pause toggle
+      if (key === ' ') {
+        this.model.pausedProperty.value = !this.model.pausedProperty.value;
+      }
+      
+      // Handle reset
+      if (key === 'r') {
+        this.model.reset();
+        this.reset();
+      }
+      
+      // Handle help toggle
+      if (key === 'h') {
+        this.showInstructions = !this.showInstructions;
+        this.instructionLayer.visible = this.showInstructions;
+      }
+      
+      // Preset scenarios
+      if (key === '1') {
+        this.model.setupScenario1();
+      }
+      else if (key === '2') {
+        this.model.setupScenario2();
+      }
+      else if (key === '3') {
+        this.model.setupScenario3();
+      }
+      else if (key === '4') {
+        this.model.setupScenario4();
+      }
+      
+      // Adjust emitted frequency
+      if (key === '+' || key === '=') {
+        this.model.emittedFrequencyProperty.value += 0.01;
+      }
+      else if (key === '-' || key === '_') {
+        this.model.emittedFrequencyProperty.value = 
+          Math.max(0.1, this.model.emittedFrequencyProperty.value - 0.01);
+      }
+      
+      // Adjust sound speed
+      if (key === '.' || key === '>') {
+        this.model.soundSpeedProperty.value += 1.0;
+      }
+      else if (key === ',' || key === '<') {
+        this.model.soundSpeedProperty.value = 
+          Math.max(1.0, this.model.soundSpeedProperty.value - 1.0);
+      }
+    });
   }
 
   /**
