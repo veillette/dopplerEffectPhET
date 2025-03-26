@@ -1,31 +1,49 @@
 import { Vector2, Property, NumberProperty, BooleanProperty } from 'scenerystack';
 import { ObservableArray } from 'scenerystack/axon';
 import { createObservableArray } from 'scenerystack/axon';
-import { PHYSICS, WAVE, INITIAL_POSITIONS, SOUND_DATA, SCENARIOS } from './SimConstants';
+import { PHYSICS, WAVE, INITIAL_POSITIONS, SOUND_DATA, SCENARIOS, MODEL_VIEW } from './SimConstants';
 /**
  * Model for the Doppler Effect simulation
+ * 
+ * This model handles all the physics calculations and state management for the simulation.
+ * All calculations are done in SI units:
+ * - Distances in meters (m)
+ * - Velocities in meters per second (m/s)
+ * - Frequencies in Hertz (Hz)
+ * - Times in seconds (s)
+ * - Angles in radians
+ * 
+ * The model space is defined by MODEL_VIEW.MODEL_BOUNDS, which maps physical space
+ * to a coordinate system centered at (0,0) with bounds of ±100m in both dimensions.
+ * This space is then transformed to view coordinates by the SimScreenView.
  */
 export class SimModel {
   // Properties for physics simulation
-  public readonly soundSpeedProperty: NumberProperty;
-  public readonly emittedFrequencyProperty: NumberProperty;
+  public readonly soundSpeedProperty: NumberProperty; // Speed of sound in m/s
+  public readonly emittedFrequencyProperty: NumberProperty; // Frequency in Hz
   
   // Properties for source
-  public readonly sourcePositionProperty: Property<Vector2>;
-  public readonly sourceVelocityProperty: Property<Vector2>;
+  public readonly sourcePositionProperty: Property<Vector2>; // Position in meters
+  public readonly sourceVelocityProperty: Property<Vector2>; // Velocity in m/s
   public readonly sourceMovingProperty: BooleanProperty;
   
   // Properties for observer
-  public readonly observerPositionProperty: Property<Vector2>;
-  public readonly observerVelocityProperty: Property<Vector2>;
+  public readonly observerPositionProperty: Property<Vector2>; // Position in meters
+  public readonly observerVelocityProperty: Property<Vector2>; // Velocity in m/s
   public readonly observerMovingProperty: BooleanProperty;
   
   // Properties for simulation state
-  public readonly simulationTimeProperty: NumberProperty;
-  public readonly observedFrequencyProperty: NumberProperty;
+  public readonly simulationTimeProperty: NumberProperty; // Time in seconds
+  public readonly observedFrequencyProperty: NumberProperty; // Frequency in Hz
   public readonly pausedProperty: BooleanProperty;
   
-  // Wave collection
+  // Wave collection - each wave contains:
+  // - position: Vector2 (meters)
+  // - radius: number (meters)
+  // - birthTime: number (seconds)
+  // - sourceVelocity: Vector2 (m/s)
+  // - sourceFrequency: number (Hz)
+  // - phaseAtEmission: number (radians)
   public readonly waves: ObservableArray<{
     position: Vector2;
     radius: number;
@@ -35,15 +53,15 @@ export class SimModel {
     phaseAtEmission: number;
   }>;
   
-  // Sound data for graphs
+  // Sound data for graphs (unitless amplitude values)
   public readonly emittedSoundData: number[] = [];
   public readonly observedSoundData: number[] = [];
   
-  // Phase accumulators
+  // Phase accumulators (in radians)
   private emittedPhase: number = 0;
   private observedPhase: number = 0;
   
-  // Time tracking
+  // Time tracking (in seconds)
   private lastWaveTime: number = 0;
   
   /**

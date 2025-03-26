@@ -2,10 +2,23 @@ import { Node, Circle, Line, Path, Text,
   Rectangle, Vector2, Color, Shape, DragListener, KeyboardUtils, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
 import { ResetAllButton } from 'scenerystack/scenery-phet';
 import { SimModel } from '../model/SimModel';
-import { PHYSICS, WAVE } from '../model/SimConstants';
+import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
 import  { Property } from 'scenerystack/axon'; 
 import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
 
+/**
+ * View for the Doppler Effect simulation
+ * 
+ * This view handles all visualization aspects of the simulation, including:
+ * - Converting between model coordinates (meters) and view coordinates (pixels)
+ * - Rendering the source, observer, waves, and connecting line
+ * - Displaying velocity vectors and waveforms
+ * - Handling user input and controls
+ * 
+ * The view uses a ModelViewTransform2 to convert between:
+ * - Model space: Physical coordinates in meters (±100m in both dimensions)
+ * - View space: Screen coordinates in pixels
+ */
 export class SimScreenView extends ScreenView {
   // Model reference
   private readonly model: SimModel;
@@ -84,11 +97,16 @@ export class SimScreenView extends ScreenView {
     this.model = model;
     
     // Create model-view transform
-    // Model space: -100 to 100 in both dimensions
-    // View space: layoutBounds
+    // Model space: Physical coordinates in meters (±100m in both dimensions)
+    // View space: Screen coordinates in pixels
     this.modelViewTransform = ModelViewTransform2.createRectangleMapping(
-      new Bounds2(-100, -100, 100, 100), // model bounds
-      this.layoutBounds                   // view bounds
+      new Bounds2(
+        MODEL_VIEW.MODEL_BOUNDS.MIN_X,
+        MODEL_VIEW.MODEL_BOUNDS.MIN_Y,
+        MODEL_VIEW.MODEL_BOUNDS.MAX_X,
+        MODEL_VIEW.MODEL_BOUNDS.MAX_Y
+      ),
+      this.layoutBounds
     );
     
     // Create display layers
@@ -1063,28 +1081,28 @@ export class SimScreenView extends ScreenView {
   }
 
   /**
-   * Convert model coordinates to view coordinates
+   * Convert model coordinates (meters) to view coordinates (pixels)
    */
   private modelToView(modelPoint: Vector2): Vector2 {
     return this.modelViewTransform.modelToViewPosition(modelPoint);
   }
 
   /**
-   * Convert view coordinates to model coordinates
+   * Convert view coordinates (pixels) to model coordinates (meters)
    */
   private viewToModel(viewPoint: Vector2): Vector2 {
     return this.modelViewTransform.viewToModelPosition(viewPoint);
   }
 
   /**
-   * Convert model distance to view distance
+   * Convert model distance (meters) to view distance (pixels)
    */
   private modelToViewDelta(modelDelta: Vector2): Vector2 {
     return this.modelViewTransform.modelToViewDelta(modelDelta);
   }
 
   /**
-   * Convert view distance to model distance
+   * Convert view distance (pixels) to model distance (meters)
    */
   private viewToModelDelta(viewDelta: Vector2): Vector2 {
     return this.modelViewTransform.viewToModelDelta(viewDelta);
