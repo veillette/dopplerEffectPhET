@@ -273,8 +273,7 @@ this.controlLayer.addChild(scenarioComboBox);
     // Reset selected object
     this.selectedObject = 'source';
     
-    // Remove the unused showInstructions variable and directly
-    // update the visibility
+    // Update visibility directly
     this.instructionLayer.visible = true;
     
     // Clear wave nodes
@@ -1038,8 +1037,7 @@ this.controlLayer.addChild(scenarioComboBox);
       fill: null,
       lineWidth: 2,
       opacity: 0.7,
-      pickable: false,
-      visible: true // Ensure wave node is visible
+      pickable: false
     });
     
     this.waveLayer.addChild(waveNode);
@@ -1079,9 +1077,6 @@ this.controlLayer.addChild(scenarioComboBox);
       const opacity = 0.7 * (1 - age / maxAge);
       
       waveNode.opacity = Math.max(0, opacity);
-      
-      // Ensure the wave is visible
-      waveNode.visible = true;
     }
   }
 
