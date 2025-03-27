@@ -24,22 +24,26 @@ An interactive simulation of the Doppler Effect, built with SceneryStack. This s
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/veillette/dopplerEffectPhET.git
 cd dopplerEffectPhET
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Start the development server:
+
 ```bash
 npm start
 ```
 
 4. Build for production:
+
 ```bash
 npm run build
 ```
@@ -47,10 +51,12 @@ npm run build
 ## Controls
 
 ### Mouse Controls
+
 - Click and drag the red source or green observer to move them
 - The connecting line shows the distance between source and observer
 
 ### Keyboard Controls
+
 - `S`: Select source
 - `O`: Select observer
 - Arrow keys: Move selected object
@@ -64,10 +70,13 @@ npm run build
 ## Physics Model
 
 The simulation uses the Doppler Effect formula:
+
 ```
 f' = f * (v - vₒ) / (v - vₛ)
 ```
+
 where:
+
 - f' is the observed frequency
 - f is the emitted frequency
 - v is the speed of sound
@@ -85,4 +94,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Built with [SceneryStack](https://github.com/sceneryStack)
-- Inspired by PhET Interactive Simulations 
+- Inspired by PhET Interactive Simulations

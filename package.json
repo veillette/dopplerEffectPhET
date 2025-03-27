@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "start": "npx vite",
-    "build": "npx tsc && npx vite build"
+    "build": "npx tsc && npx vite build",
+    "lint": "npx eslint .",
+    "format": "npx prettier --write .",
+    "fix": "npx eslint --fix . && npx prettier --write ."
   },
   "dependencies": {
     "scenerystack": "~1.0.0"

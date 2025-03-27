@@ -1,7 +1,7 @@
 import type { TBrand } from "scenerystack/brand";
 
-( async () => {
-  const init = ( await import( "scenerystack/init" ) ).init;
+(async () => {
+  const init = (await import("scenerystack/init")).init;
 
   init({
     // Internal name of the simulation.
@@ -27,9 +27,9 @@ import type { TBrand } from "scenerystack/brand";
     allowLocaleSwitching: true,
   });
 
-  await import( "scenerystack/splash" );
-  const brand = ( await import( "scenerystack/brand" ) ).brand;
-  const adaptedFromPhetModule = await import( "scenerystack/adapted-from-phet" );
+  await import("scenerystack/splash");
+  const brand = (await import("scenerystack/brand")).brand;
+  const adaptedFromPhetModule = await import("scenerystack/adapted-from-phet");
 
   const logo_png = adaptedFromPhetModule.logo_png;
   const logoOnWhite_png = adaptedFromPhetModule.logoOnWhite_png;
@@ -61,5 +61,5 @@ import type { TBrand } from "scenerystack/brand";
 
   brand.register("Brand", Brand);
 
-  await import( './main.js' );
-} )();
+  await import("./main.js");
+})();
