@@ -10,7 +10,7 @@ import {
   Shape,
   DragListener,
   SceneryEvent,
-  ModelViewTransform2
+  ModelViewTransform2,
 } from "scenerystack";
 import {
   ResetAllButton,
@@ -127,11 +127,12 @@ export class SimScreenView extends ScreenView {
     // Create model-view transform
     // Model space: Physical coordinates in meters (±100m in both dimensions)
     // View space: Screen coordinates in pixels
-    this.modelViewTransform = ModelViewTransform2.createSinglePointScaleInvertedYMapping(
-      new Vector2(0, 0),
-      new Vector2(this.layoutBounds.centerX, this.layoutBounds.centerY),
-      SCALE.MODEL_VIEW_SCALE
-    );
+    this.modelViewTransform =
+      ModelViewTransform2.createSinglePointScaleInvertedYMapping(
+        new Vector2(0, 0),
+        new Vector2(this.layoutBounds.centerX, this.layoutBounds.centerY),
+        SCALE.MODEL_VIEW_SCALE,
+      );
 
     this.visibleValuesProperty = new Property<boolean>(false);
     this.visibleVelocityArrowProperty = new Property<boolean>(false);
@@ -1106,9 +1107,7 @@ export class SimScreenView extends ScreenView {
     // Scale velocity vector for visualization
     // First scale by the model-view transform to convert m/s to pixels/s
     // Then scale by VELOCITY_VECTOR_SCALE to make it more visible
-    const scaledVelocity = velocity.timesScalar(
-      SCALE.VELOCITY_VECTOR_SCALE,
-    );
+    const scaledVelocity = velocity.timesScalar(SCALE.VELOCITY_VECTOR_SCALE);
     const viewVelocity = this.modelToViewDelta(scaledVelocity);
 
     // Create arrow node

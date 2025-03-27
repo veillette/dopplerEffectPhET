@@ -56,16 +56,15 @@ export const SCENARIOS = {
   },
 } as const;
 
-
-  // Scale factors for converting between model and view coordinates
+// Scale factors for converting between model and view coordinates
 export const SCALE = {
-    // Time scaling: 1 second in model time = 0.1 seconds in real time
-    TIME_SCALE: 0.1,
-    
-    // Velocity visualization scaling
-    // This scales the velocity vectors to make them more visible on screen
-    VELOCITY_VECTOR_SCALE: 0.5,
+  // Time scaling: 1 second in model time = 0.1 seconds in real time
+  TIME_SCALE: 0.1,
 
-    // Scale factor for converting between model and view coordinates (2 "pixels" per meter)
-    MODEL_VIEW_SCALE: 2
+  // Velocity visualization scaling
+  // This scales the velocity vectors to make them more visible on screen
+  VELOCITY_VECTOR_SCALE: 0.5,
+
+  // Scale factor for converting between model and view coordinates (2 "pixels" per meter)
+  MODEL_VIEW_SCALE: 2,
 } as const;
