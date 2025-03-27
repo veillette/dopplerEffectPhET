@@ -22,7 +22,7 @@ export const PHYSICS = {
 
 // Wave properties
 export const WAVE = {
-  MAX_AGE: 10, // Maximum age of a wave in seconds
+  MAX_AGE: 1, // Maximum age of a wave in seconds
 } as const;
 
 // Initial positions (in meters)

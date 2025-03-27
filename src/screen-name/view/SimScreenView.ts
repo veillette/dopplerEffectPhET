@@ -199,6 +199,9 @@ export class SimScreenView extends ScreenView {
     // Add to control layer
     this.controlLayer.addChild(scenarioComboBox);
     this.controlLayer.addChild(listParent);
+    
+// Add to control layer
+this.controlLayer.addChild(scenarioComboBox);
 
     // Setup reset all button
     const resetAllButton = new ResetAllButton({
