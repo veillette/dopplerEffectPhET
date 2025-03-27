@@ -32,7 +32,6 @@ export class SimScreenView extends ScreenView {
   private readonly objectLayer: Node;
   private readonly controlLayer: Node;
   private readonly graphLayer: Node;
-  private readonly instructionLayer: Node;
   
   // UI elements
   private readonly sourceNode: Circle;
@@ -126,13 +125,11 @@ export class SimScreenView extends ScreenView {
     this.objectLayer = new Node();
     this.controlLayer = new Node();
     this.graphLayer = new Node();
-    this.instructionLayer = new Node();
     
     // Add layers to the view in correct order (waves behind objects)
     this.addChild(this.waveLayer);
     this.addChild(this.objectLayer);
     this.addChild(this.graphLayer);
-    this.addChild(this.instructionLayer);
     this.addChild(this.controlLayer);
     
     // Ensure wave layer is visible
@@ -237,6 +234,11 @@ export class SimScreenView extends ScreenView {
     });
     this.controlLayer.addChild(resetAllButton);
 
+    // Create scale mark node
+    const scaleMarkNode = new Node({visibleProperty: this.visibleValuesProperty});
+    scaleMarkNode.left = resetAllButton.left - 50;
+    scaleMarkNode.bottom = resetAllButton.bottom;
+
     // Create scale mark and label using the modelViewTransform
     const scaleModelLength = 10;
     const scaleViewLength = this.modelViewTransform.modelToViewDeltaY(scaleModelLength);
@@ -257,11 +259,13 @@ export class SimScreenView extends ScreenView {
       lineWidth: 2
     });
     
+    // Create bottom end mark
     const bottomEndMark = new Line(scaleMark.left - 5, scaleMark.bottom, scaleMark.left + 5, scaleMark.bottom, {
       stroke: this.UI.CONNECTING_LINE_COLOR,
       lineWidth: 2
     });
 
+    // Create scale label 
     const scaleLabel = new Text(`${scaleModelLength}m`, {
       font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
@@ -269,11 +273,12 @@ export class SimScreenView extends ScreenView {
       centerY: scaleMark.centerY  // Position label slightly below the scale mark
     });
     
-    // Add scale mark, end marks, and label to the control layer
-    this.controlLayer.addChild(scaleMark);
-    this.controlLayer.addChild(topEndMark);
-    this.controlLayer.addChild(bottomEndMark);
-    this.controlLayer.addChild(scaleLabel);
+    // Add scale mark, end marks, and label to the scale mark node
+    scaleMarkNode.addChild(scaleMark);
+    scaleMarkNode.addChild(topEndMark);
+    scaleMarkNode.addChild(bottomEndMark);
+    scaleMarkNode.addChild(scaleLabel);
+    this.controlLayer.addChild(scaleMarkNode);
 
     // Add time control node
     const timeControlNode = new TimeControlNode(this.model.playProperty,{
@@ -332,7 +337,10 @@ export class SimScreenView extends ScreenView {
 
     const panel = new Panel(
             // Create a VerticalCheckboxGroup
-            new VerticalCheckboxGroup( items ));
+            new VerticalCheckboxGroup( items ),{
+              right: this.observedGraph.right,
+              top: this.observedGraph.bottom + 10
+            });
 
      this.controlLayer.addChild(panel);
    
@@ -354,6 +362,10 @@ export class SimScreenView extends ScreenView {
     
     // Initial view update
     this.updateView();
+
+
+    this.instructionsBox.centerX = this.layoutBounds.centerX;
+    this.instructionsBox.centerY = this.layoutBounds.centerY;
   }
   
   /**
@@ -364,7 +376,7 @@ export class SimScreenView extends ScreenView {
     this.selectedObject = 'source';
     
     // Update visibility directly
-    this.instructionLayer.visible = true;
+    this.instructionsBox.visible = true;
     
     // Clear wave nodes
     this.waveNodesMap.forEach((waveNode) => {
@@ -521,7 +533,7 @@ export class SimScreenView extends ScreenView {
     const soundSpeed = new Text(`Sound Speed: ${this.model.soundSpeedProperty.value.toFixed(2)} m/s`, {
       font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
-      left: 300,
+      left: 700,
       bottom: this.layoutBounds.maxY - 15,
       visibleProperty: this.visibleValuesProperty
     });
@@ -731,7 +743,7 @@ export class SimScreenView extends ScreenView {
         
         // Handle help toggle
         if (key === 'h') {
-          this.instructionLayer.visible = !this.instructionLayer.visible;
+          this.instructionsBox.visible = !this.instructionsBox.visible;
         }
         
         // Preset scenarios
@@ -837,7 +849,7 @@ export class SimScreenView extends ScreenView {
       
       // Handle help toggle
       if (key === 'h') {
-        this.instructionLayer.visible = !this.instructionLayer.visible;
+        this.instructionsBox.visible = !this.instructionsBox.visible;
       }
       
       // Preset scenarios
