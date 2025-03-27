@@ -71,7 +71,6 @@ export const MODEL_VIEW = {
     TIME_SCALE: 0.10,
     // Velocity visualization scaling
     // This scales the velocity vectors to make them more visible on screen
-    // 
     VELOCITY_VECTOR_SCALE: 0.2
   }
 } as const; 

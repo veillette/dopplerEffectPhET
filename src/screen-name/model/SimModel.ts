@@ -82,6 +82,12 @@ export class SimModel {
   // Time tracking (in seconds)
   private lastWaveTime: number = 0;
   
+  // Wave nodes map for tracking
+  private waveNodesMap: Map<any, Circle> = new Map();
+  
+  // Add a new property for the instructions box
+  private instructionsBox: Node;
+  
   /**
    * Constructor for the Doppler Effect SimModel
    */
@@ -171,6 +177,13 @@ export class SimModel {
       this.emittedSoundData[i] = 0;
       this.observedSoundData[i] = 0;
     }
+    
+    // Reset selected object
+    this.selectedObject = 'source';
+    
+    // Show instructions
+    this.showInstructions = true;
+    this.instructionLayer.visible = true;
   }
   
   /**

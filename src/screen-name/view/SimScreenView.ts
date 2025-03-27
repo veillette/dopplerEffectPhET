@@ -273,8 +273,8 @@ this.controlLayer.addChild(scenarioComboBox);
     // Reset selected object
     this.selectedObject = 'source';
     
-    // Show instructions
-    this.showInstructions = true;
+    // Remove the unused showInstructions variable and directly
+    // update the visibility
     this.instructionLayer.visible = true;
     
     // Clear wave nodes
@@ -501,9 +501,7 @@ this.controlLayer.addChild(scenarioComboBox);
    * Add drag handlers to source and observer nodes
    */
   private addDragHandlers(): void {
-    // Store previous positions and target positions for movement calculation
-    let previousSourcePos = new Vector2(0, 0);
-    let previousObserverPos = new Vector2(0, 0);
+    // Remove the unused variables
     let targetSourcePos = new Vector2(0, 0);
     let targetObserverPos = new Vector2(0, 0);
     
@@ -514,7 +512,7 @@ this.controlLayer.addChild(scenarioComboBox);
       start: (event) => {
         this.selectedObject = 'source';
         this.updateSelectionHighlight();
-        previousSourcePos = this.model.sourcePositionProperty.value.copy();
+        // Remove the unused previousSourcePos
         targetSourcePos = this.model.sourcePositionProperty.value.copy();
         
         // Store the initial offset between pointer and source position
@@ -554,7 +552,7 @@ this.controlLayer.addChild(scenarioComboBox);
       start: (event) => {
         this.selectedObject = 'observer';
         this.updateSelectionHighlight();
-        previousObserverPos = this.model.observerPositionProperty.value.copy();
+        // Remove the unused previousObserverPos
         targetObserverPos = this.model.observerPositionProperty.value.copy();
         
         // Store the initial offset between pointer and observer position
@@ -660,8 +658,8 @@ this.controlLayer.addChild(scenarioComboBox);
         
         // Handle help toggle
         if (key === 'h') {
-          this.showInstructions = !this.showInstructions;
-          this.instructionLayer.visible = this.showInstructions;
+          // Update the instructionLayer visibility directly instead of using showInstructions
+          this.instructionLayer.visible = !this.instructionLayer.visible;
         }
         
         // Preset scenarios
@@ -767,8 +765,8 @@ this.controlLayer.addChild(scenarioComboBox);
       
       // Handle help toggle
       if (key === 'h') {
-        this.showInstructions = !this.showInstructions;
-        this.instructionLayer.visible = this.showInstructions;
+        // Update the instructionLayer visibility directly instead of using showInstructions
+        this.instructionLayer.visible = !this.instructionLayer.visible;
       }
       
       // Preset scenarios
