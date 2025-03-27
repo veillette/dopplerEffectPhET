@@ -209,6 +209,44 @@ export class SimScreenView extends ScreenView {
     });
     this.controlLayer.addChild(resetAllButton);
 
+
+    const scaleModelLength = 10;
+    const scaleViewLength = this.modelViewTransform.modelToViewDeltaY(scaleModelLength);
+    
+    // Create scale mark and label
+    const scaleMark = new Line(0, 0, 0, scaleViewLength, { // Vertical line, 50 pixels long
+      stroke: this.UI.CONNECTING_LINE_COLOR,
+      lineWidth: 2
+    });
+    
+    // Position the scale mark to the left of the reset all button
+    scaleMark.left = resetAllButton.left - 50; // Adjust as needed
+    scaleMark.bottom = resetAllButton.bottom; // Align with the bottom of the reset button
+
+    // Create end marks for the ruler effect
+    const topEndMark = new Line(scaleMark.left - 5, scaleMark.top, scaleMark.left + 5, scaleMark.top, {
+      stroke: this.UI.CONNECTING_LINE_COLOR,
+      lineWidth: 2
+    });
+    
+    const bottomEndMark = new Line(scaleMark.left - 5, scaleMark.bottom, scaleMark.left + 5, scaleMark.bottom, {
+      stroke: this.UI.CONNECTING_LINE_COLOR,
+      lineWidth: 2
+    });
+
+    const scaleLabel = new Text(`${scaleModelLength}m`, {
+      font: new PhetFont(14),
+      fill: this.UI.TEXT_COLOR,
+      left: scaleMark.right+5 , // Position label to the left of the scale mark
+      centerY: scaleMark.centerY  // Position label slightly below the scale mark
+    });
+    
+    // Add scale mark, end marks, and label to the control layer
+    this.controlLayer.addChild(scaleMark);
+    this.controlLayer.addChild(topEndMark);
+    this.controlLayer.addChild(bottomEndMark);
+    this.controlLayer.addChild(scaleLabel);
+
     // Add time control node
     const timeControlNode = new TimeControlNode(this.model.playProperty,{
       timeSpeedProperty: this.model.timeSpeedProperty,
