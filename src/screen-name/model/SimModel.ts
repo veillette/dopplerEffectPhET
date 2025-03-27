@@ -115,12 +115,12 @@ export class SimModel {
 
     // Restore the original initialization of soundSpeedRange and frequencyRange
     this.soundSpeedRange = new RangeWithValue(
-      PHYSICS.SOUND_SPEED * 0.2,
+      PHYSICS.SOUND_SPEED * 0.5,
       PHYSICS.SOUND_SPEED * 2,
       PHYSICS.SOUND_SPEED,
     );
     this.frequencyRange = new RangeWithValue(
-      PHYSICS.EMITTED_FREQ * 0.1,
+      PHYSICS.EMITTED_FREQ * 0.5,
       PHYSICS.EMITTED_FREQ * 2,
       PHYSICS.EMITTED_FREQ,
     );
