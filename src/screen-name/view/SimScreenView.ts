@@ -1,11 +1,12 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2} from 'scenerystack';
-import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont, MeasuringTapeNode, MeasuringTapeUnits, NumberControl, NumberControlLayoutFunction2Options } from 'scenerystack/scenery-phet';
+import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont, MeasuringTapeNode, MeasuringTapeUnits, NumberControl } from 'scenerystack/scenery-phet';
 import { ComboBox, Panel, VerticalCheckboxGroup, VerticalCheckboxGroupItem} from 'scenerystack/sun';
 import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
-import { Property } from 'scenerystack/axon'; 
+import { PatternStringProperty, Property } from 'scenerystack/axon'; 
 import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
+import { Tandem } from 'scenerystack/axon';
 
 /**
  * View for the Doppler Effect simulation
@@ -340,17 +341,24 @@ export class SimScreenView extends ScreenView {
 
     const soundSpeedControl = new NumberControl('Speed of Sound',this.model.soundSpeedProperty, this.model.soundSpeedRange,{
       layoutFunction: NumberControl.createLayoutFunction2( { ySpacing: 12 } ),
-      titleNodeOptions: {
-        font: new PhetFont(14),
-        maxWidth: 140
+      numberDisplayOptions: {
+        valuePattern: '{{value}} m/s'
       },
+      titleNodeOptions: {
+        font: new PhetFont(12),
+        maxWidth: 140
+      }
     });
     soundSpeedControl.top = checkboxGroup.bottom + 10;
 
+
     const frequencyControl = new NumberControl('Frequency',this.model.emittedFrequencyProperty, this.model.frequencyRange,{
       layoutFunction: NumberControl.createLayoutFunction2( { ySpacing: 12 } ),
+      numberDisplayOptions: {
+        valuePattern: '{{value}} Hz'
+      },
       titleNodeOptions: {
-        font: new PhetFont(14),
+        font: new PhetFont(12),
         maxWidth: 140
       },
     });

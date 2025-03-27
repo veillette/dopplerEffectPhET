@@ -309,7 +309,7 @@ export class SimModel {
       const age = this.simulationTimeProperty.value - wave.birthTime;
       
       // Update radius based on age and sound speed (in model meters)
-      wave.radius = age * this.soundSpeedProperty.value;
+      wave.radius = age * wave.speedOfSound;
       
       // Remove waves that are too old
       if (age > WAVE.MAX_AGE) {
