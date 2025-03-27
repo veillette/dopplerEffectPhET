@@ -489,7 +489,7 @@ export class SimScreenView extends ScreenView {
   /**
    * Main step function called each frame
    */
-  public step(dt: number): void {
+  public step(): void {
     // Update view to match model
     this.updateView();
   }
