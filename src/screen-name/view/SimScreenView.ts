@@ -1,9 +1,9 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, KeyboardUtils, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
-import { ResetAllButton, ArrowNode } from 'scenerystack/scenery-phet';
+import { ResetAllButton, ArrowNode, PlayPauseStepButtonGroup } from 'scenerystack/scenery-phet';
 import { SimModel } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
-import  { Property } from 'scenerystack/axon'; 
+import { Property, BooleanProperty } from 'scenerystack/axon'; 
 import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
 
 /**
@@ -183,6 +183,12 @@ export class SimScreenView extends ScreenView {
       bottom: this.layoutBounds.maxY - 10
     });
     this.controlLayer.addChild(resetAllButton);
+
+    // Add play/pause/step button group
+    const playPauseStepButtonGroup = new PlayPauseStepButtonGroup(this.model.pausedProperty);
+    playPauseStepButtonGroup.centerX = this.layoutBounds.centerX;
+    playPauseStepButtonGroup.bottom = this.layoutBounds.maxY - 10;
+    this.controlLayer.addChild(playPauseStepButtonGroup);
 
     // Setup keyboard handlers
     this.addKeyboardListeners();
