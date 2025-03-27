@@ -54,7 +54,6 @@ export class SimScreenView extends ScreenView {
     observedFreq: Text;
     shiftStatus: Text;
     selectedObject: Text;
-    pauseStatus: Text;
     soundSpeed: Text;
   };
   
@@ -364,9 +363,6 @@ export class SimScreenView extends ScreenView {
   public step(dt: number): void {
     // Update view to match model
     this.updateView();
-    
-    // Update visibility of pause indication
-    this.statusTexts.pauseStatus.visible = this.model.pausedProperty.value;
   }
   
   /**
@@ -500,13 +496,7 @@ export class SimScreenView extends ScreenView {
       bottom: this.layoutBounds.maxY - 15
     });
     
-    const pauseStatus = new Text('PAUSED', {
-      font: '14px Arial',
-      fill: new Color(255, 0, 0),
-      left: 15,
-      bottom: this.layoutBounds.maxY - 15,
-      visible: false
-    });
+
     
     const soundSpeed = new Text(`Sound Speed: ${this.model.soundSpeedProperty.value.toFixed(2)} m/s`, {
       font: '14px Arial',
@@ -520,7 +510,6 @@ export class SimScreenView extends ScreenView {
     this.controlLayer.addChild(observedFreq);
     this.controlLayer.addChild(shiftStatus);
     this.controlLayer.addChild(selectedObject);
-    this.controlLayer.addChild(pauseStatus);
     this.controlLayer.addChild(soundSpeed);
     
     return {
@@ -528,7 +517,6 @@ export class SimScreenView extends ScreenView {
       observedFreq,
       shiftStatus,
       selectedObject,
-      pauseStatus,
       soundSpeed
     };
   }
@@ -1101,13 +1089,6 @@ export class SimScreenView extends ScreenView {
   private updateSoundSpeedText(): void {
     this.statusTexts.soundSpeed.string = 
       `Sound Speed: ${this.model.soundSpeedProperty.value.toFixed(2)} m/s`;
-  }
-
-  /**
-   * Update the paused state
-   */
-  private updatePausedState(): void {
-    this.statusTexts.pauseStatus.visible = this.model.pausedProperty.value;
   }
 
   /**
