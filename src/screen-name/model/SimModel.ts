@@ -14,7 +14,7 @@ export const SCENARIO_OPTIONS = {
 
 // Define time speed values - the property will store these values
 export const TIME_SPEED = {
-  SLOW: 0.5,
+  SLOW: 0.25,
   NORMAL: 1.0
 };
 
