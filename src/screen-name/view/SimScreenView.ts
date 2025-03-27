@@ -227,7 +227,7 @@ export class SimScreenView extends ScreenView {
     // Add play/pause/step button group
     const playPauseStepButtonGroup = new PlayPauseStepButtonGroup(this.model.pausedProperty);
     playPauseStepButtonGroup.centerX = this.layoutBounds.centerX;
-    playPauseStepButtonGroup.bottom = this.layoutBounds.maxY - 10;
+    timeControlNode.bottom = this.layoutBounds.maxY - 10;
     this.controlLayer.addChild(playPauseStepButtonGroup);
 
     // Create instructions box
