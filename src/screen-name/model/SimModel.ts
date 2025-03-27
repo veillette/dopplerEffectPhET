@@ -6,6 +6,7 @@ import {
   StringProperty,
   EnumerationProperty,
   TimeSpeed,
+RangeWithValue,
 } from "scenerystack";
 import { ObservableArray } from "scenerystack/axon";
 import { createObservableArray } from "scenerystack/axon";
