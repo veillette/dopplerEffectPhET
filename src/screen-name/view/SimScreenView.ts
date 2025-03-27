@@ -4,9 +4,8 @@ import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont, Measu
 import { ComboBox, Panel, VerticalCheckboxGroup, VerticalCheckboxGroupItem} from 'scenerystack/sun';
 import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
-import { PatternStringProperty, Property } from 'scenerystack/axon'; 
+import { Property } from 'scenerystack/axon'; 
 import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
-import { Tandem } from 'scenerystack/axon';
 
 /**
  * View for the Doppler Effect simulation
@@ -51,6 +50,9 @@ export class SimScreenView extends ScreenView {
 
   // Visibility properties
   private readonly visibleValuesProperty: Property<boolean>;
+  private readonly visibleVelocityArrowProperty: Property<boolean>;
+  private readonly visibleLineOfSightProperty: Property<boolean>;
+
 
   // Status text elements
   private readonly statusTexts: {
@@ -117,8 +119,8 @@ export class SimScreenView extends ScreenView {
     
 
     this.visibleValuesProperty = new Property<boolean>(false);
-    const visibleVelocityArrowProperty = new Property<boolean>(false);
-    const visibleLineOfSightProperty = new Property<boolean>(false);
+    this.visibleVelocityArrowProperty = new Property<boolean>(false);
+    this.visibleLineOfSightProperty = new Property<boolean>(false);
 
     // Create display layers
     this.waveLayer = new Node();
@@ -148,7 +150,7 @@ export class SimScreenView extends ScreenView {
     
     // Create connecting line
     this.connectingLine = new Line(0, 0, 0, 0, {
-      visibleProperty: visibleLineOfSightProperty,
+      visibleProperty: this.visibleLineOfSightProperty,
       stroke: this.UI.CONNECTING_LINE_COLOR,
       lineWidth: 1,
       lineDash: [10, 5]
@@ -168,7 +170,7 @@ export class SimScreenView extends ScreenView {
       tailWidth: 2,
       isHeadDynamic: true,
       scaleTailToo: true,
-      visibleProperty: visibleVelocityArrowProperty
+      visibleProperty: this.visibleVelocityArrowProperty
     });
     this.observerVelocityVector = new ArrowNode(0, 0, 0, 0, {
       headHeight: 10,
@@ -176,7 +178,7 @@ export class SimScreenView extends ScreenView {
       tailWidth: 2,
       isHeadDynamic: true,
       scaleTailToo: true,
-      visibleProperty: visibleVelocityArrowProperty
+      visibleProperty: this.visibleVelocityArrowProperty
     });
     
     // Add objects to object layer
@@ -327,10 +329,10 @@ export class SimScreenView extends ScreenView {
         { property: this.visibleValuesProperty ,
           createNode: () => new Text('Values', { font: new PhetFont(14), fill: this.UI.TEXT_COLOR })
         },{
-          property: visibleVelocityArrowProperty ,
+          property: this.visibleVelocityArrowProperty ,
           createNode: () => new Text('Velocity Arrows', { font: new PhetFont(14), fill: this.UI.TEXT_COLOR })
         },{
-          property: visibleLineOfSightProperty ,
+          property: this.visibleLineOfSightProperty ,
           createNode: () => new Text('Line of Sight', { font: new PhetFont(14), fill: this.UI.TEXT_COLOR })
         }
     ];
@@ -412,7 +414,11 @@ export class SimScreenView extends ScreenView {
     
     // Update visibility directly
     this.instructionsBox.visible = true;
-    
+
+    this.visibleValuesProperty.reset();
+    this.visibleVelocityArrowProperty.reset();
+    this.visibleLineOfSightProperty.reset();
+
     // Clear wave nodes
     this.waveNodesMap.forEach((waveNode) => {
       this.waveLayer.removeChild(waveNode);
