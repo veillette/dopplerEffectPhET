@@ -2,9 +2,9 @@ import { Node, Circle, Line, Path, Text,
   Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
 import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont } from 'scenerystack/scenery-phet';
 import { ComboBox } from 'scenerystack/sun';
-import { SimModel, SCENARIO_OPTIONS, TIME_SPEED } from '../model/SimModel';
+import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
-import { Property, BooleanProperty } from 'scenerystack/axon'; 
+import { Property } from 'scenerystack/axon'; 
 import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
 
 /**
@@ -184,26 +184,13 @@ export class SimScreenView extends ScreenView {
       SCENARIO_OPTIONS.SCENARIO_4
     ].map(text => ({
       value: text,
-      label: new Text(text, { font: new PhetFont(14), fill: this.UI.TEXT_COLOR }),
       createNode: () => new Text(text, { font: new PhetFont(14), fill: this.UI.TEXT_COLOR })
     }));
 
+    const listParent = new Node();
+
     // Create combo box using SceneryStack API
-    const scenarioComboBox = new ComboBox(model.scenarioProperty, scenarioItems, this.controlLayer, {
-      align: 'left',
-      listPosition: 'below',
-      labelXSpacing: 10,
-      cornerRadius: 5,
-      xMargin: 10,
-      yMargin: 10,
-      buttonFill: new Color(240, 240, 240),
-      buttonStroke: this.UI.TEXT_COLOR,
-      buttonLineWidth: 1,
-      listFill: new Color(255, 255, 255),
-      listStroke: this.UI.TEXT_COLOR,
-      listLineWidth: 1,
-      highlightFill: new Color(220, 220, 220)
-    });
+    const scenarioComboBox = new ComboBox(model.scenarioProperty, scenarioItems, listParent);
 
     // Position the combo box
     scenarioComboBox.left = 10;
@@ -211,6 +198,7 @@ export class SimScreenView extends ScreenView {
 
     // Add to control layer
     this.controlLayer.addChild(scenarioComboBox);
+    this.controlLayer.addChild(listParent);
 
     // Setup reset all button
     const resetAllButton = new ResetAllButton({
