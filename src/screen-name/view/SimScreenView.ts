@@ -82,9 +82,6 @@ export class SimScreenView extends ScreenView {
   // Selection tracking
   private selectedObject: 'source' | 'observer' = 'source';
   
-  // Instructions visible flag
-  private showInstructions: boolean = true;
-  
   // Wave nodes map for tracking
   private waveNodesMap: Map<any, Circle> = new Map();
   
@@ -200,9 +197,6 @@ export class SimScreenView extends ScreenView {
     this.controlLayer.addChild(scenarioComboBox);
     this.controlLayer.addChild(listParent);
     
-// Add to control layer
-this.controlLayer.addChild(scenarioComboBox);
-
     // Setup reset all button
     const resetAllButton = new ResetAllButton({
       listener: () => {
@@ -500,10 +494,6 @@ this.controlLayer.addChild(scenarioComboBox);
    * Add drag handlers to source and observer nodes
    */
   private addDragHandlers(): void {
-    // Remove the unused variables
-    let targetSourcePos = new Vector2(0, 0);
-    let targetObserverPos = new Vector2(0, 0);
-    
     // Source drag handler
     const sourceDragListener = new DragListener({
       targetNode: this.sourceNode,
@@ -511,8 +501,6 @@ this.controlLayer.addChild(scenarioComboBox);
       start: (event) => {
         this.selectedObject = 'source';
         this.updateSelectionHighlight();
-        // Remove the unused previousSourcePos
-        targetSourcePos = this.model.sourcePositionProperty.value.copy();
         
         // Store the initial offset between pointer and source position
         const sourceViewPos = this.modelToView(this.model.sourcePositionProperty.value);
@@ -523,11 +511,8 @@ this.controlLayer.addChild(scenarioComboBox);
         const viewPoint = event.pointer.point.plus((sourceDragListener as any).dragOffset);
         const modelPoint = this.viewToModel(viewPoint);
         
-        // Update target position
-        targetSourcePos = modelPoint;
-        
         // Calculate desired velocity (direction to target)
-        const desiredVelocity = targetSourcePos.minus(this.model.sourcePositionProperty.value);
+        const desiredVelocity = modelPoint.minus(this.model.sourcePositionProperty.value);
         
         // Limit velocity to maximum speed
         if (desiredVelocity.magnitude > PHYSICS.MAX_SPEED) {
@@ -537,9 +522,6 @@ this.controlLayer.addChild(scenarioComboBox);
         // Apply velocity
         this.model.sourceVelocityProperty.value = desiredVelocity;
         this.model.sourceMovingProperty.value = true;
-      },
-      end: () => {
-        // Keep current velocity when drag ends
       }
     });
     this.sourceNode.addInputListener(sourceDragListener);
@@ -551,8 +533,6 @@ this.controlLayer.addChild(scenarioComboBox);
       start: (event) => {
         this.selectedObject = 'observer';
         this.updateSelectionHighlight();
-        // Remove the unused previousObserverPos
-        targetObserverPos = this.model.observerPositionProperty.value.copy();
         
         // Store the initial offset between pointer and observer position
         const observerViewPos = this.modelToView(this.model.observerPositionProperty.value);
@@ -563,11 +543,8 @@ this.controlLayer.addChild(scenarioComboBox);
         const viewPoint = event.pointer.point.plus((observerDragListener as any).dragOffset);
         const modelPoint = this.viewToModel(viewPoint);
         
-        // Update target position
-        targetObserverPos = modelPoint;
-        
         // Calculate desired velocity (direction to target)
-        const desiredVelocity = targetObserverPos.minus(this.model.observerPositionProperty.value);
+        const desiredVelocity = modelPoint.minus(this.model.observerPositionProperty.value);
         
         // Limit velocity to maximum speed
         if (desiredVelocity.magnitude > PHYSICS.MAX_SPEED) {
@@ -577,9 +554,6 @@ this.controlLayer.addChild(scenarioComboBox);
         // Apply velocity
         this.model.observerVelocityProperty.value = desiredVelocity;
         this.model.observerMovingProperty.value = true;
-      },
-      end: () => {
-        // Keep current velocity when drag ends
       }
     });
     this.observerNode.addInputListener(observerDragListener);
@@ -657,7 +631,6 @@ this.controlLayer.addChild(scenarioComboBox);
         
         // Handle help toggle
         if (key === 'h') {
-          // Update the instructionLayer visibility directly instead of using showInstructions
           this.instructionLayer.visible = !this.instructionLayer.visible;
         }
         
@@ -764,7 +737,6 @@ this.controlLayer.addChild(scenarioComboBox);
       
       // Handle help toggle
       if (key === 'h') {
-        // Update the instructionLayer visibility directly instead of using showInstructions
         this.instructionLayer.visible = !this.instructionLayer.visible;
       }
       
