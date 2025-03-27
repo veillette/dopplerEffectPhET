@@ -48,6 +48,10 @@ export class SimScreenView extends ScreenView {
   private readonly emittedWaveform: Path;
   private readonly observedWaveform: Path;
   
+
+  // Visibility properties
+  private readonly visibleValuesProperty: Property<boolean>;
+
   // Status text elements
   private readonly statusTexts: {
     emittedFreq: Text;
@@ -113,7 +117,7 @@ export class SimScreenView extends ScreenView {
     );
     
 
-    const visibleValuesProperty = new Property<boolean>(false);
+    this.visibleValuesProperty = new Property<boolean>(false);
     const visibleVelocityArrowProperty = new Property<boolean>(false);
     const visibleLineOfSightProperty = new Property<boolean>(false);
 
@@ -315,7 +319,7 @@ export class SimScreenView extends ScreenView {
     // Create a panel
     const items: VerticalCheckboxGroupItem[] = [
         // Add three checkboxes
-        { property: visibleValuesProperty ,
+        { property: this.visibleValuesProperty ,
           createNode: () => new Text('Values', { font: new PhetFont(14), fill: this.UI.TEXT_COLOR })
         },{
           property: visibleVelocityArrowProperty ,
@@ -487,21 +491,24 @@ export class SimScreenView extends ScreenView {
       font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
       left: this.layoutBounds.maxX - this.UI.GRAPH_WIDTH - this.UI.GRAPH_MARGIN,
-      top: 15
+      top: 15,
+      visibleProperty: this.visibleValuesProperty
     });
     
     const observedFreq = new Text('', {
       font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
       left: this.layoutBounds.maxX - this.UI.GRAPH_WIDTH - this.UI.GRAPH_MARGIN,
-      top: 30 + this.UI.GRAPH_HEIGHT + this.UI.GRAPH_SPACING - 15
+      top: 30 + this.UI.GRAPH_HEIGHT + this.UI.GRAPH_SPACING - 15,
+      visibleProperty: this.visibleValuesProperty
     });
     
     const shiftStatus = new Text('', {
       font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
-      right: this.layoutBounds.maxX - this.UI.GRAPH_MARGIN,
-      top: 30 + this.UI.GRAPH_HEIGHT + this.UI.GRAPH_SPACING - 15
+      left: observedFreq.right + 0.75*this.UI.GRAPH_WIDTH,
+      top: 30 + this.UI.GRAPH_HEIGHT + this.UI.GRAPH_SPACING - 15,
+      visibleProperty: this.visibleValuesProperty
     });
     
     const selectedObject = new Text('Selected: Source', {
@@ -515,7 +522,8 @@ export class SimScreenView extends ScreenView {
       font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
       left: 300,
-      bottom: this.layoutBounds.maxY - 15
+      bottom: this.layoutBounds.maxY - 15,
+      visibleProperty: this.visibleValuesProperty
     });
     
     // Add to control layer
