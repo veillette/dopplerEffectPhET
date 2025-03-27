@@ -620,7 +620,7 @@ export class SimScreenView extends ScreenView {
         }
         
         // Handle arrow key movement
-        if (!this.model.pausedProperty.value) {
+        if (this.model.playProperty.value) {
           let targetPos, targetVel, isMoving;
           
           // Determine which object to control
@@ -660,7 +660,7 @@ export class SimScreenView extends ScreenView {
         
         // Handle pause toggle
         if (key === ' ') {
-          this.model.pausedProperty.value = !this.model.pausedProperty.value;
+          this.model.playProperty.value = !this.model.playProperty.value;
         }
         
         // Handle reset
@@ -727,7 +727,7 @@ export class SimScreenView extends ScreenView {
       }
       
       // Handle arrow key movement
-      if (!this.model.pausedProperty.value) {
+      if (this.model.playProperty.value) {
         let targetPos, targetVel, isMoving;
         
         // Determine which object to control
@@ -767,7 +767,7 @@ export class SimScreenView extends ScreenView {
       
       // Handle pause toggle
       if (key === ' ') {
-        this.model.pausedProperty.value = !this.model.pausedProperty.value;
+        this.model.playProperty.value = !this.model.playProperty.value;
       }
       
       // Handle reset
