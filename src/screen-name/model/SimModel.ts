@@ -15,8 +15,7 @@ export const SCENARIO_OPTIONS = {
 // Define time speed values - the property will store these values
 export const TIME_SPEED = {
   SLOW: 0.5,
-  NORMAL: 1.0,
-  FAST: 2.0
+  NORMAL: 1.0
 };
 
 /**
@@ -175,6 +174,20 @@ export class SimModel {
   }
   
   /**
+   * Get the numeric value associated with the current TimeSpeed enum value
+   */
+  private getTimeSpeedValue(): number {
+    // Convert TimeSpeed enum to a numeric value for calculations
+    switch (this.timeSpeedProperty.value) {
+      case TimeSpeed.SLOW:
+        return TIME_SPEED.SLOW;
+      case TimeSpeed.NORMAL:
+      default:
+        return TIME_SPEED.NORMAL;
+    }
+  }
+  
+  /**
    * Update the simulation state based on elapsed time
    * @param dt - elapsed time in seconds (real time)
    */
@@ -184,7 +197,7 @@ export class SimModel {
     // Apply time scaling to convert real time to model time
     // This ensures that 1 second of real time = 0.5 seconds of model time
     // Also apply the user-selected time speed factor from timeSpeedProperty
-    const modelDt = dt * MODEL_VIEW.SCALE.TIME_SCALE * this.timeSpeedProperty.value;
+    const modelDt = dt * MODEL_VIEW.SCALE.TIME_SCALE * this.getTimeSpeedValue();
     
     // Update simulation time (in model seconds)
     this.simulationTimeProperty.value += modelDt;
