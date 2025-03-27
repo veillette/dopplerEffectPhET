@@ -1,5 +1,5 @@
 import { Node, Circle, Line, Path, Text, 
-  Rectangle, Vector2, Color, Shape, DragListener, KeyboardUtils, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
+  Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
 import { ResetAllButton, ArrowNode, PlayPauseStepButtonGroup } from 'scenerystack/scenery-phet';
 import { ComboBox } from 'scenerystack/sun';
 import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
@@ -87,8 +87,6 @@ export class SimScreenView extends ScreenView {
   
   // Wave nodes map for tracking
   private waveNodesMap: Map<any, Circle> = new Map();
-  
-  private readonly scenarioComboBox: Node;
   
   /**
    * Constructor for the Doppler Effect SimScreenView
@@ -210,7 +208,6 @@ export class SimScreenView extends ScreenView {
 
     // Add to control layer
     this.controlLayer.addChild(scenarioComboBox);
-    this.scenarioComboBox = scenarioComboBox;
 
     // Setup reset all button
     const resetAllButton = new ResetAllButton({
