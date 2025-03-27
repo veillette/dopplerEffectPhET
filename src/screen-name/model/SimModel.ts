@@ -4,8 +4,8 @@ import { createObservableArray } from 'scenerystack/axon';
 import { PHYSICS, WAVE, INITIAL_POSITIONS, SOUND_DATA, SCENARIOS, MODEL_VIEW } from './SimConstants';
 import { RangeWithValue } from 'scenerystack';
 
-// Add this interface near the top of the file, after the imports
-interface Wave {
+// Export the Wave interface
+export interface Wave {
   position: Vector2;
   radius: number;
   speedOfSound: number;

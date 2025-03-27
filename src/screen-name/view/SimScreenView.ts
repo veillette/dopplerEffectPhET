@@ -1,8 +1,8 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2} from 'scenerystack';
-import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont, MeasuringTapeNode, MeasuringTapeUnits, NumberControl } from 'scenerystack/scenery-phet';
+import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont, NumberControl } from 'scenerystack/scenery-phet';
 import { ComboBox, Panel, VerticalCheckboxGroup, VerticalCheckboxGroupItem} from 'scenerystack/sun';
-import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
+import { SimModel, SCENARIO_OPTIONS, Wave } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
 import { Property } from 'scenerystack/axon'; 
 import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
@@ -86,13 +86,11 @@ export class SimScreenView extends ScreenView {
   
   // Selection tracking
   private selectedObject: 'source' | 'observer' = 'source';
-  
   // Wave nodes map for tracking
-  private waveNodesMap: Map<any, Circle> = new Map();
+  private waveNodesMap: Map<Wave, Circle> = new Map();
   
   // Add a new property for the instructions box
   private instructionsBox: Node;
-  
   // Add a new property for the toolbox
   private toolbox: Node;
   
@@ -642,11 +640,11 @@ export class SimScreenView extends ScreenView {
         
         // Store the initial offset between pointer and source position
         const sourceViewPos = this.modelToView(this.model.sourcePositionProperty.value);
-        (sourceDragListener as any).dragOffset = sourceViewPos.minus(event.pointer.point);
+        (sourceDragListener as DragListener & { dragOffset: Vector2 }).dragOffset = sourceViewPos.minus(event.pointer.point);
       },
       drag: (event) => {
         // Convert view coordinates to model coordinates, accounting for initial offset
-        const viewPoint = event.pointer.point.plus((sourceDragListener as any).dragOffset);
+        const viewPoint = event.pointer.point.plus((sourceDragListener as DragListener & { dragOffset: Vector2 }).dragOffset);
         const modelPoint = this.viewToModel(viewPoint);
         
         // Calculate desired velocity (direction to target)
@@ -674,11 +672,11 @@ export class SimScreenView extends ScreenView {
         
         // Store the initial offset between pointer and observer position
         const observerViewPos = this.modelToView(this.model.observerPositionProperty.value);
-        (observerDragListener as any).dragOffset = observerViewPos.minus(event.pointer.point);
+        (observerDragListener as DragListener & { dragOffset: Vector2 }).dragOffset = observerViewPos.minus(event.pointer.point);
       },
       drag: (event) => {
         // Convert view coordinates to model coordinates, accounting for initial offset
-        const viewPoint = event.pointer.point.plus((observerDragListener as any).dragOffset);
+        const viewPoint = event.pointer.point.plus((observerDragListener as DragListener & { dragOffset: Vector2 }).dragOffset);
         const modelPoint = this.viewToModel(viewPoint);
         
         // Calculate desired velocity (direction to target)
@@ -1121,7 +1119,7 @@ export class SimScreenView extends ScreenView {
   /**
    * Add a wave node for a new wave in the model
    */
-  private addWaveNode(wave: any): void {
+  private addWaveNode(wave: Wave): void {
     const waveNode = new Circle(0, {
       stroke: this.UI.WAVE_COLOR,
       fill: null,
@@ -1140,7 +1138,7 @@ export class SimScreenView extends ScreenView {
   /**
    * Remove a wave node when removed from the model
    */
-  private removeWaveNode(wave: any): void {
+  private removeWaveNode(wave: Wave): void {
     const waveNode = this.waveNodesMap.get(wave);
     if (waveNode) {
       this.waveLayer.removeChild(waveNode);
@@ -1151,7 +1149,7 @@ export class SimScreenView extends ScreenView {
   /**
    * Update visualization for a specific wave
    */
-  private updateWaveNode(wave: any): void {
+  private updateWaveNode(wave: Wave): void {
     const waveNode = this.waveNodesMap.get(wave);
     if (waveNode) {
       // Update position to match wave's origin (convert to view coordinates)
