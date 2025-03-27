@@ -10,8 +10,7 @@ import {
   Shape,
   DragListener,
   SceneryEvent,
-  ModelViewTransform2,
-  Bounds2,
+  ModelViewTransform2
 } from "scenerystack";
 import {
   ResetAllButton,
@@ -794,15 +793,13 @@ export class SimScreenView extends ScreenView {
 
         // Handle arrow key movement
         if (this.model.playProperty.value) {
-          let targetPos, targetVel, isMoving;
+          let targetVel, isMoving;
 
           // Determine which object to control
           if (this.selectedObject === "source") {
-            targetPos = this.model.sourcePositionProperty;
             targetVel = this.model.sourceVelocityProperty;
             isMoving = this.model.sourceMovingProperty;
           } else {
-            targetPos = this.model.observerPositionProperty;
             targetVel = this.model.observerVelocityProperty;
             isMoving = this.model.observerMovingProperty;
           }
@@ -896,15 +893,13 @@ export class SimScreenView extends ScreenView {
 
       // Handle arrow key movement
       if (this.model.playProperty.value) {
-        let targetPos, targetVel, isMoving;
+        let targetVel, isMoving;
 
         // Determine which object to control
         if (this.selectedObject === "source") {
-          targetPos = this.model.sourcePositionProperty;
           targetVel = this.model.sourceVelocityProperty;
           isMoving = this.model.sourceMovingProperty;
         } else {
-          targetPos = this.model.observerPositionProperty;
           targetVel = this.model.observerVelocityProperty;
           isMoving = this.model.observerMovingProperty;
         }
