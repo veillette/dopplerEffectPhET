@@ -559,11 +559,6 @@ export class SimScreenView extends ScreenView {
       this.updateSoundSpeedText();
     });
 
-    // Update paused state
-    this.model.pausedProperty.lazyLink(() => {
-      this.updatePausedState();
-    });
-
     // Listen to waves collection
     this.model.waves.addItemAddedListener(wave => {
       this.addWaveNode(wave);
