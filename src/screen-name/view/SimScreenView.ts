@@ -1,7 +1,7 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
 import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont, MeasuringTapeNode, MeasuringTapeUnits } from 'scenerystack/scenery-phet';
-import { ComboBox } from 'scenerystack/sun';
+import { ComboBox, Panel, VerticalCheckboxGroup, VerticalCheckboxGroupItem } from 'scenerystack/sun';
 import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
 import { Property } from 'scenerystack/axon'; 
@@ -37,8 +37,8 @@ export class SimScreenView extends ScreenView {
   // UI elements
   private readonly sourceNode: Circle;
   private readonly observerNode: Circle;
-  private readonly sourceVelocityVector: Node;
-  private readonly observerVelocityVector: Node;
+  private readonly sourceVelocityVector: ArrowNode;
+  private readonly observerVelocityVector: ArrowNode;
   private readonly connectingLine: Line;
   private readonly selectionHighlight: Circle;
   
@@ -112,6 +112,11 @@ export class SimScreenView extends ScreenView {
       this.layoutBounds
     );
     
+
+    const visibleValuesProperty = new Property<boolean>(false);
+    const visibleVelocityArrowProperty = new Property<boolean>(false);
+    const visibleLineOfSightProperty = new Property<boolean>(false);
+
     // Create display layers
     this.waveLayer = new Node();
     this.objectLayer = new Node();
@@ -142,8 +147,10 @@ export class SimScreenView extends ScreenView {
     
     // Create connecting line
     this.connectingLine = new Line(0, 0, 0, 0, {
+      visibleProperty: visibleLineOfSightProperty,
       stroke: this.UI.CONNECTING_LINE_COLOR,
-      lineWidth: 1
+      lineWidth: 1,
+      lineDash: [10, 5]
     });
     
     // Create selection highlight
@@ -154,8 +161,22 @@ export class SimScreenView extends ScreenView {
     });
     
     // Create velocity vector nodes
-    this.sourceVelocityVector = new Node();
-    this.observerVelocityVector = new Node();
+    this.sourceVelocityVector = new ArrowNode(0, 0, 0, 0, {
+      headHeight: 10,
+      headWidth: 10,
+      tailWidth: 2,
+      isHeadDynamic: true,
+      scaleTailToo: true,
+      visibleProperty: visibleVelocityArrowProperty
+    });
+    this.observerVelocityVector = new ArrowNode(0, 0, 0, 0, {
+      headHeight: 10,
+      headWidth: 10,
+      tailWidth: 2,
+      isHeadDynamic: true,
+      scaleTailToo: true,
+      visibleProperty: visibleVelocityArrowProperty
+    });
     
     // Add objects to object layer
     this.objectLayer.addChild(this.connectingLine);
@@ -289,16 +310,29 @@ export class SimScreenView extends ScreenView {
     this.toolbox = new Node();
     this.controlLayer.addChild(this.toolbox);
 
-    // // Create measuring tape units property
-    // const measuringTapeUnitsProperty = new Property<MeasuringTapeUnits>(MeasuringTapeUnits.METERS); // Set default units
 
-    // // Create measuring tape
-    // const measuringTape = new MeasuringTapeNode(measuringTapeUnitsProperty, this.modelViewTransform);
 
-    // // Add measuring tape to the toolbox
-    // this.toolbox.addChild(measuringTape);
+    // Create a panel
+    const items: VerticalCheckboxGroupItem[] = [
+        // Add three checkboxes
+        { property: visibleValuesProperty ,
+          createNode: () => new Text('Values', { font: new PhetFont(14), fill: this.UI.TEXT_COLOR })
+        },{
+          property: visibleVelocityArrowProperty ,
+          createNode: () => new Text('Velocity Arrows', { font: new PhetFont(14), fill: this.UI.TEXT_COLOR })
+        },{
+          property: visibleLineOfSightProperty ,
+          createNode: () => new Text('Line of Sight', { font: new PhetFont(14), fill: this.UI.TEXT_COLOR })
+        }
+    ];
 
-    // Position the toolbox
+    const panel = new Panel(
+            // Create a VerticalCheckboxGroup
+            new VerticalCheckboxGroup( items ));
+
+     this.controlLayer.addChild(panel);
+   
+     // Position the toolbox
     this.toolbox.left = 10; // Adjust as needed
     this.toolbox.top = 50; // Adjust as needed
 
@@ -947,15 +981,13 @@ export class SimScreenView extends ScreenView {
    * Update a velocity vector visualization
    */
   private updateVelocityVector(
-    node: Node, 
+    node: ArrowNode, 
     position: Vector2, 
     velocity: Vector2, 
     color: Color,
     minMagnitude: number
   ): void {
-    // Clear previous children
-    node.removeAllChildren();
-    
+
     // Only show velocity vector if magnitude is significant
     if (velocity.magnitude < minMagnitude) {
       return;
@@ -971,22 +1003,13 @@ export class SimScreenView extends ScreenView {
     const viewVelocity = this.modelToViewDelta(scaledVelocity);
     
     // Create arrow node
-    const arrow = new ArrowNode(
+    node.setTailAndTip(
       viewPosition.x,
       viewPosition.y,
       viewPosition.x + viewVelocity.x,
-      viewPosition.y + viewVelocity.y,
-      {
-        fill: color,
-        stroke: color,
-        lineWidth: this.UI.VELOCITY_STROKE_WEIGHT,
-        headWidth: 15,
-        headHeight: 15,
-        tailWidth: 3
-      }
+      viewPosition.y + viewVelocity.y
     );
-    
-    node.addChild(arrow);
+
   }
 
   /**
