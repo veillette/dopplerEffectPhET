@@ -53,7 +53,7 @@ export class SimModel {
   // Properties for simulation state
   public readonly simulationTimeProperty: NumberProperty; // Time in seconds
   public readonly observedFrequencyProperty: NumberProperty; // Frequency in Hz
-  public readonly pausedProperty: BooleanProperty;
+  public readonly playProperty: BooleanProperty;
   
   // Wave collection - each wave contains:
   // - position: Vector2 (meters)
@@ -105,7 +105,7 @@ export class SimModel {
     // Initialize simulation state
     this.simulationTimeProperty = new NumberProperty(0);
     this.observedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
-    this.pausedProperty = new BooleanProperty(false);
+    this.playProperty = new BooleanProperty(true);
     
     // Create waves array
     this.waves = createObservableArray<{
@@ -154,7 +154,7 @@ export class SimModel {
     // Reset simulation state
     this.simulationTimeProperty.reset();
     this.observedFrequencyProperty.value = PHYSICS.EMITTED_FREQ;
-    this.pausedProperty.reset();
+    this.playProperty.reset();
     
     // Clear waves
     this.waves.clear();
@@ -190,9 +190,10 @@ export class SimModel {
   /**
    * Update the simulation state based on elapsed time
    * @param dt - elapsed time in seconds (real time)
+   * @param force - optional parameter to force stepping even when paused
    */
-  public step(dt: number): void {
-    if (this.pausedProperty.value) return;
+  public step(dt: number, force: boolean = false): void {
+    if (!this.playProperty.value && !force) return;
     
     // Apply time scaling to convert real time to model time
     // This ensures that 1 second of real time = 0.5 seconds of model time

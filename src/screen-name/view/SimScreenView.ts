@@ -225,7 +225,13 @@ export class SimScreenView extends ScreenView {
     this.controlLayer.addChild(resetAllButton);
 
     // Add time control node
-    const timeControlNode = new TimeControlNode(this.model.pausedProperty,{timeSpeedProperty: this.model.timeSpeedProperty});
+    const timeControlNode = new TimeControlNode(this.model.playProperty,{
+      timeSpeedProperty: this.model.timeSpeedProperty,
+      playPauseStepButtonOptions: {
+        stepForwardButtonOptions: {
+          listener: () => {
+            model.step(1/60, true);      
+          }}}});
     timeControlNode.centerX = this.layoutBounds.centerX;
     timeControlNode.bottom = this.layoutBounds.maxY - 10;
     this.controlLayer.addChild(timeControlNode);
