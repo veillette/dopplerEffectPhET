@@ -1,6 +1,6 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
-import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont } from 'scenerystack/scenery-phet';
+import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont, MeasuringTapeNode, MeasuringTapeUnits } from 'scenerystack/scenery-phet';
 import { ComboBox } from 'scenerystack/sun';
 import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
@@ -87,6 +87,9 @@ export class SimScreenView extends ScreenView {
   
   // Add a new property for the instructions box
   private instructionsBox: Node;
+  
+  // Add a new property for the toolbox
+  private toolbox: Node;
   
   /**
    * Constructor for the Doppler Effect SimScreenView
@@ -281,6 +284,23 @@ export class SimScreenView extends ScreenView {
     });
     
     this.controlLayer.addChild(infoButton);
+
+    // Create toolbox node
+    this.toolbox = new Node();
+    this.controlLayer.addChild(this.toolbox);
+
+    // // Create measuring tape units property
+    // const measuringTapeUnitsProperty = new Property<MeasuringTapeUnits>(MeasuringTapeUnits.METERS); // Set default units
+
+    // // Create measuring tape
+    // const measuringTape = new MeasuringTapeNode(measuringTapeUnitsProperty, this.modelViewTransform);
+
+    // // Add measuring tape to the toolbox
+    // this.toolbox.addChild(measuringTape);
+
+    // Position the toolbox
+    this.toolbox.left = 10; // Adjust as needed
+    this.toolbox.top = 50; // Adjust as needed
 
     // Setup keyboard handlers
     this.addKeyboardListeners();
