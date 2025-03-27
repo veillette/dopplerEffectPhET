@@ -16,7 +16,7 @@ import {
   INITIAL_POSITIONS,
   SOUND_DATA,
   SCENARIOS,
-  MODEL_VIEW,
+  SCALE,
 } from "./SimConstants";
 
 // Export the Wave interface
@@ -56,9 +56,6 @@ export const TIME_SPEED = {
  * - Times in seconds (s)
  * - Angles in radians
  *
- * The model space is defined by MODEL_VIEW.MODEL_BOUNDS, which maps physical space
- * to a coordinate system centered at (0,0) with bounds of ±100m in both dimensions.
- * This space is then transformed to view coordinates by the SimScreenView.
  */
 export class SimModel {
   // Properties for physics simulation
@@ -236,7 +233,7 @@ export class SimModel {
     // Apply time scaling to convert real time to model time
     // This ensures that 1 second of real time = 0.5 seconds of model time
     // Also apply the user-selected time speed factor from timeSpeedProperty
-    const modelDt = dt * MODEL_VIEW.SCALE.TIME_SCALE * this.getTimeSpeedValue();
+    const modelDt = dt * SCALE.TIME_SCALE * this.getTimeSpeedValue();
 
     // Update simulation time (in model seconds)
     this.simulationTimeProperty.value += modelDt;

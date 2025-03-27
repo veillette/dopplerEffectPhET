@@ -28,7 +28,7 @@ import {
   VerticalCheckboxGroupItem,
 } from "scenerystack/sun";
 import { SimModel, SCENARIO_OPTIONS, Wave } from "../model/SimModel";
-import { PHYSICS, WAVE, MODEL_VIEW } from "../model/SimConstants";
+import { PHYSICS, WAVE, SCALE } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 
@@ -128,14 +128,10 @@ export class SimScreenView extends ScreenView {
     // Create model-view transform
     // Model space: Physical coordinates in meters (±100m in both dimensions)
     // View space: Screen coordinates in pixels
-    this.modelViewTransform = ModelViewTransform2.createRectangleMapping(
-      new Bounds2(
-        MODEL_VIEW.MODEL_BOUNDS.MIN_X,
-        MODEL_VIEW.MODEL_BOUNDS.MIN_Y,
-        MODEL_VIEW.MODEL_BOUNDS.MAX_X,
-        MODEL_VIEW.MODEL_BOUNDS.MAX_Y,
-      ),
-      this.layoutBounds,
+    this.modelViewTransform = ModelViewTransform2.createSinglePointScaleInvertedYMapping(
+      new Vector2(0, 0),
+      new Vector2(this.layoutBounds.centerX, this.layoutBounds.centerY),
+      SCALE.MODEL_VIEW_SCALE
     );
 
     this.visibleValuesProperty = new Property<boolean>(false);
@@ -1116,7 +1112,7 @@ export class SimScreenView extends ScreenView {
     // First scale by the model-view transform to convert m/s to pixels/s
     // Then scale by VELOCITY_VECTOR_SCALE to make it more visible
     const scaledVelocity = velocity.timesScalar(
-      MODEL_VIEW.SCALE.VELOCITY_VECTOR_SCALE,
+      SCALE.VELOCITY_VECTOR_SCALE,
     );
     const viewVelocity = this.modelToViewDelta(scaledVelocity);
 
