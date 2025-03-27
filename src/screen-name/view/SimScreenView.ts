@@ -230,9 +230,6 @@ export class SimScreenView extends ScreenView {
     timeControlNode.bottom = this.layoutBounds.maxY - 10;
     this.controlLayer.addChild(timeControlNode);
     
-    // Add custom speed control buttons next to the TimeControlNode
-    this.addSpeedControlButtons(timeControlNode);
-
     // Create instructions box
     this.instructionsBox = new Node();
     this.instructionsBox.visible = false; // Initially hidden
@@ -1173,11 +1170,5 @@ export class SimScreenView extends ScreenView {
    */
   private viewToModelDelta(viewDelta: Vector2): Vector2 {
     return this.modelViewTransform.viewToModelDelta(viewDelta);
-  }
-
-  /**
-   * Add custom speed control buttons to the UI
-   * @param timeControlNode - the TimeControlNode to place buttons near
-   */
-  
+  } 
 }
