@@ -1,7 +1,8 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, KeyboardUtils, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
 import { ResetAllButton, ArrowNode, PlayPauseStepButtonGroup } from 'scenerystack/scenery-phet';
-import { SimModel } from '../model/SimModel';
+import { ComboBox } from 'scenerystack/sun';
+import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
 import { Property, BooleanProperty } from 'scenerystack/axon'; 
 import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
@@ -88,6 +89,8 @@ export class SimScreenView extends ScreenView {
   // Wave nodes map for tracking
   private waveNodesMap: Map<any, Circle> = new Map();
   
+  private readonly scenarioComboBox: Node;
+  
   /**
    * Constructor for the Doppler Effect SimScreenView
    */
@@ -171,6 +174,134 @@ export class SimScreenView extends ScreenView {
     
     // Create status texts
     this.statusTexts = this.createStatusTexts();
+    
+    // Create scenario combo box
+    const scenarioItems = [
+      SCENARIO_OPTIONS.FREE_PLAY,
+      SCENARIO_OPTIONS.SCENARIO_1,
+      SCENARIO_OPTIONS.SCENARIO_2,
+      SCENARIO_OPTIONS.SCENARIO_3,
+      SCENARIO_OPTIONS.SCENARIO_4
+    ].map(text => ({
+      value: text,
+      label: new Text(text, { font: '14px Arial', fill: this.UI.TEXT_COLOR })
+    }));
+
+    // Create combo box container
+    const comboBoxContainer = new Node();
+    
+    // Create combo box background
+    const background = new Rectangle(0, 0, 250, 30, {
+      fill: new Color(240, 240, 240),
+      stroke: this.UI.TEXT_COLOR,
+      cornerRadius: 5,
+      cursor: 'pointer'
+    });
+    comboBoxContainer.addChild(background);
+
+    // Create selected text
+    const selectedText = new Text(model.scenarioProperty.value, {
+      font: '14px Arial',
+      fill: this.UI.TEXT_COLOR,
+      left: 10,
+      centerY: 15
+    });
+    comboBoxContainer.addChild(selectedText);
+
+    // Create dropdown arrow
+    const arrowNode = new ArrowNode(0, 0, 0, 10, {
+      headHeight: 8,
+      headWidth: 8,
+      tailWidth: 2,
+      fill: this.UI.TEXT_COLOR,
+      right: background.right - 10,
+      centerY: 15
+    });
+    comboBoxContainer.addChild(arrowNode);
+
+    // Create dropdown list container
+    const dropdownList = new Node({
+      visible: false
+    });
+
+    // Create dropdown background
+    const dropdownBackground = new Rectangle(0, 0, 250, scenarioItems.length * 30, {
+      fill: new Color(255, 255, 255),
+      stroke: this.UI.TEXT_COLOR,
+      cornerRadius: 5
+    });
+    dropdownList.addChild(dropdownBackground);
+
+    // Add dropdown items
+    scenarioItems.forEach((item, index) => {
+      const itemBackground = new Rectangle(0, index * 30, 250, 30, {
+        fill: new Color(255, 255, 255, 0),
+        cursor: 'pointer'
+      });
+
+      const itemText = item.label;
+      itemText.left = 10;
+      itemText.centerY = index * 30 + 15;
+
+      const itemContainer = new Node();
+      itemContainer.addChild(itemBackground);
+      itemContainer.addChild(itemText);
+
+      // Add hover effect
+      itemBackground.addInputListener({
+        over: () => {
+          itemBackground.fill = new Color(220, 220, 220);
+        },
+        out: () => {
+          itemBackground.fill = new Color(255, 255, 255, 0);
+        }
+      });
+
+      // Add click handler
+      itemBackground.addInputListener({
+        up: () => {
+          model.scenarioProperty.value = item.value;
+          dropdownList.visible = false;
+        }
+      });
+
+      dropdownList.addChild(itemContainer);
+    });
+
+    // Position dropdown list
+    dropdownList.left = comboBoxContainer.left;
+    dropdownList.top = comboBoxContainer.bottom;
+
+    // Add click handler to toggle dropdown
+    background.addInputListener({
+      up: () => {
+        dropdownList.visible = !dropdownList.visible;
+      }
+    });
+
+    // Position container
+    comboBoxContainer.left = 10;
+    comboBoxContainer.top = 10;
+
+    // Add to control layer
+    this.controlLayer.addChild(comboBoxContainer);
+    this.controlLayer.addChild(dropdownList);
+    this.scenarioComboBox = comboBoxContainer;
+
+    // Update text when scenario changes
+    model.scenarioProperty.link(scenario => {
+      selectedText.string = scenario;
+    });
+
+    // Close dropdown when clicking outside
+    this.addInputListener({
+      down: (event) => {
+        if (!dropdownList.containsPoint(event.pointer.point) && 
+            !comboBoxContainer.containsPoint(event.pointer.point)) {
+          dropdownList.visible = false;
+        }
+      }
+    });
     
     // Setup reset all button
     const resetAllButton = new ResetAllButton({

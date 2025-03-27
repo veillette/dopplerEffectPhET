@@ -1,7 +1,17 @@
-import { Vector2, Property, NumberProperty, BooleanProperty } from 'scenerystack';
+import { Vector2, Property, NumberProperty, BooleanProperty, StringProperty } from 'scenerystack';
 import { ObservableArray } from 'scenerystack/axon';
 import { createObservableArray } from 'scenerystack/axon';
 import { PHYSICS, WAVE, INITIAL_POSITIONS, SOUND_DATA, SCENARIOS, MODEL_VIEW } from './SimConstants';
+
+// Define available scenarios
+export const SCENARIO_OPTIONS = {
+  FREE_PLAY: 'Free Play',
+  SCENARIO_1: 'Scenario 1: Source Approaching',
+  SCENARIO_2: 'Scenario 2: Source Receding',
+  SCENARIO_3: 'Scenario 3: Observer Approaching',
+  SCENARIO_4: 'Scenario 4: Observer Receding'
+};
+
 /**
  * Model for the Doppler Effect simulation
  * 
@@ -21,6 +31,7 @@ export class SimModel {
   // Properties for physics simulation
   public readonly soundSpeedProperty: NumberProperty; // Speed of sound in m/s
   public readonly emittedFrequencyProperty: NumberProperty; // Frequency in Hz
+  public readonly scenarioProperty: StringProperty; // Current scenario
   
   // Properties for source
   public readonly sourcePositionProperty: Property<Vector2>; // Position in meters
@@ -68,18 +79,19 @@ export class SimModel {
    * Constructor for the Doppler Effect SimModel
    */
   public constructor() {
-    // Initialize physics properties
+    // Initialize properties
     this.soundSpeedProperty = new NumberProperty(PHYSICS.SOUND_SPEED);
     this.emittedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
+    this.scenarioProperty = new StringProperty(SCENARIO_OPTIONS.FREE_PLAY);
     
     // Initialize source properties
-    this.sourcePositionProperty = new Property<Vector2>(new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y));
-    this.sourceVelocityProperty = new Property<Vector2>(new Vector2(0, 0));
+    this.sourcePositionProperty = new Property(new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y));
+    this.sourceVelocityProperty = new Property(new Vector2(0, 0));
     this.sourceMovingProperty = new BooleanProperty(false);
     
     // Initialize observer properties
-    this.observerPositionProperty = new Property<Vector2>(new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y));
-    this.observerVelocityProperty = new Property<Vector2>(new Vector2(0, 0));
+    this.observerPositionProperty = new Property(new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y));
+    this.observerVelocityProperty = new Property(new Vector2(0, 0));
     this.observerMovingProperty = new BooleanProperty(false);
     
     // Initialize simulation state
@@ -87,7 +99,7 @@ export class SimModel {
     this.observedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
     this.pausedProperty = new BooleanProperty(false);
     
-    // Initialize waves array
+    // Create waves array
     this.waves = createObservableArray<{
       position: Vector2;
       radius: number;
@@ -102,12 +114,20 @@ export class SimModel {
       this.emittedSoundData.push(0);
       this.observedSoundData.push(0);
     }
+    
+    // Add listener for scenario changes
+    this.scenarioProperty.lazyLink(() => {
+      this.applyScenario();
+    });
   }
   
   /**
    * Reset the simulation to initial state
    */
   public reset(): void {
+    // Reset scenario property
+    this.scenarioProperty.reset();
+    
     // Reset physics properties
     this.soundSpeedProperty.reset();
     this.emittedFrequencyProperty.reset();
@@ -400,5 +420,38 @@ export class SimModel {
     this.observerVelocityProperty.value = new Vector2(SCENARIOS.PERPENDICULAR.observerVelocity.x, SCENARIOS.PERPENDICULAR.observerVelocity.y);
     this.sourceMovingProperty.value = true;
     this.observerMovingProperty.value = true;
+  }
+  
+  /**
+   * Apply the current scenario settings
+   */
+  private applyScenario(): void {
+    // Reset velocities and positions first
+    this.sourceVelocityProperty.value = new Vector2(0, 0);
+    this.observerVelocityProperty.value = new Vector2(0, 0);
+    this.sourcePositionProperty.value = new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y);
+    this.observerPositionProperty.value = new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y);
+    this.sourceMovingProperty.value = false;
+    this.observerMovingProperty.value = false;
+
+    // Apply scenario-specific settings
+    switch (this.scenarioProperty.value) {
+      case SCENARIO_OPTIONS.SCENARIO_1:
+        this.setupScenario1();
+        break;
+      case SCENARIO_OPTIONS.SCENARIO_2:
+        this.setupScenario2();
+        break;
+      case SCENARIO_OPTIONS.SCENARIO_3:
+        this.setupScenario3();
+        break;
+      case SCENARIO_OPTIONS.SCENARIO_4:
+        this.setupScenario4();
+        break;
+      case SCENARIO_OPTIONS.FREE_PLAY:
+      default:
+        // Free play mode - no initial velocities
+        break;
+    }
   }
 }
