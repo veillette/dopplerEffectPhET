@@ -4,6 +4,17 @@ import { createObservableArray } from 'scenerystack/axon';
 import { PHYSICS, WAVE, INITIAL_POSITIONS, SOUND_DATA, SCENARIOS, MODEL_VIEW } from './SimConstants';
 import { RangeWithValue } from 'scenerystack';
 
+// Add this interface near the top of the file, after the imports
+interface Wave {
+  position: Vector2;
+  radius: number;
+  speedOfSound: number;
+  birthTime: number;
+  sourceVelocity: Vector2;
+  sourceFrequency: number;
+  phaseAtEmission: number;
+}
+
 // Define available scenarios
 export const SCENARIO_OPTIONS = {
   FREE_PLAY: 'Free Play',
@@ -68,15 +79,7 @@ export class SimModel {
   // - sourceVelocity: Vector2 (m/s)
   // - sourceFrequency: number (Hz)
   // - phaseAtEmission: number (radians)
-  public readonly waves: ObservableArray<{
-    position: Vector2;
-    radius: number;
-    speedOfSound: number;
-    birthTime: number;
-    sourceVelocity: Vector2;
-    sourceFrequency: number;
-    phaseAtEmission: number;
-  }>;
+  public readonly waves: ObservableArray<Wave>;
   
   // Sound data for graphs (unitless amplitude values)
   public readonly emittedSoundData: number[] = [];
@@ -120,15 +123,7 @@ export class SimModel {
     this.playProperty = new BooleanProperty(true);
     
     // Create waves array
-    this.waves = createObservableArray<{
-      position: Vector2;
-      radius: number;
-      speedOfSound: number;
-      birthTime: number;
-      sourceVelocity: Vector2;
-      sourceFrequency: number;
-      phaseAtEmission: number;
-    }>([]);
+    this.waves = createObservableArray<Wave>([]);
     
     // Initialize sound data arrays
     for (let i = 0; i < SOUND_DATA.ARRAY_SIZE; i++) {
@@ -331,7 +326,7 @@ export class SimModel {
     this.emittedSoundData.shift();
     
     // Find waves affecting the observer
-    const wavesAtObserver: Array<{ wave: any, arrivalTime: number }> = [];
+    const wavesAtObserver: Array<{ wave: Wave, arrivalTime: number }> = [];
     
     for (let i = 0; i < this.waves.length; i++) {
       const wave = this.waves.get(i);
@@ -390,7 +385,7 @@ export class SimModel {
   /**
    * Calculate the frequency observed by the observer using the Doppler formula
    */
-  private calculateObservedFrequency(wave: any): number {
+  private calculateObservedFrequency(wave: Wave): number {
     // Calculate unit vector from source to observer
     const direction = this.observerPositionProperty.value
       .minus(wave.position)
