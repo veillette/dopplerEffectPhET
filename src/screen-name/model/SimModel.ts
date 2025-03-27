@@ -2,6 +2,7 @@ import { Vector2, Property, NumberProperty, BooleanProperty, StringProperty, Enu
 import { ObservableArray } from 'scenerystack/axon';
 import { createObservableArray } from 'scenerystack/axon';
 import { PHYSICS, WAVE, INITIAL_POSITIONS, SOUND_DATA, SCENARIOS, MODEL_VIEW } from './SimConstants';
+import { RangeWithValue } from 'scenerystack';
 
 // Define available scenarios
 export const SCENARIO_OPTIONS = {
@@ -40,6 +41,10 @@ export class SimModel {
   public readonly scenarioProperty: StringProperty; // Current scenario
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>; // Simulation time speed factor
   
+  public readonly soundSpeedRange: RangeWithValue;
+  public readonly frequencyRange: RangeWithValue;
+
+
   // Properties for source
   public readonly sourcePositionProperty: Property<Vector2>; // Position in meters
   public readonly sourceVelocityProperty: Property<Vector2>; // Velocity in m/s
@@ -58,6 +63,7 @@ export class SimModel {
   // Wave collection - each wave contains:
   // - position: Vector2 (meters)
   // - radius: number (meters)
+  // - speedOfSound: number (m/s)
   // - birthTime: number (seconds)
   // - sourceVelocity: Vector2 (m/s)
   // - sourceFrequency: number (Hz)
@@ -65,6 +71,7 @@ export class SimModel {
   public readonly waves: ObservableArray<{
     position: Vector2;
     radius: number;
+    speedOfSound: number;
     birthTime: number;
     sourceVelocity: Vector2;
     sourceFrequency: number;
@@ -91,6 +98,9 @@ export class SimModel {
     // Initialize properties
     this.soundSpeedProperty = new NumberProperty(PHYSICS.SOUND_SPEED);
     this.emittedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
+
+    this.soundSpeedRange = new RangeWithValue(PHYSICS.SOUND_SPEED*0.2, PHYSICS.SOUND_SPEED*2, PHYSICS.SOUND_SPEED);
+    this.frequencyRange = new RangeWithValue(PHYSICS.EMITTED_FREQ*0.1, PHYSICS.EMITTED_FREQ*2, PHYSICS.EMITTED_FREQ);
     this.scenarioProperty = new StringProperty(SCENARIO_OPTIONS.FREE_PLAY);
     this.timeSpeedProperty = new EnumerationProperty(TimeSpeed.NORMAL); // Default to normal speed
     
@@ -113,6 +123,7 @@ export class SimModel {
     this.waves = createObservableArray<{
       position: Vector2;
       radius: number;
+      speedOfSound: number;
       birthTime: number;
       sourceVelocity: Vector2;
       sourceFrequency: number;
@@ -274,6 +285,7 @@ export class SimModel {
       this.waves.add({
         position: this.sourcePositionProperty.value.copy(),
         radius: 0,
+        speedOfSound: this.soundSpeedProperty.value,
         birthTime: this.simulationTimeProperty.value,
         sourceVelocity: this.sourceVelocityProperty.value.copy(),
         sourceFrequency: this.emittedFrequencyProperty.value,

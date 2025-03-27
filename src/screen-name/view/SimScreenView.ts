@@ -1,7 +1,7 @@
 import { Node, Circle, Line, Path, Text, 
-  Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
-import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont, MeasuringTapeNode, MeasuringTapeUnits } from 'scenerystack/scenery-phet';
-import { ComboBox, Panel, VerticalCheckboxGroup, VerticalCheckboxGroupItem } from 'scenerystack/sun';
+  Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2} from 'scenerystack';
+import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont, MeasuringTapeNode, MeasuringTapeUnits, NumberControl, NumberControlLayoutFunction2Options } from 'scenerystack/scenery-phet';
+import { ComboBox, Panel, VerticalCheckboxGroup, VerticalCheckboxGroupItem} from 'scenerystack/sun';
 import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
 import { Property } from 'scenerystack/axon'; 
@@ -57,7 +57,6 @@ export class SimScreenView extends ScreenView {
     observedFreq: Text;
     shiftStatus: Text;
     selectedObject: Text;
-    soundSpeed: Text;
   };
   
   // UI constants
@@ -335,12 +334,36 @@ export class SimScreenView extends ScreenView {
         }
     ];
 
+
+
+    const checkboxGroup = new VerticalCheckboxGroup( items );
+
+    const soundSpeedControl = new NumberControl('Speed of Sound',this.model.soundSpeedProperty, this.model.soundSpeedRange,{
+      layoutFunction: NumberControl.createLayoutFunction2( { ySpacing: 12 } ),
+      titleNodeOptions: {
+        font: new PhetFont(14),
+        maxWidth: 140
+      },
+    });
+    soundSpeedControl.top = checkboxGroup.bottom + 10;
+
+    const frequencyControl = new NumberControl('Frequency',this.model.emittedFrequencyProperty, this.model.frequencyRange,{
+      layoutFunction: NumberControl.createLayoutFunction2( { ySpacing: 12 } ),
+      titleNodeOptions: {
+        font: new PhetFont(14),
+        maxWidth: 140
+      },
+    });
+    frequencyControl.top = soundSpeedControl.bottom + 10;
+
+
+    const panelContent = new Node({children: [checkboxGroup, soundSpeedControl, frequencyControl]});
     const panel = new Panel(
-            // Create a VerticalCheckboxGroup
-            new VerticalCheckboxGroup( items ),{
+            panelContent,{
               right: this.observedGraph.right,
               top: this.observedGraph.bottom + 10
             });
+
 
      this.controlLayer.addChild(panel);
    
@@ -366,6 +389,10 @@ export class SimScreenView extends ScreenView {
 
     this.instructionsBox.centerX = this.layoutBounds.centerX;
     this.instructionsBox.centerY = this.layoutBounds.centerY;
+
+ 
+
+  
   }
   
   /**
@@ -530,27 +557,17 @@ export class SimScreenView extends ScreenView {
       bottom: this.layoutBounds.maxY - 15
     });
     
-    const soundSpeed = new Text(`Sound Speed: ${this.model.soundSpeedProperty.value.toFixed(2)} m/s`, {
-      font: new PhetFont(14),
-      fill: this.UI.TEXT_COLOR,
-      left: 700,
-      bottom: this.layoutBounds.maxY - 15,
-      visibleProperty: this.visibleValuesProperty
-    });
-    
     // Add to control layer
     this.controlLayer.addChild(emittedFreq);
     this.controlLayer.addChild(observedFreq);
     this.controlLayer.addChild(shiftStatus);
     this.controlLayer.addChild(selectedObject);
-    this.controlLayer.addChild(soundSpeed);
     
     return {
       emittedFreq,
       observedFreq,
       shiftStatus,
-      selectedObject,
-      soundSpeed
+      selectedObject
     };
   }
 
@@ -585,11 +602,6 @@ export class SimScreenView extends ScreenView {
 
     this.model.observedFrequencyProperty.lazyLink(() => {
       this.updateFrequencyText();
-    });
-
-    // Update sound speed
-    this.model.soundSpeedProperty.lazyLink(() => {
-      this.updateSoundSpeedText();
     });
 
     // Listen to waves collection
@@ -947,7 +959,6 @@ export class SimScreenView extends ScreenView {
     this.updateObserverVelocity();
     this.updateSelectionHighlight();
     this.updateFrequencyText();
-    this.updateSoundSpeedText();
     this.updateWaveforms();
     this.updateConnectingLine();
     this.updateWaves();
@@ -1072,14 +1083,6 @@ export class SimScreenView extends ScreenView {
     } else {
       this.statusTexts.shiftStatus.string = '';
     }
-  }
-
-  /**
-   * Update the sound speed text display
-   */
-  private updateSoundSpeedText(): void {
-    this.statusTexts.soundSpeed.string = 
-      `Sound Speed: ${this.model.soundSpeedProperty.value.toFixed(2)} m/s`;
   }
 
   /**
