@@ -1,6 +1,6 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
-import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton } from 'scenerystack/scenery-phet';
+import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton, PhetFont } from 'scenerystack/scenery-phet';
 import { ComboBox } from 'scenerystack/sun';
 import { SimModel, SCENARIO_OPTIONS, TIME_SPEED } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
@@ -184,8 +184,8 @@ export class SimScreenView extends ScreenView {
       SCENARIO_OPTIONS.SCENARIO_4
     ].map(text => ({
       value: text,
-      label: new Text(text, { font: '14px Arial', fill: this.UI.TEXT_COLOR }),
-      createNode: () => new Text(text, { font: '14px Arial', fill: this.UI.TEXT_COLOR })
+      label: new Text(text, { font: new PhetFont(14), fill: this.UI.TEXT_COLOR }),
+      createNode: () => new Text(text, { font: new PhetFont(14), fill: this.UI.TEXT_COLOR })
     }));
 
     // Create combo box using SceneryStack API
@@ -372,14 +372,14 @@ export class SimScreenView extends ScreenView {
     
     // Add graph titles
     const emittedTitle = new Text('Emitted Sound', {
-      font: '12px Arial',
+      font: new PhetFont(12),
       fill: this.UI.TEXT_COLOR,
       left: graphX + 5,
       top: graphY1 + 15
     });
     
     const observedTitle = new Text('Observed Sound', {
-      font: '12px Arial',
+      font: new PhetFont(12),
       fill: this.UI.TEXT_COLOR,
       left: graphX + 5,
       top: graphY2 + 15
@@ -408,37 +408,35 @@ export class SimScreenView extends ScreenView {
    */
   private createStatusTexts() {
     const emittedFreq = new Text('', {
-      font: '14px Arial',
+      font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
       left: this.layoutBounds.maxX - this.UI.GRAPH_WIDTH - this.UI.GRAPH_MARGIN,
       top: 15
     });
     
     const observedFreq = new Text('', {
-      font: '14px Arial',
+      font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
       left: this.layoutBounds.maxX - this.UI.GRAPH_WIDTH - this.UI.GRAPH_MARGIN,
       top: 30 + this.UI.GRAPH_HEIGHT + this.UI.GRAPH_SPACING - 15
     });
     
     const shiftStatus = new Text('', {
-      font: '14px Arial',
+      font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
       right: this.layoutBounds.maxX - this.UI.GRAPH_MARGIN,
       top: 30 + this.UI.GRAPH_HEIGHT + this.UI.GRAPH_SPACING - 15
     });
     
     const selectedObject = new Text('Selected: Source', {
-      font: '14px Arial',
+      font: new PhetFont(14),
       fill: this.UI.SELECTION_COLOR,
       left: 120,
       bottom: this.layoutBounds.maxY - 15
     });
     
-
-    
     const soundSpeed = new Text(`Sound Speed: ${this.model.soundSpeedProperty.value.toFixed(2)} m/s`, {
-      font: '14px Arial',
+      font: new PhetFont(14),
       fill: this.UI.TEXT_COLOR,
       left: 300,
       bottom: this.layoutBounds.maxY - 15
@@ -831,7 +829,7 @@ export class SimScreenView extends ScreenView {
     
     // Title
     const title = new Text('Doppler Effect Simulation Controls', {
-        font: 'bold 16px Arial',
+        font: new PhetFont({ size: 16, weight: 'bold' }),
         fill: this.UI.TEXT_COLOR,
         centerX: background.centerX,
         top: 10
@@ -852,7 +850,7 @@ export class SimScreenView extends ScreenView {
     
     instructions.forEach((instruction) => {
         const line = new Text(instruction, {
-            font: '14px Arial',
+            font: new PhetFont(14),
             fill: this.UI.TEXT_COLOR,
             left: 15,
             top: yPosition
