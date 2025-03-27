@@ -1,4 +1,4 @@
-import { Vector2, Property, NumberProperty, BooleanProperty, StringProperty } from 'scenerystack';
+import { Vector2, Property, NumberProperty, BooleanProperty, StringProperty, EnumerationProperty, TimeSpeed } from 'scenerystack';
 import { ObservableArray } from 'scenerystack/axon';
 import { createObservableArray } from 'scenerystack/axon';
 import { PHYSICS, WAVE, INITIAL_POSITIONS, SOUND_DATA, SCENARIOS, MODEL_VIEW } from './SimConstants';
@@ -10,6 +10,13 @@ export const SCENARIO_OPTIONS = {
   SCENARIO_2: 'Scenario 2: Source Receding',
   SCENARIO_3: 'Scenario 3: Observer Approaching',
   SCENARIO_4: 'Scenario 4: Observer Receding'
+};
+
+// Define time speed values - the property will store these values
+export const TIME_SPEED = {
+  SLOW: 0.5,
+  NORMAL: 1.0,
+  FAST: 2.0
 };
 
 /**
@@ -32,6 +39,7 @@ export class SimModel {
   public readonly soundSpeedProperty: NumberProperty; // Speed of sound in m/s
   public readonly emittedFrequencyProperty: NumberProperty; // Frequency in Hz
   public readonly scenarioProperty: StringProperty; // Current scenario
+  public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>; // Simulation time speed factor
   
   // Properties for source
   public readonly sourcePositionProperty: Property<Vector2>; // Position in meters
@@ -83,6 +91,7 @@ export class SimModel {
     this.soundSpeedProperty = new NumberProperty(PHYSICS.SOUND_SPEED);
     this.emittedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
     this.scenarioProperty = new StringProperty(SCENARIO_OPTIONS.FREE_PLAY);
+    this.timeSpeedProperty = new EnumerationProperty(TimeSpeed.NORMAL); // Default to normal speed
     
     // Initialize source properties
     this.sourcePositionProperty = new Property(new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y));
@@ -131,6 +140,7 @@ export class SimModel {
     // Reset physics properties
     this.soundSpeedProperty.reset();
     this.emittedFrequencyProperty.reset();
+    this.timeSpeedProperty.reset();
     
     // Reset source properties
     this.sourcePositionProperty.value = new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y);
@@ -173,7 +183,8 @@ export class SimModel {
     
     // Apply time scaling to convert real time to model time
     // This ensures that 1 second of real time = 0.5 seconds of model time
-    const modelDt = dt * MODEL_VIEW.SCALE.TIME_SCALE;
+    // Also apply the user-selected time speed factor from timeSpeedProperty
+    const modelDt = dt * MODEL_VIEW.SCALE.TIME_SCALE * this.timeSpeedProperty.value;
     
     // Update simulation time (in model seconds)
     this.simulationTimeProperty.value += modelDt;

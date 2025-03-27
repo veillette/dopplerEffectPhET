@@ -1,8 +1,8 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
-import { ResetAllButton, ArrowNode, PlayPauseStepButtonGroup, InfoButton } from 'scenerystack/scenery-phet';
+import { ResetAllButton, ArrowNode, TimeControlNode, InfoButton } from 'scenerystack/scenery-phet';
 import { ComboBox } from 'scenerystack/sun';
-import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
+import { SimModel, SCENARIO_OPTIONS, TIME_SPEED } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
 import { Property, BooleanProperty } from 'scenerystack/axon'; 
 import { ScreenView, ScreenViewOptions } from 'scenerystack/sim';
@@ -224,11 +224,14 @@ export class SimScreenView extends ScreenView {
     });
     this.controlLayer.addChild(resetAllButton);
 
-    // Add play/pause/step button group
-    const playPauseStepButtonGroup = new PlayPauseStepButtonGroup(this.model.pausedProperty);
-    playPauseStepButtonGroup.centerX = this.layoutBounds.centerX;
+    // Add time control node
+    const timeControlNode = new TimeControlNode(this.model.pausedProperty,{timeSpeedProperty: this.model.timeSpeedProperty});
+    timeControlNode.centerX = this.layoutBounds.centerX;
     timeControlNode.bottom = this.layoutBounds.maxY - 10;
-    this.controlLayer.addChild(playPauseStepButtonGroup);
+    this.controlLayer.addChild(timeControlNode);
+    
+    // Add custom speed control buttons next to the TimeControlNode
+    this.addSpeedControlButtons(timeControlNode);
 
     // Create instructions box
     this.instructionsBox = new Node();
@@ -1170,5 +1173,97 @@ export class SimScreenView extends ScreenView {
    */
   private viewToModelDelta(viewDelta: Vector2): Vector2 {
     return this.modelViewTransform.viewToModelDelta(viewDelta);
+  }
+
+  /**
+   * Add custom speed control buttons to the UI
+   * @param timeControlNode - the TimeControlNode to place buttons near
+   */
+  private addSpeedControlButtons(timeControlNode: Node): void {
+    // Create a container for the speed buttons
+    const speedControlContainer = new Node();
+    
+    // Define button options
+    const speeds = [
+      { label: '1/2×', value: TIME_SPEED.SLOW },
+      { label: '1×', value: TIME_SPEED.NORMAL },
+      { label: '2×', value: TIME_SPEED.FAST }
+    ];
+    
+    // Create text buttons horizontally
+    let offsetX = 0;
+    const spacing = 10;
+    
+    speeds.forEach(speed => {
+      // Create button with background
+      const buttonText = new Text(speed.label, {
+        font: '12px Arial',
+        fill: this.UI.TEXT_COLOR
+      });
+      
+      const buttonBackground = new Rectangle(
+        0, 0, buttonText.width + 10, buttonText.height + 6, 
+        { 
+          fill: this.model.timeSpeedProperty.value === speed.value 
+            ? new Color(200, 200, 255) 
+            : new Color(240, 240, 240),
+          stroke: this.UI.TEXT_COLOR,
+          cornerRadius: 4
+        }
+      );
+      
+      // Center text in background
+      buttonText.centerX = buttonBackground.centerX;
+      buttonText.centerY = buttonBackground.centerY;
+      
+      // Create button node
+      const button = new Node();
+      button.addChild(buttonBackground);
+      button.addChild(buttonText);
+      
+      // Position button
+      button.left = offsetX;
+      offsetX += button.width + spacing;
+      
+      // Add click handler
+      button.cursor = 'pointer';
+      button.addInputListener({
+        down: () => {
+          this.model.timeSpeedProperty.value = speed.value;
+          
+          // Update all button backgrounds
+          speedControlContainer.children.forEach((child, index) => {
+            if (child instanceof Node && child.children[0] instanceof Rectangle) {
+              const bg = child.children[0] as Rectangle;
+              bg.fill = speeds[index].value === speed.value 
+                ? new Color(200, 200, 255) 
+                : new Color(240, 240, 240);
+            }
+          });
+        }
+      });
+      
+      speedControlContainer.addChild(button);
+    });
+    
+    // Position the container to the right of the time control node
+    speedControlContainer.left = timeControlNode.right + 20;
+    speedControlContainer.centerY = timeControlNode.centerY;
+    
+    // Add to control layer
+    this.controlLayer.addChild(speedControlContainer);
+    
+    // Listen for model time speed changes
+    this.model.timeSpeedProperty.lazyLink(() => {
+      // Update button appearances
+      speedControlContainer.children.forEach((child, index) => {
+        if (child instanceof Node && child.children[0] instanceof Rectangle) {
+          const bg = child.children[0] as Rectangle;
+          bg.fill = speeds[index].value === this.model.timeSpeedProperty.value 
+            ? new Color(200, 200, 255) 
+            : new Color(240, 240, 240);
+        }
+      });
+    });
   }
 }
