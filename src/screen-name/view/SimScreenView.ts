@@ -209,12 +209,12 @@ export class SimScreenView extends ScreenView {
     });
     this.controlLayer.addChild(resetAllButton);
 
-
+    // Create scale mark and label using the modelViewTransform
     const scaleModelLength = 10;
     const scaleViewLength = this.modelViewTransform.modelToViewDeltaY(scaleModelLength);
-    
+
     // Create scale mark and label
-    const scaleMark = new Line(0, 0, 0, scaleViewLength, { // Vertical line, 50 pixels long
+    const scaleMark = new Line(0, 0, 0, scaleViewLength, {
       stroke: this.UI.CONNECTING_LINE_COLOR,
       lineWidth: 2
     });
