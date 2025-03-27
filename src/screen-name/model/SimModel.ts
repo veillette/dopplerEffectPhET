@@ -6,7 +6,7 @@ import {
   StringProperty,
   EnumerationProperty,
   TimeSpeed,
-RangeWithValue,
+  RangeWithValue,
 } from "scenerystack";
 import { ObservableArray } from "scenerystack/axon";
 import { createObservableArray } from "scenerystack/axon";
@@ -18,7 +18,6 @@ import {
   SCENARIOS,
   MODEL_VIEW,
 } from "./SimConstants";
-import { RangeWithValue } from "scenerystack";
 
 // Export the Wave interface
 export interface Wave {
@@ -67,9 +66,8 @@ export class SimModel {
   public readonly emittedFrequencyProperty: NumberProperty; // Frequency in Hz
   public readonly scenarioProperty: StringProperty; // Current scenario
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>; // Simulation time speed factor
-
-  public readonly soundSpeedRange: RangeWithValue;
-  public readonly frequencyRange: RangeWithValue;
+  public readonly soundSpeedRange: RangeWithValue; // Re-add this line
+  public readonly frequencyRange: RangeWithValue; // Re-add this line
 
   // Properties for source
   public readonly sourcePositionProperty: Property<Vector2>; // Position in meters
@@ -115,6 +113,7 @@ export class SimModel {
     this.soundSpeedProperty = new NumberProperty(PHYSICS.SOUND_SPEED);
     this.emittedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
 
+    // Restore the original initialization of soundSpeedRange and frequencyRange
     this.soundSpeedRange = new RangeWithValue(
       PHYSICS.SOUND_SPEED * 0.2,
       PHYSICS.SOUND_SPEED * 2,
