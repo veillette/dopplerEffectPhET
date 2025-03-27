@@ -1,6 +1,6 @@
 import { Node, Circle, Line, Path, Text, 
   Rectangle, Vector2, Color, Shape, DragListener, SceneryEvent, ModelViewTransform2, Bounds2 } from 'scenerystack';
-import { ResetAllButton, ArrowNode, PlayPauseStepButtonGroup } from 'scenerystack/scenery-phet';
+import { ResetAllButton, ArrowNode, PlayPauseStepButtonGroup, InfoButton } from 'scenerystack/scenery-phet';
 import { ComboBox } from 'scenerystack/sun';
 import { SimModel, SCENARIO_OPTIONS } from '../model/SimModel';
 import { PHYSICS, WAVE, MODEL_VIEW } from '../model/SimConstants';
@@ -87,6 +87,9 @@ export class SimScreenView extends ScreenView {
   
   // Wave nodes map for tracking
   private waveNodesMap: Map<any, Circle> = new Map();
+  
+  // Add a new property for the instructions box
+  private instructionsBox: Node;
   
   /**
    * Constructor for the Doppler Effect SimScreenView
@@ -226,6 +229,29 @@ export class SimScreenView extends ScreenView {
     playPauseStepButtonGroup.centerX = this.layoutBounds.centerX;
     playPauseStepButtonGroup.bottom = this.layoutBounds.maxY - 10;
     this.controlLayer.addChild(playPauseStepButtonGroup);
+
+    // Create instructions box
+    this.instructionsBox = new Node();
+    this.instructionsBox.visible = false; // Initially hidden
+    this.controlLayer.addChild(this.instructionsBox);
+
+    // Define padding
+    const padding = 10; // Adjust padding as needed
+
+    // Create the info button using the InfoButton from scenery-phet
+    const infoButton = new InfoButton({
+        listener: () => {
+            this.instructionsBox.visible = !this.instructionsBox.visible;
+            if (this.instructionsBox.visible) {
+                this.drawInstructions(); // Draw instructions when shown
+            }
+        },
+        // Position the button in the lower left corner with padding
+        left: this.layoutBounds.minX + padding,
+        bottom: this.layoutBounds.maxY - padding
+    });
+    
+    this.controlLayer.addChild(infoButton);
 
     // Setup keyboard handlers
     this.addKeyboardListeners();
@@ -788,53 +814,51 @@ export class SimScreenView extends ScreenView {
    * Draw instructions on the instruction layer
    */
   private drawInstructions(): void {
-    const instructionsNode = new Node();
-    
-    // Background for instructions
+    // Clear previous instructions
+    this.instructionsBox.removeAllChildren();
+
     const background = new Rectangle(0, 0, this.layoutBounds.width / 2, 200, {
-      fill: new Color(255, 255, 255, 0.8),
-      cornerRadius: 5
+        fill: new Color(255, 255, 255, 0.8),
+        cornerRadius: 5
     });
-    instructionsNode.addChild(background);
+    this.instructionsBox.addChild(background);
     
     // Title
     const title = new Text('Doppler Effect Simulation Controls', {
-      font: 'bold 16px Arial',
-      fill: this.UI.TEXT_COLOR,
-      centerX: background.centerX,
-      top: 10
+        font: 'bold 16px Arial',
+        fill: this.UI.TEXT_COLOR,
+        centerX: background.centerX,
+        top: 10
     });
-    instructionsNode.addChild(title);
+    this.instructionsBox.addChild(title);
     
     // Instructions text
     const instructions = [
-      'Click and drag source (red) or observer (green) to move them',
-      'Keyboard Controls:',
-      'S: Select source | O: Select observer | Arrow keys: Move selected object',
-      'Space: Pause/Resume | R: Reset | H: Toggle help',
-      '+/-: Adjust emitted frequency | ,/.: Adjust sound speed',
-      '1-4: Load preset scenarios (approaching source, observer, etc.)'
+        'Click and drag source (red) or observer (green) to move them',
+        'Keyboard Controls:',
+        'S: Select source | O: Select observer | Arrow keys: Move selected object',
+        'Space: Pause/Resume | R: Reset | H: Toggle help',
+        '+/-: Adjust emitted frequency | ,/.: Adjust sound speed',
+        '1-4: Load preset scenarios (approaching source, observer, etc.)'
     ];
     
     let yPosition = title.bottom + 15;
     
-    instructions.forEach((instruction, index) => {
-      const line = new Text(instruction, {
-        font: '14px Arial',
-        fill: this.UI.TEXT_COLOR,
-        left: 15,
-        top: yPosition
-      });
-      instructionsNode.addChild(line);
-      yPosition = line.bottom + 10;
+    instructions.forEach((instruction) => {
+        const line = new Text(instruction, {
+            font: '14px Arial',
+            fill: this.UI.TEXT_COLOR,
+            left: 15,
+            top: yPosition
+        });
+        this.instructionsBox.addChild(line);
+        yPosition = line.bottom + 10;
     });
     
     // Adjust background to fit content
     background.setRectHeight(yPosition + 10);
     background.centerX = this.layoutBounds.centerX / 2;
     background.centerY = this.layoutBounds.centerY / 2;
-    
-    this.instructionLayer.addChild(instructionsNode);
   }
 
   /**
