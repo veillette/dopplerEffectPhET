@@ -782,112 +782,8 @@ export class SimScreenView extends ScreenView {
    * Add keyboard listeners for controls
    */
   private addKeyboardListeners(): void {
-    // Add key listeners to the view
-    const keydownListener = {
-      keydown: (event: SceneryEvent<KeyboardEvent>) => {
-        if (!event.domEvent) return;
-        const key = event.domEvent.key.toLowerCase();
-
-        // Handle object selection
-        if (key === "s") {
-          this.selectedObject = "source";
-          this.updateSelectionHighlight();
-        } else if (key === "o") {
-          this.selectedObject = "observer";
-          this.updateSelectionHighlight();
-        }
-
-        // Handle arrow key movement
-        if (this.model.playProperty.value) {
-          let targetVel, isMoving;
-
-          // Determine which object to control
-          if (this.selectedObject === "source") {
-            targetVel = this.model.sourceVelocityProperty;
-            isMoving = this.model.sourceMovingProperty;
-          } else {
-            targetVel = this.model.observerVelocityProperty;
-            isMoving = this.model.observerMovingProperty;
-          }
-
-          // Set velocity based on key
-          const velocity = new Vector2(0, 0);
-
-          if (key === "arrowleft") {
-            velocity.x = -60.0;
-          } else if (key === "arrowright") {
-            velocity.x = 60.0;
-          }
-
-          if (key === "arrowup") {
-            velocity.y = -60.0;
-          } else if (key === "arrowdown") {
-            velocity.y = 60.0;
-          }
-
-          // Apply velocity if any keys were pressed
-          if (velocity.magnitude > 0) {
-            targetVel.value = velocity;
-            isMoving.value = true;
-          }
-        }
-
-        // Handle pause toggle
-        if (key === " ") {
-          this.model.playProperty.value = !this.model.playProperty.value;
-        }
-
-        // Handle reset
-        if (key === "r") {
-          this.model.reset();
-          this.reset();
-        }
-
-        // Handle help toggle
-        if (key === "h") {
-          this.instructionsBox.visible = !this.instructionsBox.visible;
-        }
-
-        // Preset scenarios
-        if (key === "1") {
-          this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_1);
-        } else if (key === "2") {
-          this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_2);
-        } else if (key === "3") {
-          this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_3);
-        } else if (key === "4") {
-          this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_4);
-        }
-
-        // Adjust emitted frequency
-        if (key === "+" || key === "=") {
-          this.model.emittedFrequencyProperty.value += 0.01;
-        } else if (key === "-" || key === "_") {
-          this.model.emittedFrequencyProperty.value = Math.max(
-            0.1,
-            this.model.emittedFrequencyProperty.value - 0.01,
-          );
-        }
-
-        // Adjust sound speed
-        if (key === "." || key === ">") {
-          this.model.soundSpeedProperty.value += 1.0;
-        } else if (key === "," || key === "<") {
-          this.model.soundSpeedProperty.value = Math.max(
-            1.0,
-            this.model.soundSpeedProperty.value - 1.0,
-          );
-        }
-      },
-    };
-
-    // Add the keyboard listener to the view
-    this.addInputListener(keydownListener);
-
-    // Also add a global keyboard listener to ensure we catch all keyboard events
-    window.addEventListener("keydown", (event) => {
-      const key = event.key.toLowerCase();
-
+    // Create a shared handler function for keydown events
+    const handleKeydown = (key: string) => {
       // Handle object selection
       if (key === "s") {
         this.selectedObject = "source";
@@ -978,6 +874,24 @@ export class SimScreenView extends ScreenView {
           this.model.soundSpeedProperty.value - 1.0,
         );
       }
+    };
+
+    // Add key listeners to the view
+    const keydownListener = {
+      keydown: (event: SceneryEvent<KeyboardEvent>) => {
+        if (!event.domEvent) return;
+        const key = event.domEvent.key.toLowerCase();
+        handleKeydown(key);
+      },
+    };
+
+    // Add the keyboard listener to the view
+    this.addInputListener(keydownListener);
+
+    // Also add a global keyboard listener to ensure we catch all keyboard events
+    window.addEventListener("keydown", (event) => {
+      const key = event.key.toLowerCase();
+      handleKeydown(key);
     });
   }
 
