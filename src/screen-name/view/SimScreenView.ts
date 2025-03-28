@@ -1208,7 +1208,7 @@ export class SimScreenView extends ScreenView {
     graphX: number,
     graphY: number,
     graphWidth: number,
-    waveformData: { t: number; y: number }[]
+    waveformData: WaveformPoint[]
   ): Shape {
     const shape = new Shape();
     
