@@ -27,7 +27,7 @@ import {
   VerticalCheckboxGroupItem,
 } from "scenerystack/sun";
 import { SimModel, SCENARIO_OPTIONS, Wave } from "../model/SimModel";
-import { PHYSICS, WAVE, SCALE } from "../model/SimConstants";
+import { PHYSICS, WAVE, SCALE, WaveformPoint } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 
@@ -649,31 +649,31 @@ export class SimScreenView extends ScreenView {
   private addModelListeners(): void {
     // Update source position
     this.model.sourcePositionProperty.lazyLink(() => {
-      this.updateSourcePosition();
+      this.updatePositions();
     });
 
     // Update observer position
     this.model.observerPositionProperty.lazyLink(() => {
-      this.updateObserverPosition();
+      this.updatePositions();
     });
 
     // Update source velocity
     this.model.sourceVelocityProperty.lazyLink(() => {
-      this.updateSourceVelocity();
+      this.updateVectors();
     });
 
     // Update observer velocity
     this.model.observerVelocityProperty.lazyLink(() => {
-      this.updateObserverVelocity();
+      this.updateVectors();
     });
 
     // Update frequencies
     this.model.emittedFrequencyProperty.lazyLink(() => {
-      this.updateFrequencyText();
+      this.updateStatus();
     });
 
     this.model.observedFrequencyProperty.lazyLink(() => {
-      this.updateFrequencyText();
+      this.updateStatus();
     });
 
     // Listen to waves collection
@@ -687,7 +687,7 @@ export class SimScreenView extends ScreenView {
     
     // Listen for time speed changes to update waveform displays
     this.model.timeSpeedProperty.lazyLink(() => {
-      this.updateWaveforms();
+      this.updateGraphics();
     });
   }
 
@@ -950,92 +950,104 @@ export class SimScreenView extends ScreenView {
    * Update the view to match the model state
    */
   private updateView(): void {
-    this.updateSourcePosition();
-    this.updateObserverPosition();
-    this.updateSourceVelocity();
-    this.updateObserverVelocity();
-    this.updateSelectionHighlight();
-    this.updateFrequencyText();
-    this.updateWaveforms();
-    this.updateConnectingLine();
-    this.updateWaves();
+    this.updatePositions();
+    this.updateVectors();
+    this.updateStatus();
+    this.updateGraphics();
   }
 
   /**
-   * Update source position
+   * Update positions of objects in the view
    */
-  private updateSourcePosition(): void {
+  private updatePositions(): void {
+    // Update source and observer positions
     const sourcePos = this.model.sourcePositionProperty.value;
-    this.sourceNode.center = this.modelToView(sourcePos);
-  }
-
-  /**
-   * Update observer position
-   */
-  private updateObserverPosition(): void {
     const observerPos = this.model.observerPositionProperty.value;
+    
+    this.sourceNode.center = this.modelToView(sourcePos);
     this.observerNode.center = this.modelToView(observerPos);
+    
+    // Update connecting line between source and observer
+    const viewSourcePos = this.modelToView(sourcePos);
+    const viewObserverPos = this.modelToView(observerPos);
+    
+    this.connectingLine.setLine(
+      viewSourcePos.x,
+      viewSourcePos.y,
+      viewObserverPos.x,
+      viewObserverPos.y
+    );
+    
+    // Update selection highlight position
+    if (this.selectedObject === "source") {
+      this.selectionHighlight.radius = this.UI.SOURCE_RADIUS + 5;
+      this.selectionHighlight.center = viewSourcePos;
+    } else {
+      this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
+      this.selectionHighlight.center = viewObserverPos;
+    }
   }
 
   /**
-   * Update the source velocity vector visualization
+   * Update velocity vectors for source and observer
    */
-  private updateSourceVelocity(): void {
-    const velocity = this.model.sourceVelocityProperty.value;
+  private updateVectors(): void {
+    // Update source velocity vector
     this.updateVelocityVector(
       this.sourceVelocityVector,
       this.model.sourcePositionProperty.value,
-      velocity,
+      this.model.sourceVelocityProperty.value,
       this.UI.SOURCE_COLOR,
-      PHYSICS.MIN_VELOCITY_MAG,
+      PHYSICS.MIN_VELOCITY_MAG
     );
-  }
-
-  /**
-   * Update the observer velocity vector visualization
-   */
-  private updateObserverVelocity(): void {
-    const velocity = this.model.observerVelocityProperty.value;
+    
+    // Update observer velocity vector
     this.updateVelocityVector(
       this.observerVelocityVector,
       this.model.observerPositionProperty.value,
-      velocity,
+      this.model.observerVelocityProperty.value,
       this.UI.OBSERVER_COLOR,
-      PHYSICS.MIN_VELOCITY_MAG,
+      PHYSICS.MIN_VELOCITY_MAG
     );
   }
 
   /**
-   * Update a velocity vector visualization
+   * Update status displays and text information
    */
-  private updateVelocityVector(
-    node: ArrowNode,
-    position: Vector2,
-    velocity: Vector2,
-    color: Color,
-    minMagnitude: number,
-  ): void {
-    // Only show velocity vector if magnitude is significant
-    if (velocity.magnitude < minMagnitude) {
-      return;
+  private updateStatus(): void {
+    // Update selection status text
+    this.statusTexts.selectedObject.string = `Selected: ${
+      this.selectedObject === "source" ? "Source" : "Observer"
+    }`;
+    
+    // Update frequency text displays
+    const emittedFreq = this.model.emittedFrequencyProperty.value;
+    const observedFreq = this.model.observedFrequencyProperty.value;
+    
+    this.statusTexts.emittedFreq.string = `Emitted Freq.: ${emittedFreq.toFixed(2)} Hz`;
+    this.statusTexts.observedFreq.string = `Observed Freq.: ${observedFreq.toFixed(2)} Hz`;
+    
+    // Update Doppler shift status text (red/blue shift)
+    if (observedFreq > emittedFreq) {
+      this.statusTexts.shiftStatus.string = "Blueshifted (approaching)";
+      this.statusTexts.shiftStatus.fill = this.UI.BLUESHIFT_COLOR;
+    } else if (observedFreq < emittedFreq) {
+      this.statusTexts.shiftStatus.string = "Redshifted (receding)";
+      this.statusTexts.shiftStatus.fill = this.UI.REDSHIFT_COLOR;
+    } else {
+      this.statusTexts.shiftStatus.string = "";
     }
+  }
 
-    // Convert model coordinates to view coordinates
-    const viewPosition = this.modelToView(position);
-
-    // Scale velocity vector for visualization
-    // First scale by the model-view transform to convert m/s to pixels/s
-    // Then scale by VELOCITY_VECTOR_SCALE to make it more visible
-    const scaledVelocity = velocity.timesScalar(SCALE.VELOCITY_VECTOR);
-    const viewVelocity = this.modelToViewDelta(scaledVelocity);
-
-    // Create arrow node
-    node.setTailAndTip(
-      viewPosition.x,
-      viewPosition.y,
-      viewPosition.x + viewVelocity.x,
-      viewPosition.y + viewVelocity.y,
-    );
+  /**
+   * Update graphical elements (waves and waveforms)
+   */
+  private updateGraphics(): void {
+    // Update waveforms in the graph displays
+    this.updateWaveforms();
+    
+    // Update wave circles
+    this.updateWaves();
   }
 
   /**
@@ -1196,7 +1208,7 @@ export class SimScreenView extends ScreenView {
     graphX: number,
     graphY: number,
     graphWidth: number,
-    waveformData: WaveformPoint[]
+    waveformData: { t: number; y: number }[]
   ): Shape {
     const shape = new Shape();
     
@@ -1248,5 +1260,38 @@ export class SimScreenView extends ScreenView {
    */
   private viewToModelDelta(viewDelta: Vector2): Vector2 {
     return this.modelViewTransform.viewToModelDelta(viewDelta);
+  }
+
+  /**
+   * Update a velocity vector visualization
+   */
+  private updateVelocityVector(
+    node: ArrowNode,
+    position: Vector2,
+    velocity: Vector2,
+    color: Color,
+    minMagnitude: number,
+  ): void {
+    // Only show velocity vector if magnitude is significant
+    if (velocity.magnitude < minMagnitude) {
+      return;
+    }
+
+    // Convert model coordinates to view coordinates
+    const viewPosition = this.modelToView(position);
+
+    // Scale velocity vector for visualization
+    // First scale by the model-view transform to convert m/s to pixels/s
+    // Then scale by VELOCITY_VECTOR_SCALE to make it more visible
+    const scaledVelocity = velocity.timesScalar(SCALE.VELOCITY_VECTOR);
+    const viewVelocity = this.modelToViewDelta(scaledVelocity);
+
+    // Create arrow node
+    node.setTailAndTip(
+      viewPosition.x,
+      viewPosition.y,
+      viewPosition.x + viewVelocity.x,
+      viewPosition.y + viewVelocity.y,
+    );
   }
 }
