@@ -88,8 +88,6 @@ export class SimScreenView extends ScreenView {
   private readonly UI = {
     SOURCE_RADIUS: 10,
     OBSERVER_RADIUS: 10,
-    VECTOR_SCALE: 0.2,
-    VELOCITY_STROKE_WEIGHT: 2,
     SOURCE_COLOR: new Color(255, 0, 0),
     OBSERVER_COLOR: new Color(0, 128, 0),
     CONNECTING_LINE_COLOR: new Color(100, 100, 100),
@@ -113,8 +111,6 @@ export class SimScreenView extends ScreenView {
 
   // Add a new property for the instructions box
   private instructionsBox: Node;
-  // Add a new property for the toolbox
-  private toolbox: Node;
 
   /**
    * Constructor for the Doppler Effect SimScreenView
@@ -356,10 +352,6 @@ export class SimScreenView extends ScreenView {
 
     this.controlLayer.addChild(infoButton);
 
-    // Create toolbox node
-    this.toolbox = new Node();
-    this.controlLayer.addChild(this.toolbox);
-
     // Create a panel
     const items: VerticalCheckboxGroupItem[] = [
       // Add three checkboxes
@@ -434,10 +426,6 @@ export class SimScreenView extends ScreenView {
     });
 
     this.controlLayer.addChild(panel);
-
-    // Position the toolbox
-    this.toolbox.left = 10; // Adjust as needed
-    this.toolbox.top = 50; // Adjust as needed
 
     // Setup keyboard handlers
     this.addKeyboardListeners();
@@ -1067,50 +1055,6 @@ export class SimScreenView extends ScreenView {
       );
       this.statusTexts.selectedObject.string = "Selected: Observer";
     }
-  }
-
-  /**
-   * Update the frequency text displays
-   */
-  private updateFrequencyText(): void {
-    // Update emitted frequency text
-    this.statusTexts.emittedFreq.string = `Emitted Freq.: ${this.model.emittedFrequencyProperty.value.toFixed(2)} Hz`;
-
-    // Update observed frequency text
-    this.statusTexts.observedFreq.string = `Observed Freq.: ${this.model.observedFrequencyProperty.value.toFixed(2)} Hz`;
-
-    // Update shift status text (red/blue shift)
-    const emittedFreq = this.model.emittedFrequencyProperty.value;
-    const observedFreq = this.model.observedFrequencyProperty.value;
-
-    if (observedFreq > emittedFreq) {
-      this.statusTexts.shiftStatus.string = "Blueshifted (approaching)";
-      this.statusTexts.shiftStatus.fill = this.UI.BLUESHIFT_COLOR;
-    } else if (observedFreq < emittedFreq) {
-      this.statusTexts.shiftStatus.string = "Redshifted (receding)";
-      this.statusTexts.shiftStatus.fill = this.UI.REDSHIFT_COLOR;
-    } else {
-      this.statusTexts.shiftStatus.string = "";
-    }
-  }
-
-  /**
-   * Update the connecting line between source and observer
-   */
-  private updateConnectingLine(): void {
-    const sourcePos = this.model.sourcePositionProperty.value;
-    const observerPos = this.model.observerPositionProperty.value;
-
-    // Convert model coordinates to view coordinates
-    const viewSourcePos = this.modelToView(sourcePos);
-    const viewObserverPos = this.modelToView(observerPos);
-
-    this.connectingLine.setLine(
-      viewSourcePos.x,
-      viewSourcePos.y,
-      viewObserverPos.x,
-      viewObserverPos.y,
-    );
   }
 
   /**
