@@ -515,71 +515,50 @@ export class SimModel {
   }
 
   /**
-   * Setup a preset scenario with the source moving toward observer
+   * Setup a preset scenario
+   * @param scenario - the scenario to apply
    */
-  public setupScenario1(): void {
+  public setupScenario(scenario: string): void {
     this.reset();
-    this.sourceVelocityProperty.value = new Vector2(
-      SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity.x,
-      SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity.y,
-    );
-    this.observerVelocityProperty.value = new Vector2(
-      SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity.x,
-      SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity.y,
-    );
-    this.sourceMovingProperty.value = true;
-    this.observerMovingProperty.value = false;
-  }
-
-  /**
-   * Setup a preset scenario with observer moving toward source
-   */
-  public setupScenario2(): void {
-    this.reset();
-    this.sourceVelocityProperty.value = new Vector2(
-      SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity.x,
-      SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity.y,
-    );
-    this.observerVelocityProperty.value = new Vector2(
-      SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity.x,
-      SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity.y,
-    );
-    this.sourceMovingProperty.value = false;
-    this.observerMovingProperty.value = true;
-  }
-
-  /**
-   * Setup a preset scenario with source and observer moving away from each other
-   */
-  public setupScenario3(): void {
-    this.reset();
-    this.sourceVelocityProperty.value = new Vector2(
-      SCENARIOS.MOVING_APART.sourceVelocity.x,
-      SCENARIOS.MOVING_APART.sourceVelocity.y,
-    );
-    this.observerVelocityProperty.value = new Vector2(
-      SCENARIOS.MOVING_APART.observerVelocity.x,
-      SCENARIOS.MOVING_APART.observerVelocity.y,
-    );
-    this.sourceMovingProperty.value = true;
-    this.observerMovingProperty.value = true;
-  }
-
-  /**
-   * Setup a preset scenario with perpendicular movement
-   */
-  public setupScenario4(): void {
-    this.reset();
-    this.sourceVelocityProperty.value = new Vector2(
-      SCENARIOS.PERPENDICULAR.sourceVelocity.x,
-      SCENARIOS.PERPENDICULAR.sourceVelocity.y,
-    );
-    this.observerVelocityProperty.value = new Vector2(
-      SCENARIOS.PERPENDICULAR.observerVelocity.x,
-      SCENARIOS.PERPENDICULAR.observerVelocity.y,
-    );
-    this.sourceMovingProperty.value = true;
-    this.observerMovingProperty.value = true;
+    
+    switch (scenario) {
+      case SCENARIO_OPTIONS.SCENARIO_1:
+        this.sourceVelocityProperty.value = SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity.copy();
+        this.observerVelocityProperty.value = SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity.copy();
+        this.sourceMovingProperty.value = true;
+        this.observerMovingProperty.value = false;
+        break;
+        
+      case SCENARIO_OPTIONS.SCENARIO_2:
+        this.sourceVelocityProperty.value = SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity.copy();
+        this.observerVelocityProperty.value = SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity.copy();
+        this.sourceMovingProperty.value = false;
+        this.observerMovingProperty.value = true;
+        break;
+        
+      case SCENARIO_OPTIONS.SCENARIO_3:
+        this.sourceVelocityProperty.value = SCENARIOS.MOVING_APART.sourceVelocity.copy();
+        this.observerVelocityProperty.value = SCENARIOS.MOVING_APART.observerVelocity.copy();
+        this.sourceMovingProperty.value = true;
+        this.observerMovingProperty.value = true;
+        break;
+        
+      case SCENARIO_OPTIONS.SCENARIO_4:
+        this.sourceVelocityProperty.value = SCENARIOS.PERPENDICULAR.sourceVelocity.copy();
+        this.observerVelocityProperty.value = SCENARIOS.PERPENDICULAR.observerVelocity.copy();
+        this.sourceMovingProperty.value = true;
+        this.observerMovingProperty.value = true;
+        break;
+        
+      case SCENARIO_OPTIONS.FREE_PLAY:
+      default:
+        // Free play mode - no initial velocities
+        this.sourceVelocityProperty.value = new Vector2(0, 0);
+        this.observerVelocityProperty.value = new Vector2(0, 0);
+        this.sourceMovingProperty.value = false;
+        this.observerMovingProperty.value = false;
+        break;
+    }
   }
 
   /**
@@ -587,9 +566,7 @@ export class SimModel {
    * @param scenario - the scenario to apply
    */
   private applyScenario(scenario: string): void {
-    // Reset velocities and positions first
-    this.sourceVelocityProperty.value = new Vector2(0, 0);
-    this.observerVelocityProperty.value = new Vector2(0, 0);
+    // Reset positions to initial positions
     this.sourcePositionProperty.value = new Vector2(
       INITIAL_POSITIONS.SOURCE.x,
       INITIAL_POSITIONS.SOURCE.y,
@@ -598,27 +575,8 @@ export class SimModel {
       INITIAL_POSITIONS.OBSERVER.x,
       INITIAL_POSITIONS.OBSERVER.y,
     );
-    this.sourceMovingProperty.value = false;
-    this.observerMovingProperty.value = false;
-
-    // Apply scenario-specific settings
-    switch (scenario) {
-      case SCENARIO_OPTIONS.SCENARIO_1:
-        this.setupScenario1();
-        break;
-      case SCENARIO_OPTIONS.SCENARIO_2:
-        this.setupScenario2();
-        break;
-      case SCENARIO_OPTIONS.SCENARIO_3:
-        this.setupScenario3();
-        break;
-      case SCENARIO_OPTIONS.SCENARIO_4:
-        this.setupScenario4();
-        break;
-      case SCENARIO_OPTIONS.FREE_PLAY:
-      default:
-        // Free play mode - no initial velocities
-        break;
-    }
+    
+    // Apply the scenario settings
+    this.setupScenario(scenario);
   }
 }

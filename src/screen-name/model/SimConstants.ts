@@ -9,6 +9,8 @@
  * - All angles are in radians
  */
 
+import { Vector2 } from "scenerystack";
+
 // Physical constants in SI units
 export const PHYSICS = {
   SOUND_SPEED: 343.0, // Speed of sound in air (m/s) at room temperature
@@ -39,20 +41,20 @@ export const SOUND_DATA = {
 // Preset scenarios (velocities in m/s)
 export const SCENARIOS = {
   SOURCE_TOWARD_OBSERVER: {
-    sourceVelocity: { x: 60, y: 0 }, // Source moves right at 60 m/s
-    observerVelocity: { x: 0, y: 0 }, // Observer stationary
+    sourceVelocity: new Vector2(60, 0), // Source moves right at 60 m/s
+    observerVelocity: new Vector2(0, 0), // Observer stationary
   },
   OBSERVER_TOWARD_SOURCE: {
-    sourceVelocity: { x: 0, y: 0 }, // Source stationary
-    observerVelocity: { x: -60, y: 0 }, // Observer moves left at 60 m/s
+    sourceVelocity: new Vector2(0, 0), // Source stationary
+    observerVelocity: new Vector2(-60, 0), // Observer moves left at 60 m/s
   },
   MOVING_APART: {
-    sourceVelocity: { x: -60, y: 0 }, // Source moves left at 60 m/s
-    observerVelocity: { x: 60, y: 0 }, // Observer moves right at 60 m/s
+    sourceVelocity: new Vector2(-60, 0), // Source moves left at 60 m/s
+    observerVelocity: new Vector2(60, 0), // Observer moves right at 60 m/s
   },
   PERPENDICULAR: {
-    sourceVelocity: { x: 0, y: 60 }, // Source moves up at 60 m/s
-    observerVelocity: { x: 0, y: -60 }, // Observer moves down at 60 m/s
+    sourceVelocity: new Vector2(0, 60), // Source moves up at 60 m/s
+    observerVelocity: new Vector2(0, -60), // Observer moves down at 60 m/s
   },
 } as const;
 
