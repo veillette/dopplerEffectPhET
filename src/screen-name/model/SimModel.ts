@@ -1,6 +1,5 @@
 import {
   Vector2,
-  Property,
   NumberProperty,
   BooleanProperty,
   StringProperty,
@@ -12,13 +11,16 @@ import { ObservableArray } from "scenerystack/axon";
 import { createObservableArray } from "scenerystack/axon";
 import {
   PHYSICS,
-  WAVE,
   INITIAL_POSITIONS,
   SOUND_DATA,
   SCENARIOS,
   SCALE,
   WaveformPoint,
 } from "./SimConstants";
+import { WaveGenerator } from "./WaveGenerator";
+import { WaveformManager } from "./WaveformManager";
+import { MovableObject } from "./MovableObject";
+import { DopplerCalculator } from "./DopplerCalculator";
 
 // Export the Wave interface
 export interface Wave {
@@ -49,73 +51,68 @@ export const TIME_SPEED = {
 /**
  * Model for the Doppler Effect simulation
  *
- * This model handles all the physics calculations and state management for the simulation.
- * All calculations are done in SI units:
- * - Distances in meters (m)
- * - Velocities in meters per second (m/s)
- * - Frequencies in Hertz (Hz)
- * - Times in seconds (s)
- * - Angles in radians
- *
+ * This model is the main coordinator for the simulation, connecting the various
+ * specialized classes that handle different aspects of the simulation.
  */
 export class SimModel {
   // Properties for physics simulation
-  public readonly soundSpeedProperty: NumberProperty; // Speed of sound in m/s
-  public readonly emittedFrequencyProperty: NumberProperty; // Frequency in Hz
-  public readonly scenarioProperty: StringProperty; // Current scenario
-  public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>; // Simulation time speed factor
-  public readonly soundSpeedRange: RangeWithValue; // Re-add this line
-  public readonly frequencyRange: RangeWithValue; // Re-add this line
+  public readonly soundSpeedProperty: NumberProperty;  // in meters per second (m/s)
+  public readonly emittedFrequencyProperty: NumberProperty;  // in Hertz (Hz)
+  public readonly scenarioProperty: StringProperty;
+  public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;  // dimensionless factor
+  public readonly soundSpeedRange: RangeWithValue;  // in meters per second (m/s)
+  public readonly frequencyRange: RangeWithValue;  // in Hertz (Hz)
 
-  // Properties for source
-  public readonly sourcePositionProperty: Property<Vector2>; // Position in meters
-  public readonly sourceVelocityProperty: Property<Vector2>; // Velocity in m/s
-  public readonly sourceMovingProperty: BooleanProperty;
+  // Source and observer objects
+  private readonly source: MovableObject;  // position in meters (m)
+  private readonly observer: MovableObject;  // position in meters (m)
+  
+  // For convenience, expose properties directly
+  public readonly sourcePositionProperty;  // in meters (m)
+  public readonly sourceVelocityProperty;  // in meters per second (m/s)
+  public readonly sourceMovingProperty;
+  public readonly observerPositionProperty;  // in meters (m)
+  public readonly observerVelocityProperty;  // in meters per second (m/s)
+  public readonly observerMovingProperty;
 
-  // Properties for observer
-  public readonly observerPositionProperty: Property<Vector2>; // Position in meters
-  public readonly observerVelocityProperty: Property<Vector2>; // Velocity in m/s
-  public readonly observerMovingProperty: BooleanProperty;
-
-  // Properties for simulation state
-  public readonly simulationTimeProperty: NumberProperty; // Time in seconds
-  public readonly observedFrequencyProperty: NumberProperty; // Frequency in Hz
+  // Simulation state properties
+  public readonly simulationTimeProperty: NumberProperty;  // in seconds (s)
+  public readonly observedFrequencyProperty: NumberProperty;  // in Hertz (Hz)
   public readonly playProperty: BooleanProperty;
 
-  // Wave collection - each wave contains:
-  // - position: Vector2 (meters)
-  // - radius: number (meters)
-  // - speedOfSound: number (m/s)
-  // - birthTime: number (seconds)
-  // - sourceVelocity: Vector2 (m/s)
-  // - sourceFrequency: number (Hz)
-  // - phaseAtEmission: number (radians)
-  public readonly waves: ObservableArray<Wave>;
+  // Wave collection
+  public readonly waves: ObservableArray<Wave>;  // radius in meters (m)
 
-  // Sound data for graphs (unitless amplitude values)
-  public readonly emittedSoundData: number[] = [];
-  public readonly observedSoundData: number[] = [];
+  // Specialized component classes
+  private readonly waveGenerator: WaveGenerator;
+  private readonly waveformManager: WaveformManager;
+  private readonly dopplerCalculator: DopplerCalculator;
+
+  // Expose waveform data for view access
+  public get emittedWaveformData(): WaveformPoint[] { 
+    return this.waveformManager.emittedWaveformData;
+  }
   
-  // New emitted and observed waveforms data for view
-  public readonly emittedWaveformData: WaveformPoint[] = [];
-  public readonly observedWaveformData: WaveformPoint[] = [];
-
-  // Phase accumulators (in radians)
-  private emittedPhase: number = 0;
-  private observedPhase: number = 0;
-
-  // Time tracking (in seconds)
-  private lastWaveTime: number = 0;
+  public get observedWaveformData(): WaveformPoint[] {
+    return this.waveformManager.observedWaveformData;
+  }
+  
+  // Expose sound data for backward compatibility
+  public get emittedSoundData(): number[] {
+    return this.waveformManager.emittedSoundData;
+  }
+  
+  public get observedSoundData(): number[] {
+    return this.waveformManager.observedSoundData;
+  }
 
   /**
    * Constructor for the Doppler Effect SimModel
    */
   public constructor() {
-    // Initialize properties
+    // Initialize physics properties
     this.soundSpeedProperty = new NumberProperty(PHYSICS.SOUND_SPEED);
     this.emittedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
-
-    // Restore the original initialization of soundSpeedRange and frequencyRange
     this.soundSpeedRange = new RangeWithValue(
       PHYSICS.SOUND_SPEED * 0.5,
       PHYSICS.SOUND_SPEED * 2,
@@ -127,21 +124,7 @@ export class SimModel {
       PHYSICS.EMITTED_FREQ,
     );
     this.scenarioProperty = new StringProperty(SCENARIO_OPTIONS.FREE_PLAY);
-    this.timeSpeedProperty = new EnumerationProperty(TimeSpeed.NORMAL); // Default to normal speed
-
-    // Initialize source properties
-    this.sourcePositionProperty = new Property(
-      new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y),
-    );
-    this.sourceVelocityProperty = new Property(new Vector2(0, 0));
-    this.sourceMovingProperty = new BooleanProperty(false);
-
-    // Initialize observer properties
-    this.observerPositionProperty = new Property(
-      new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y),
-    );
-    this.observerVelocityProperty = new Property(new Vector2(0, 0));
-    this.observerMovingProperty = new BooleanProperty(false);
+    this.timeSpeedProperty = new EnumerationProperty(TimeSpeed.NORMAL);
 
     // Initialize simulation state
     this.simulationTimeProperty = new NumberProperty(0);
@@ -151,25 +134,44 @@ export class SimModel {
     // Create waves array
     this.waves = createObservableArray<Wave>([]);
 
-    // Initialize sound data arrays
-    for (let i = 0; i < SOUND_DATA.ARRAY_SIZE; i++) {
-      this.emittedSoundData.push(0);
-      this.observedSoundData.push(0);
-      
-      // Initialize waveform data arrays with t instead of x
-      this.emittedWaveformData.push({ t: i / SOUND_DATA.ARRAY_SIZE, y: 0 });
-      this.observedWaveformData.push({ t: i / SOUND_DATA.ARRAY_SIZE, y: 0 });
-    }
+    // Initialize source and observer
+    this.source = new MovableObject(
+      new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y)
+    );
+    this.observer = new MovableObject(
+      new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y)
+    );
+    
+    // Link properties for direct access
+    this.sourcePositionProperty = this.source.positionProperty;
+    this.sourceVelocityProperty = this.source.velocityProperty;
+    this.sourceMovingProperty = this.source.movingProperty;
+    this.observerPositionProperty = this.observer.positionProperty;
+    this.observerVelocityProperty = this.observer.velocityProperty;
+    this.observerMovingProperty = this.observer.movingProperty;
 
-    // Add listener for scenario changes
+    // Create specialized component classes
+    this.waveGenerator = new WaveGenerator(
+      this.waves,
+      () => this.simulationTimeProperty.value,
+      () => this.sourcePositionProperty.value,
+      () => this.sourceVelocityProperty.value,
+      () => this.emittedFrequencyProperty.value,
+      () => this.soundSpeedProperty.value,
+      () => this.waveformManager.getEmittedPhase()
+    );
+    
+    this.waveformManager = new WaveformManager(SOUND_DATA.ARRAY_SIZE);
+    this.dopplerCalculator = new DopplerCalculator();
+
+    // Add listeners
     this.scenarioProperty.lazyLink((scenario) => {
       this.applyScenario(scenario);
     });
     
-    // Add listener for time speed changes to update waveforms
     this.timeSpeedProperty.lazyLink(() => {
-      this.updateEmittedWaveformData();
-      this.updateObservedWaveformData();
+      // Just ensure latest data is used when time speed changes
+      this.updateWaveforms(0);
     });
   }
 
@@ -177,61 +179,28 @@ export class SimModel {
    * Reset the simulation to initial state
    */
   public reset(): void {
-    // Reset scenario property
+    // Reset properties
     this.scenarioProperty.reset();
-
-    // Reset physics properties
     this.soundSpeedProperty.reset();
     this.emittedFrequencyProperty.reset();
     this.timeSpeedProperty.reset();
-
-    // Reset source properties
-    this.sourcePositionProperty.value = new Vector2(
-      INITIAL_POSITIONS.SOURCE.x,
-      INITIAL_POSITIONS.SOURCE.y,
-    );
-    this.sourceVelocityProperty.value = new Vector2(0, 0);
-    this.sourceMovingProperty.value = false;
-
-    // Reset observer properties
-    this.observerPositionProperty.value = new Vector2(
-      INITIAL_POSITIONS.OBSERVER.x,
-      INITIAL_POSITIONS.OBSERVER.y,
-    );
-    this.observerVelocityProperty.value = new Vector2(0, 0);
-    this.observerMovingProperty.value = false;
-
-    // Reset simulation state
     this.simulationTimeProperty.reset();
     this.observedFrequencyProperty.value = PHYSICS.EMITTED_FREQ;
     this.playProperty.reset();
 
-    // Clear waves
-    this.waves.clear();
+    // Reset source and observer
+    this.source.reset(new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y));
+    this.observer.reset(new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y));
 
-    // Reset phase accumulators
-    this.emittedPhase = 0;
-    this.observedPhase = 0;
-
-    // Reset time tracking
-    this.lastWaveTime = 0;
-
-    // Reset sound data
-    for (let i = 0; i < this.emittedSoundData.length; i++) {
-      this.emittedSoundData[i] = 0;
-      this.observedSoundData[i] = 0;
-      
-      // Reset waveform data with t instead of x
-      this.emittedWaveformData[i] = { t: i / SOUND_DATA.ARRAY_SIZE, y: 0 };
-      this.observedWaveformData[i] = { t: i / SOUND_DATA.ARRAY_SIZE, y: 0 };
-    }
+    // Reset components
+    this.waveGenerator.reset();
+    this.waveformManager.reset(SOUND_DATA.ARRAY_SIZE);
   }
 
   /**
    * Get the numeric value associated with the current TimeSpeed enum value
    */
   private getTimeSpeedValue(): number {
-    // Convert TimeSpeed enum to a numeric value for calculations
     switch (this.timeSpeedProperty.value) {
       case TimeSpeed.SLOW:
         return TIME_SPEED.SLOW;
@@ -243,272 +212,82 @@ export class SimModel {
 
   /**
    * Update the simulation state based on elapsed time
-   * @param dt - elapsed time in seconds (real time)
+   * @param dt - elapsed time in seconds (real time) (s)
    * @param force - optional parameter to force stepping even when paused
    */
   public step(dt: number, force: boolean = false): void {
-    if (!this.playProperty.value && !force ) return;
+    if (!this.playProperty.value && !force) return;
 
-    // Apply time scaling to convert real time to model time
-    // This ensures that 1 second of real time = 0.5 seconds of model time
-    // Also apply the user-selected time speed factor from timeSpeedProperty
-    const modelDt = dt * SCALE.TIME * this.getTimeSpeedValue();
+    // Apply time scaling
+    const modelDt = dt * SCALE.TIME * this.getTimeSpeedValue();  // in seconds (s)
 
-    // Update simulation time (in model seconds)
-    this.simulationTimeProperty.value += modelDt;
+    // Update simulation time
+    this.simulationTimeProperty.value += modelDt;  // in seconds (s)
 
-    // Update positions based on velocities
-    this.updatePositions(modelDt);
+    // Update positions
+    this.source.updatePosition(modelDt);
+    this.observer.updatePosition(modelDt);
 
-    // Generate new waves
-    this.generateWaves();
+    // Generate and update waves
+    this.waveGenerator.generateWaves();
+    this.waveGenerator.updateWaves(this.simulationTimeProperty.value);
 
-    // Update waves
-    this.updateWaves();
-
-    // Calculate Doppler effect
-    this.calculateDopplerEffect(modelDt);
+    // Calculate Doppler effect and update waveforms
+    this.updateWaveforms(modelDt);
   }
 
   /**
-   * Update source and observer positions based on velocities
-   * @param dt - elapsed time in model seconds
+   * Update waveforms and calculate Doppler effect
+   * @param dt Elapsed model time in seconds (s)
    */
-  private updatePositions(dt: number): void {
-    // Update source position if moving
-    if (this.sourceMovingProperty.value) {
-      const sourcePos = this.sourcePositionProperty.value;
-      const sourceVel = this.sourceVelocityProperty.value;
-
-      // Update position based on velocity (in model space)
-      this.sourcePositionProperty.value = sourcePos.plus(
-        sourceVel.timesScalar(dt),
-      );
-
-      // Check if velocity is too small
-      if (sourceVel.magnitude < PHYSICS.MIN_VELOCITY_MAG) {
-        this.sourceMovingProperty.value = false;
-      }
-    } else if (
-      !this.sourceMovingProperty.value &&
-      this.sourceVelocityProperty.value.magnitude > 0
-    ) {
-      // Apply velocity decay when not actively moving
-      const sourceVel = this.sourceVelocityProperty.value;
-      this.sourceVelocityProperty.value = sourceVel.timesScalar(
-        PHYSICS.VELOCITY_DECAY,
-      );
-    }
-
-    // Update observer position if moving
-    if (this.observerMovingProperty.value) {
-      const observerPos = this.observerPositionProperty.value;
-      const observerVel = this.observerVelocityProperty.value;
-
-      // Update position based on velocity (in model space)
-      this.observerPositionProperty.value = observerPos.plus(
-        observerVel.timesScalar(dt),
-      );
-
-      // Check if velocity is too small
-      if (observerVel.magnitude < PHYSICS.MIN_VELOCITY_MAG) {
-        this.observerMovingProperty.value = false;
-      }
-    } else if (
-      !this.observerMovingProperty.value &&
-      this.observerVelocityProperty.value.magnitude > 0
-    ) {
-      // Apply velocity decay when not actively moving
-      const observerVel = this.observerVelocityProperty.value;
-      this.observerVelocityProperty.value = observerVel.timesScalar(
-        PHYSICS.VELOCITY_DECAY,
-      );
-    }
-  }
-
-  /**
-   * Generate new waves based on emitted frequency
-   */
-  private generateWaves(): void {
-    // Calculate wave interval based on emitted frequency (in model seconds)
-    const waveInterval = 1.0 / this.emittedFrequencyProperty.value;
-
-    // Check if it's time to emit a new wave
-    if (this.simulationTimeProperty.value - this.lastWaveTime > waveInterval) {
-      // Create a new wave
-      this.waves.add({
-        position: this.sourcePositionProperty.value.copy(),
-        radius: 0,
-        speedOfSound: this.soundSpeedProperty.value,
-        birthTime: this.simulationTimeProperty.value,
-        sourceVelocity: this.sourceVelocityProperty.value.copy(),
-        sourceFrequency: this.emittedFrequencyProperty.value,
-        phaseAtEmission: this.emittedPhase,
-      });
-
-      // Update last wave time
-      this.lastWaveTime = this.simulationTimeProperty.value;
-    }
-  }
-
-  /**
-   * Update existing waves (expand radius, remove old ones)
-   */
-  private updateWaves(): void {
-    // Update existing waves
-    for (let i = this.waves.length - 1; i >= 0; i--) {
-      const wave = this.waves.get(i);
-
-      // Calculate age (in model seconds)
-      const age = this.simulationTimeProperty.value - wave.birthTime;
-
-      // Update radius based on age and sound speed (in model meters)
-      wave.radius = age * wave.speedOfSound;
-
-      // Remove waves that are too old
-      if (age > WAVE.MAX_AGE) {
-        this.waves.remove(wave);
-      }
-    }
-  }
-
-  /**
-   * Calculate Doppler effect for the observer
-   * @param dt - elapsed time in model seconds
-   */
-  private calculateDopplerEffect(dt: number): void {
-    // Calculate emitted waveform (in model time)
-    this.emittedPhase += this.emittedFrequencyProperty.value * dt * Math.PI * 2;
-
-    // Update emitted sound data
-    this.emittedSoundData.push(Math.sin(this.emittedPhase) * 30);
-    this.emittedSoundData.shift();
-    
-    // Update emitted waveform data
-    this.updateEmittedWaveformData();
+  private updateWaveforms(dt: number): void {
+    // Update emitted waveform
+    this.waveformManager.updateEmittedWaveform(
+      this.emittedFrequencyProperty.value,
+      dt,
+      this.getTimeSpeedValue()
+    );
 
     // Find waves affecting the observer
-    const wavesAtObserver: Array<{ wave: Wave; arrivalTime: number }> = [];
+    const wavesAtObserver = this.dopplerCalculator.findWavesAtObserver(
+      this.waves,
+      this.observerPositionProperty.value,
+      this.soundSpeedProperty.value
+    );
 
-    for (let i = 0; i < this.waves.length; i++) {
-      const wave = this.waves.get(i);
-
-      // Calculate distance from wave origin to observer (in model meters)
-      const distanceToObserver = wave.position.distance(
-        this.observerPositionProperty.value,
-      );
-
-      // Check if wave has reached observer
-      if (wave.radius >= distanceToObserver) {
-        // Calculate arrival time (in model seconds)
-        const travelTime = distanceToObserver / this.soundSpeedProperty.value;
-        const arrivalTime = wave.birthTime + travelTime;
-
-        wavesAtObserver.push({
-          wave,
-          arrivalTime,
-        });
-      }
-    }
-
-    // If no waves have reached observer yet, use default frequency
+    // If no waves have reached observer yet, clear observed waveform
     if (wavesAtObserver.length === 0) {
-      this.observedSoundData.push(0);
-      this.observedSoundData.shift();
+      this.waveformManager.clearObservedWaveform();
       return;
     }
-
-    // Sort by arrival time (most recent first)
-    wavesAtObserver.sort((a, b) => b.arrivalTime - a.arrivalTime);
 
     // Use most recently arrived wave
     const currentWave = wavesAtObserver[0].wave;
     const arrivalTime = wavesAtObserver[0].arrivalTime;
 
-    // Calculate time since wave arrival (in model seconds)
-    const timeSinceArrival = this.simulationTimeProperty.value - arrivalTime;
+    // Calculate time since wave arrival (in seconds)
+    const timeSinceArrival = this.simulationTimeProperty.value - arrivalTime;  // in seconds (s)
 
     // Get phase at arrival from original wave
     const phaseAtArrival = currentWave.phaseAtEmission;
 
     // Calculate Doppler frequency
-    const observedFrequency = this.calculateObservedFrequency(currentWave);
+    const observedFrequency = this.dopplerCalculator.calculateObservedFrequency(
+      currentWave,
+      this.observerPositionProperty.value,
+      this.observerVelocityProperty.value,
+      this.soundSpeedProperty.value
+    );
 
-    // Update the property
+    // Update observed frequency property
     this.observedFrequencyProperty.value = observedFrequency;
 
-    // Calculate additional phase based on observed frequency (in model time)
-    const additionalPhase = timeSinceArrival * observedFrequency * Math.PI * 2;
-    this.observedPhase = phaseAtArrival + additionalPhase;
-
-    // Update observed sound data
-    this.observedSoundData.push(Math.sin(this.observedPhase) * 30);
-    this.observedSoundData.shift();
-    
-    // Update observed waveform data
-    this.updateObservedWaveformData();
-  }
-  
-  /**
-   * Update emitted and observed waveform data for the view
-   * @param waveformData The target waveform data array to update
-   * @param soundData The source sound data array
-   */
-  private updateWaveformData(waveformData: WaveformPoint[], soundData: number[]): void {
-    // Apply time speed factor to the waveform display
-    const timeSpeedFactor = this.getTimeSpeedValue();
-    
-    for (let i = 0; i < soundData.length; i++) {
-      // Scale t-position by time speed to show proper time compression/expansion
-      waveformData[i] = {
-        // We multiply by timeSpeedFactor to achieve the correct relationship
-        t: (i / soundData.length) * timeSpeedFactor,
-        y: soundData[i]
-      };
-    }
-  }
-  
-  /**
-   * Update the emitted waveform data for the view
-   */
-  private updateEmittedWaveformData(): void {
-    this.updateWaveformData(this.emittedWaveformData, this.emittedSoundData);
-  }
-  
-  /**
-   * Update the observed waveform data for the view
-   */
-  private updateObservedWaveformData(): void {
-    this.updateWaveformData(this.observedWaveformData, this.observedSoundData);
-  }
-
-  /**
-   * Calculate the frequency observed by the observer using the Doppler formula
-   */
-  private calculateObservedFrequency(wave: Wave): number {
-    // Calculate unit vector from source to observer
-    const direction = this.observerPositionProperty.value
-      .minus(wave.position)
-      .normalized();
-
-    // Calculate velocity components along the direction vector
-    const sourceVelocityComponent = wave.sourceVelocity.dot(direction);
-    const observerVelocityComponent =
-      this.observerVelocityProperty.value.dot(direction);
-
-    // Calculate observed frequency using Doppler formula:
-    // f' = f * (v - v_o) / (v - v_s)
-    // where f is emitted frequency, v is sound speed,
-    // v_o is observer velocity component, v_s is source velocity component
-    const observedFreq =
-      (wave.sourceFrequency *
-        (this.soundSpeedProperty.value - observerVelocityComponent)) /
-      (this.soundSpeedProperty.value - sourceVelocityComponent);
-
-    // Constrain to reasonable limits
-    return Math.max(
-      PHYSICS.FREQ_MIN,
-      Math.min(observedFreq, wave.sourceFrequency * PHYSICS.FREQ_MAX_FACTOR),
+    // Update observed waveform
+    this.waveformManager.updateObservedWaveform(
+      observedFrequency,
+      phaseAtArrival,
+      timeSinceArrival,
+      this.getTimeSpeedValue()
     );
   }
 
@@ -564,14 +343,14 @@ export class SimModel {
    * @param scenario - the scenario to apply
    */
   private applyScenario(scenario: string): void {
-    // Reset positions to initial positions
+    // Reset positions
     this.sourcePositionProperty.value = new Vector2(
       INITIAL_POSITIONS.SOURCE.x,
-      INITIAL_POSITIONS.SOURCE.y,
+      INITIAL_POSITIONS.SOURCE.y
     );
     this.observerPositionProperty.value = new Vector2(
       INITIAL_POSITIONS.OBSERVER.x,
-      INITIAL_POSITIONS.OBSERVER.y,
+      INITIAL_POSITIONS.OBSERVER.y
     );
     
     // Apply the scenario settings
