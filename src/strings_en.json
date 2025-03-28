@@ -1,0 +1,74 @@
+{
+  "doppler-effect.title": {
+    "value": "Doppler Effect Simulation Controls"
+  },
+  "doppler-effect.source": {
+    "value": "Source"
+  },
+  "doppler-effect.observer": {
+    "value": "Observer"
+  },
+  "doppler-effect.selectedObject": {
+    "value": "Selected: {{object}}"
+  },
+  "doppler-effect.controls.values": {
+    "value": "Values"
+  },
+  "doppler-effect.controls.velocityArrows": {
+    "value": "Velocity Arrows"
+  },
+  "doppler-effect.controls.lineOfSight": {
+    "value": "Line of Sight"
+  },
+  "doppler-effect.controls.soundSpeed": {
+    "value": "Speed of Sound"
+  },
+  "doppler-effect.controls.frequency": {
+    "value": "Frequency"
+  },
+  "doppler-effect.units.metersPerSecond": {
+    "value": "{{value}} m/s"
+  },
+  "doppler-effect.units.hertz": {
+    "value": "{{value}} Hz"
+  },
+  "doppler-effect.units.meters": {
+    "value": "{{value}}m"
+  },
+  "doppler-effect.graphs.emittedSound": {
+    "value": "Emitted Sound"
+  },
+  "doppler-effect.graphs.observedSound": {
+    "value": "Observed Sound"
+  },
+  "doppler-effect.graphs.emittedFrequency": {
+    "value": "Emitted Freq.: {{value}} Hz"
+  },
+  "doppler-effect.graphs.observedFrequency": {
+    "value": "Observed Freq.: {{value}} Hz"
+  },
+  "doppler-effect.shift.blueshift": {
+    "value": "Blueshifted (approaching)"
+  },
+  "doppler-effect.shift.redshift": {
+    "value": "Redshifted (receding)"
+  },
+  "doppler-effect.help.dragAndDrop": {
+    "value": "Click and drag source (red) or observer (green) to move them"
+  },
+  "doppler-effect.help.keyboardControls": {
+    "value": "Keyboard Controls:"
+  },
+  "doppler-effect.help.objectSelection": {
+    "value": "S: Select source | O: Select observer | Arrow keys: Move selected object"
+  },
+  "doppler-effect.help.controls": {
+    "value": "Space: Pause/Resume | R: Reset | H: Toggle help"
+  },
+  "doppler-effect.help.adjust": {
+    "value": "+/-: Adjust emitted frequency | ,/.: Adjust sound speed"
+  },
+  "doppler-effect.help.scenarios": {
+    "value": "1-4: Load preset scenarios (approaching source, observer, etc.)"
+  }
+} 

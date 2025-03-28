@@ -30,6 +30,45 @@ import { SimModel, SCENARIO_OPTIONS, Wave } from "../model/SimModel";
 import { PHYSICS, WAVE, SCALE, WaveformPoint } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
+import strings from "../../strings_en.json";
+
+// Add this section at the top of the file, after imports
+const STRINGS = {
+  TITLE: strings["doppler-effect.title"].value,
+  SOURCE: strings["doppler-effect.source"].value,
+  OBSERVER: strings["doppler-effect.observer"].value,
+  SELECTED_OBJECT: strings["doppler-effect.selectedObject"].value,
+  CONTROLS: {
+    VALUES: strings["doppler-effect.controls.values"].value,
+    VELOCITY_ARROWS: strings["doppler-effect.controls.velocityArrows"].value,
+    LINE_OF_SIGHT: strings["doppler-effect.controls.lineOfSight"].value,
+    SOUND_SPEED: strings["doppler-effect.controls.soundSpeed"].value,
+    FREQUENCY: strings["doppler-effect.controls.frequency"].value,
+  },
+  UNITS: {
+    METERS_PER_SECOND: strings["doppler-effect.units.metersPerSecond"].value,
+    HERTZ: strings["doppler-effect.units.hertz"].value,
+    METERS: strings["doppler-effect.units.meters"].value,
+  },
+  GRAPHS: {
+    EMITTED_SOUND: strings["doppler-effect.graphs.emittedSound"].value,
+    OBSERVED_SOUND: strings["doppler-effect.graphs.observedSound"].value,
+    EMITTED_FREQUENCY: strings["doppler-effect.graphs.emittedFrequency"].value,
+    OBSERVED_FREQUENCY: strings["doppler-effect.graphs.observedFrequency"].value,
+  },
+  SHIFT: {
+    BLUESHIFT: strings["doppler-effect.shift.blueshift"].value,
+    REDSHIFT: strings["doppler-effect.shift.redshift"].value,
+  },
+  HELP: {
+    DRAG_AND_DROP: strings["doppler-effect.help.dragAndDrop"].value,
+    KEYBOARD_CONTROLS: strings["doppler-effect.help.keyboardControls"].value,
+    OBJECT_SELECTION: strings["doppler-effect.help.objectSelection"].value,
+    CONTROLS: strings["doppler-effect.help.controls"].value,
+    ADJUST: strings["doppler-effect.help.adjust"].value,
+    SCENARIOS: strings["doppler-effect.help.scenarios"].value,
+  }
+};
 
 /**
  * View for the Doppler Effect simulation
@@ -354,11 +393,10 @@ export class SimScreenView extends ScreenView {
 
     // Create a panel
     const items: VerticalCheckboxGroupItem[] = [
-      // Add three checkboxes
       {
         property: this.visibleValuesProperty,
         createNode: () =>
-          new Text("Values", {
+          new Text(STRINGS.CONTROLS.VALUES, {
             font: new PhetFont(14),
             fill: this.UI.TEXT_COLOR,
           }),
@@ -366,7 +404,7 @@ export class SimScreenView extends ScreenView {
       {
         property: this.visibleVelocityArrowProperty,
         createNode: () =>
-          new Text("Velocity Arrows", {
+          new Text(STRINGS.CONTROLS.VELOCITY_ARROWS, {
             font: new PhetFont(14),
             fill: this.UI.TEXT_COLOR,
           }),
@@ -374,7 +412,7 @@ export class SimScreenView extends ScreenView {
       {
         property: this.visibleLineOfSightProperty,
         createNode: () =>
-          new Text("Line of Sight", {
+          new Text(STRINGS.CONTROLS.LINE_OF_SIGHT, {
             font: new PhetFont(14),
             fill: this.UI.TEXT_COLOR,
           }),
@@ -384,13 +422,13 @@ export class SimScreenView extends ScreenView {
     const checkboxGroup = new VerticalCheckboxGroup(items);
 
     const soundSpeedControl = new NumberControl(
-      "Speed of Sound",
+      STRINGS.CONTROLS.SOUND_SPEED,
       this.model.soundSpeedProperty,
       this.model.soundSpeedRange,
       {
         layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
         numberDisplayOptions: {
-          valuePattern: "{{value}} m/s",
+          valuePattern: STRINGS.UNITS.METERS_PER_SECOND,
         },
         titleNodeOptions: {
           font: new PhetFont(12),
@@ -401,13 +439,13 @@ export class SimScreenView extends ScreenView {
     soundSpeedControl.top = checkboxGroup.bottom + 10;
 
     const frequencyControl = new NumberControl(
-      "Frequency",
+      STRINGS.CONTROLS.FREQUENCY,
       this.model.emittedFrequencyProperty,
       this.model.frequencyRange,
       {
         layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
         numberDisplayOptions: {
-          valuePattern: "{{value}} Hz",
+          valuePattern: STRINGS.UNITS.HERTZ,
         },
         titleNodeOptions: {
           font: new PhetFont(12),
@@ -550,14 +588,14 @@ export class SimScreenView extends ScreenView {
     });
 
     // Add graph titles
-    const emittedTitle = new Text("Emitted Sound", {
+    const emittedTitle = new Text(STRINGS.GRAPHS.EMITTED_SOUND, {
       font: new PhetFont(12),
       fill: this.UI.TEXT_COLOR,
       left: graphX + 5,
       top: graphY1 + 15,
     });
 
-    const observedTitle = new Text("Observed Sound", {
+    const observedTitle = new Text(STRINGS.GRAPHS.OBSERVED_SOUND, {
       font: new PhetFont(12),
       fill: this.UI.TEXT_COLOR,
       left: graphX + 5,
@@ -610,7 +648,7 @@ export class SimScreenView extends ScreenView {
       visibleProperty: this.visibleValuesProperty,
     });
 
-    const selectedObject = new Text("Selected: Source", {
+    const selectedObject = new Text(STRINGS.SELECTED_OBJECT.replace("{{object}}", "Source"), {
       font: new PhetFont(14),
       fill: this.UI.SELECTION_COLOR,
       left: 120,
@@ -897,7 +935,7 @@ export class SimScreenView extends ScreenView {
     this.instructionsBox.addChild(background);
 
     // Title
-    const title = new Text("Doppler Effect Simulation Controls", {
+    const title = new Text(STRINGS.TITLE, {
       font: new PhetFont({ size: 16, weight: "bold" }),
       fill: this.UI.TEXT_COLOR,
       centerX: background.centerX,
@@ -907,12 +945,12 @@ export class SimScreenView extends ScreenView {
 
     // Instructions text
     const instructions = [
-      "Click and drag source (red) or observer (green) to move them",
-      "Keyboard Controls:",
-      "S: Select source | O: Select observer | Arrow keys: Move selected object",
-      "Space: Pause/Resume | R: Reset | H: Toggle help",
-      "+/-: Adjust emitted frequency | ,/.: Adjust sound speed",
-      "1-4: Load preset scenarios (approaching source, observer, etc.)",
+      STRINGS.HELP.DRAG_AND_DROP,
+      STRINGS.HELP.KEYBOARD_CONTROLS,
+      STRINGS.HELP.OBJECT_SELECTION,
+      STRINGS.HELP.CONTROLS,
+      STRINGS.HELP.ADJUST,
+      STRINGS.HELP.SCENARIOS,
     ];
 
     let yPosition = title.bottom + 15;
@@ -1004,23 +1042,25 @@ export class SimScreenView extends ScreenView {
    */
   private updateStatus(): void {
     // Update selection status text
-    this.statusTexts.selectedObject.string = `Selected: ${
-      this.selectedObject === "source" ? "Source" : "Observer"
-    }`;
+    const selectedObjectName = this.selectedObject === "source" 
+      ? STRINGS.SOURCE 
+      : STRINGS.OBSERVER;
+    
+    this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace("{{object}}", selectedObjectName);
 
     // Update frequency text displays
     const emittedFreq = this.model.emittedFrequencyProperty.value;
     const observedFreq = this.model.observedFrequencyProperty.value;
 
-    this.statusTexts.emittedFreq.string = `Emitted Freq.: ${emittedFreq.toFixed(2)} Hz`;
-    this.statusTexts.observedFreq.string = `Observed Freq.: ${observedFreq.toFixed(2)} Hz`;
+    this.statusTexts.emittedFreq.string = STRINGS.GRAPHS.EMITTED_FREQUENCY.replace("{{value}}", emittedFreq.toFixed(2));
+    this.statusTexts.observedFreq.string = STRINGS.GRAPHS.OBSERVED_FREQUENCY.replace("{{value}}", observedFreq.toFixed(2));
 
-    // Update Doppler shift status text (red/blue shift)
+    // Update Doppler shift status text
     if (observedFreq > emittedFreq) {
-      this.statusTexts.shiftStatus.string = "Blueshifted (approaching)";
+      this.statusTexts.shiftStatus.string = STRINGS.SHIFT.BLUESHIFT;
       this.statusTexts.shiftStatus.fill = this.UI.BLUESHIFT_COLOR;
     } else if (observedFreq < emittedFreq) {
-      this.statusTexts.shiftStatus.string = "Redshifted (receding)";
+      this.statusTexts.shiftStatus.string = STRINGS.SHIFT.REDSHIFT;
       this.statusTexts.shiftStatus.fill = this.UI.REDSHIFT_COLOR;
     } else {
       this.statusTexts.shiftStatus.string = "";
@@ -1047,13 +1087,13 @@ export class SimScreenView extends ScreenView {
       this.selectionHighlight.center = this.modelToView(
         this.model.sourcePositionProperty.value,
       );
-      this.statusTexts.selectedObject.string = "Selected: Source";
+      this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace("{{object}}", STRINGS.SOURCE);
     } else {
       this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
       this.selectionHighlight.center = this.modelToView(
         this.model.observerPositionProperty.value,
       );
-      this.statusTexts.selectedObject.string = "Selected: Observer";
+      this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace("{{object}}", STRINGS.OBSERVER);
     }
   }
 
