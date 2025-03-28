@@ -251,7 +251,7 @@ export class SimModel {
     // Apply time scaling to convert real time to model time
     // This ensures that 1 second of real time = 0.5 seconds of model time
     // Also apply the user-selected time speed factor from timeSpeedProperty
-    const modelDt = dt * SCALE.TIME_SCALE * this.getTimeSpeedValue();
+    const modelDt = dt * SCALE.TIME * this.getTimeSpeedValue();
 
     // Update simulation time (in model seconds)
     this.simulationTimeProperty.value += modelDt;

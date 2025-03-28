@@ -131,7 +131,7 @@ export class SimScreenView extends ScreenView {
       ModelViewTransform2.createSinglePointScaleInvertedYMapping(
         new Vector2(0, 0),
         new Vector2(this.layoutBounds.centerX, this.layoutBounds.centerY),
-        SCALE.MODEL_VIEW_SCALE,
+        SCALE.MODEL_VIEW,
       );
 
     this.visibleValuesProperty = new Property<boolean>(false);
@@ -850,13 +850,13 @@ export class SimScreenView extends ScreenView {
 
         // Preset scenarios
         if (key === "1") {
-          this.model.setupScenario1();
+          this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_1);
         } else if (key === "2") {
-          this.model.setupScenario2();
+          this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_2);
         } else if (key === "3") {
-          this.model.setupScenario3();
+          this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_3);
         } else if (key === "4") {
-          this.model.setupScenario4();
+          this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_4);
         }
 
         // Adjust emitted frequency
@@ -950,13 +950,13 @@ export class SimScreenView extends ScreenView {
 
       // Preset scenarios
       if (key === "1") {
-        this.model.setupScenario1();
+        this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_1);
       } else if (key === "2") {
-        this.model.setupScenario2();
+        this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_2);
       } else if (key === "3") {
-        this.model.setupScenario3();
+        this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_3);
       } else if (key === "4") {
-        this.model.setupScenario4();
+        this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_4);
       }
 
       // Adjust emitted frequency
@@ -1112,7 +1112,7 @@ export class SimScreenView extends ScreenView {
     // Scale velocity vector for visualization
     // First scale by the model-view transform to convert m/s to pixels/s
     // Then scale by VELOCITY_VECTOR_SCALE to make it more visible
-    const scaledVelocity = velocity.timesScalar(SCALE.VELOCITY_VECTOR_SCALE);
+    const scaledVelocity = velocity.timesScalar(SCALE.VELOCITY_VECTOR);
     const viewVelocity = this.modelToViewDelta(scaledVelocity);
 
     // Create arrow node
