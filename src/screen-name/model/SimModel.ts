@@ -153,8 +153,8 @@ export class SimModel {
     }
 
     // Add listener for scenario changes
-    this.scenarioProperty.lazyLink(() => {
-      this.applyScenario();
+    this.scenarioProperty.lazyLink((scenario) => {
+      this.applyScenario(scenario);
     });
   }
 
@@ -228,7 +228,7 @@ export class SimModel {
    * @param force - optional parameter to force stepping even when paused
    */
   public step(dt: number, force: boolean = false): void {
-    if (!this.playProperty.value && !force) return;
+    if (!this.playProperty.value && !force ) return;
 
     // Apply time scaling to convert real time to model time
     // This ensures that 1 second of real time = 0.5 seconds of model time
@@ -524,8 +524,9 @@ export class SimModel {
 
   /**
    * Apply the current scenario settings
+   * @param scenario - the scenario to apply
    */
-  private applyScenario(): void {
+  private applyScenario(scenario: string): void {
     // Reset velocities and positions first
     this.sourceVelocityProperty.value = new Vector2(0, 0);
     this.observerVelocityProperty.value = new Vector2(0, 0);
@@ -541,7 +542,7 @@ export class SimModel {
     this.observerMovingProperty.value = false;
 
     // Apply scenario-specific settings
-    switch (this.scenarioProperty.value) {
+    switch (scenario) {
       case SCENARIO_OPTIONS.SCENARIO_1:
         this.setupScenario1();
         break;
