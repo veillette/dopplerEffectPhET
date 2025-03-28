@@ -54,7 +54,8 @@ const STRINGS = {
     EMITTED_SOUND: strings["doppler-effect.graphs.emittedSound"].value,
     OBSERVED_SOUND: strings["doppler-effect.graphs.observedSound"].value,
     EMITTED_FREQUENCY: strings["doppler-effect.graphs.emittedFrequency"].value,
-    OBSERVED_FREQUENCY: strings["doppler-effect.graphs.observedFrequency"].value,
+    OBSERVED_FREQUENCY:
+      strings["doppler-effect.graphs.observedFrequency"].value,
   },
   SHIFT: {
     BLUESHIFT: strings["doppler-effect.shift.blueshift"].value,
@@ -67,7 +68,7 @@ const STRINGS = {
     CONTROLS: strings["doppler-effect.help.controls"].value,
     ADJUST: strings["doppler-effect.help.adjust"].value,
     SCENARIOS: strings["doppler-effect.help.scenarios"].value,
-  }
+  },
 };
 
 /**
@@ -648,12 +649,15 @@ export class SimScreenView extends ScreenView {
       visibleProperty: this.visibleValuesProperty,
     });
 
-    const selectedObject = new Text(STRINGS.SELECTED_OBJECT.replace("{{object}}", "Source"), {
-      font: new PhetFont(14),
-      fill: this.UI.SELECTION_COLOR,
-      left: 120,
-      bottom: this.layoutBounds.maxY - 15,
-    });
+    const selectedObject = new Text(
+      STRINGS.SELECTED_OBJECT.replace("{{object}}", "Source"),
+      {
+        font: new PhetFont(14),
+        fill: this.UI.SELECTION_COLOR,
+        left: 120,
+        bottom: this.layoutBounds.maxY - 15,
+      },
+    );
 
     // Add to control layer
     this.controlLayer.addChild(emittedFreq);
@@ -1042,18 +1046,28 @@ export class SimScreenView extends ScreenView {
    */
   private updateStatus(): void {
     // Update selection status text
-    const selectedObjectName = this.selectedObject === "source" 
-      ? STRINGS.SOURCE 
-      : STRINGS.OBSERVER;
-    
-    this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace("{{object}}", selectedObjectName);
+    const selectedObjectName =
+      this.selectedObject === "source" ? STRINGS.SOURCE : STRINGS.OBSERVER;
+
+    this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace(
+      "{{object}}",
+      selectedObjectName,
+    );
 
     // Update frequency text displays
     const emittedFreq = this.model.emittedFrequencyProperty.value;
     const observedFreq = this.model.observedFrequencyProperty.value;
 
-    this.statusTexts.emittedFreq.string = STRINGS.GRAPHS.EMITTED_FREQUENCY.replace("{{value}}", emittedFreq.toFixed(2));
-    this.statusTexts.observedFreq.string = STRINGS.GRAPHS.OBSERVED_FREQUENCY.replace("{{value}}", observedFreq.toFixed(2));
+    this.statusTexts.emittedFreq.string =
+      STRINGS.GRAPHS.EMITTED_FREQUENCY.replace(
+        "{{value}}",
+        emittedFreq.toFixed(2),
+      );
+    this.statusTexts.observedFreq.string =
+      STRINGS.GRAPHS.OBSERVED_FREQUENCY.replace(
+        "{{value}}",
+        observedFreq.toFixed(2),
+      );
 
     // Update Doppler shift status text
     if (observedFreq > emittedFreq) {
@@ -1087,13 +1101,19 @@ export class SimScreenView extends ScreenView {
       this.selectionHighlight.center = this.modelToView(
         this.model.sourcePositionProperty.value,
       );
-      this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace("{{object}}", STRINGS.SOURCE);
+      this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace(
+        "{{object}}",
+        STRINGS.SOURCE,
+      );
     } else {
       this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
       this.selectionHighlight.center = this.modelToView(
         this.model.observerPositionProperty.value,
       );
-      this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace("{{object}}", STRINGS.OBSERVER);
+      this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace(
+        "{{object}}",
+        STRINGS.OBSERVER,
+      );
     }
   }
 
