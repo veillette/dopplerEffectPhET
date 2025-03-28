@@ -684,6 +684,11 @@ export class SimScreenView extends ScreenView {
     this.model.waves.addItemRemovedListener((wave) => {
       this.removeWaveNode(wave);
     });
+    
+    // Listen for time speed changes to update waveform displays
+    this.model.timeSpeedProperty.lazyLink(() => {
+      this.updateWaveforms();
+    });
   }
 
   /**
@@ -1249,41 +1254,59 @@ export class SimScreenView extends ScreenView {
    */
   private updateWaveforms(): void {
     // Update emitted sound waveform
-    const emittedShape = new Shape();
-    const graphX = this.emittedGraph.left;
-    const graphY = this.emittedGraph.centerY;
-    const graphWidth = this.emittedGraph.width;
-
-    // Start at left edge
-    emittedShape.moveToPoint(new Vector2(graphX, graphY));
-
-    // Draw waveform for emitted sound
-    const emittedData = this.model.emittedSoundData;
-    for (let i = 0; i < emittedData.length; i++) {
-      const x = graphX + (i / emittedData.length) * graphWidth;
-      const y = graphY - emittedData[i];
-      emittedShape.lineToPoint(new Vector2(x, y));
-    }
-
-    this.emittedWaveform.shape = emittedShape;
+    this.emittedWaveform.shape = this.createWaveformShape(
+      this.emittedGraph.left,
+      this.emittedGraph.centerY,
+      this.emittedGraph.width,
+      this.model.emittedWaveformData
+    );
 
     // Update observed sound waveform
-    const observedShape = new Shape();
-    const obsGraphX = this.observedGraph.left;
-    const obsGraphY = this.observedGraph.centerY;
+    this.observedWaveform.shape = this.createWaveformShape(
+      this.observedGraph.left,
+      this.observedGraph.centerY,
+      this.observedGraph.width,
+      this.model.observedWaveformData
+    );
+  }
 
+  /**
+   * Create a waveform shape from waveform data
+   * @param graphX The x-coordinate of the left edge of the graph
+   * @param graphY The y-coordinate of the center of the graph
+   * @param graphWidth The width of the graph
+   * @param waveformData The waveform data to render
+   * @returns A Shape object representing the waveform
+   */
+  private createWaveformShape(
+    graphX: number,
+    graphY: number,
+    graphWidth: number,
+    waveformData: { x: number; y: number }[]
+  ): Shape {
+    const shape = new Shape();
+    
     // Start at left edge
-    observedShape.moveToPoint(new Vector2(obsGraphX, obsGraphY));
-
-    // Draw waveform for observed sound
-    const observedData = this.model.observedSoundData;
-    for (let i = 0; i < observedData.length; i++) {
-      const x = obsGraphX + (i / observedData.length) * graphWidth;
-      const y = obsGraphY - observedData[i];
-      observedShape.lineToPoint(new Vector2(x, y));
+    shape.moveToPoint(new Vector2(graphX, graphY));
+    
+    let firstValidPointFound = false;
+    
+    for (let i = 0; i < waveformData.length; i++) {
+      // Calculate x position, clamping to graph boundaries
+      // This ensures we handle time-scaled x values correctly
+      const xRatio = Math.max(0, Math.min(1, waveformData[i].x));
+      const x = graphX + xRatio * graphWidth;
+      const y = graphY - waveformData[i].y;
+      
+      if (!firstValidPointFound) {
+        shape.moveToPoint(new Vector2(x, y));
+        firstValidPointFound = true;
+      } else {
+        shape.lineToPoint(new Vector2(x, y));
+      }
     }
-
-    this.observedWaveform.shape = observedShape;
+    
+    return shape;
   }
 
   /**

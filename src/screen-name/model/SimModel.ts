@@ -94,6 +94,10 @@ export class SimModel {
   // Sound data for graphs (unitless amplitude values)
   public readonly emittedSoundData: number[] = [];
   public readonly observedSoundData: number[] = [];
+  
+  // New emitted and observed waveforms data for view
+  public readonly emittedWaveformData: { x: number; y: number }[] = [];
+  public readonly observedWaveformData: { x: number; y: number }[] = [];
 
   // Phase accumulators (in radians)
   private emittedPhase: number = 0;
@@ -150,11 +154,21 @@ export class SimModel {
     for (let i = 0; i < SOUND_DATA.ARRAY_SIZE; i++) {
       this.emittedSoundData.push(0);
       this.observedSoundData.push(0);
+      
+      // Initialize waveform data arrays
+      this.emittedWaveformData.push({ x: i / SOUND_DATA.ARRAY_SIZE, y: 0 });
+      this.observedWaveformData.push({ x: i / SOUND_DATA.ARRAY_SIZE, y: 0 });
     }
 
     // Add listener for scenario changes
     this.scenarioProperty.lazyLink((scenario) => {
       this.applyScenario(scenario);
+    });
+    
+    // Add listener for time speed changes to update waveforms
+    this.timeSpeedProperty.lazyLink(() => {
+      this.updateEmittedWaveformData();
+      this.updateObservedWaveformData();
     });
   }
 
@@ -205,6 +219,10 @@ export class SimModel {
     for (let i = 0; i < this.emittedSoundData.length; i++) {
       this.emittedSoundData[i] = 0;
       this.observedSoundData[i] = 0;
+      
+      // Reset waveform data
+      this.emittedWaveformData[i] = { x: i / SOUND_DATA.ARRAY_SIZE, y: 0 };
+      this.observedWaveformData[i] = { x: i / SOUND_DATA.ARRAY_SIZE, y: 0 };
     }
   }
 
@@ -364,6 +382,9 @@ export class SimModel {
     // Update emitted sound data
     this.emittedSoundData.push(Math.sin(this.emittedPhase) * 30);
     this.emittedSoundData.shift();
+    
+    // Update emitted waveform data
+    this.updateEmittedWaveformData();
 
     // Find waves affecting the observer
     const wavesAtObserver: Array<{ wave: Wave; arrivalTime: number }> = [];
@@ -422,6 +443,45 @@ export class SimModel {
     // Update observed sound data
     this.observedSoundData.push(Math.sin(this.observedPhase) * 30);
     this.observedSoundData.shift();
+    
+    // Update observed waveform data
+    this.updateObservedWaveformData();
+  }
+  
+  /**
+   * Update emitted and observed waveform data for the view
+   * @param waveformData The target waveform data array to update
+   * @param soundData The source sound data array
+   */
+  private updateWaveformData(waveformData: { x: number; y: number }[], soundData: number[]): void {
+    // Apply time speed factor to the waveform display
+    const timeSpeedFactor = this.getTimeSpeedValue();
+    
+    for (let i = 0; i < soundData.length; i++) {
+      // Scale x-position by time speed to show proper time compression/expansion
+      // When time is slowed (timeSpeedFactor < 1), waveform should stretch horizontally (wavelength increases)
+      // When time is accelerated (timeSpeedFactor > 1), waveform should compress horizontally (wavelength decreases)
+      waveformData[i] = {
+        // We multiply by timeSpeedFactor to achieve the correct relationship:
+        // slower time = stretched waveform, faster time = compressed waveform
+        x: (i / soundData.length) * timeSpeedFactor,
+        y: soundData[i]
+      };
+    }
+  }
+  
+  /**
+   * Update the emitted waveform data for the view
+   */
+  private updateEmittedWaveformData(): void {
+    this.updateWaveformData(this.emittedWaveformData, this.emittedSoundData);
+  }
+  
+  /**
+   * Update the observed waveform data for the view
+   */
+  private updateObservedWaveformData(): void {
+    this.updateWaveformData(this.observedWaveformData, this.observedSoundData);
   }
 
   /**
