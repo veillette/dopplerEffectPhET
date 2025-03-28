@@ -11,6 +11,12 @@
 
 import { Vector2 } from "scenerystack";
 
+// Add this interface near the top of the file with other type definitions
+export interface WaveformPoint {
+  t: number;  // Time value
+  y: number;  // Amplitude value
+}
+
 // Physical constants in SI units
 export const PHYSICS = {
   SOUND_SPEED: 343.0, // Speed of sound in air (m/s) at room temperature

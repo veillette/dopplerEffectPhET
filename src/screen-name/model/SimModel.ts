@@ -17,6 +17,7 @@ import {
   SOUND_DATA,
   SCENARIOS,
   SCALE,
+  WaveformPoint,
 } from "./SimConstants";
 
 // Export the Wave interface
@@ -96,8 +97,8 @@ export class SimModel {
   public readonly observedSoundData: number[] = [];
   
   // New emitted and observed waveforms data for view
-  public readonly emittedWaveformData: { x: number; y: number }[] = [];
-  public readonly observedWaveformData: { x: number; y: number }[] = [];
+  public readonly emittedWaveformData: WaveformPoint[] = [];
+  public readonly observedWaveformData: WaveformPoint[] = [];
 
   // Phase accumulators (in radians)
   private emittedPhase: number = 0;
@@ -155,9 +156,9 @@ export class SimModel {
       this.emittedSoundData.push(0);
       this.observedSoundData.push(0);
       
-      // Initialize waveform data arrays
-      this.emittedWaveformData.push({ x: i / SOUND_DATA.ARRAY_SIZE, y: 0 });
-      this.observedWaveformData.push({ x: i / SOUND_DATA.ARRAY_SIZE, y: 0 });
+      // Initialize waveform data arrays with t instead of x
+      this.emittedWaveformData.push({ t: i / SOUND_DATA.ARRAY_SIZE, y: 0 });
+      this.observedWaveformData.push({ t: i / SOUND_DATA.ARRAY_SIZE, y: 0 });
     }
 
     // Add listener for scenario changes
@@ -220,9 +221,9 @@ export class SimModel {
       this.emittedSoundData[i] = 0;
       this.observedSoundData[i] = 0;
       
-      // Reset waveform data
-      this.emittedWaveformData[i] = { x: i / SOUND_DATA.ARRAY_SIZE, y: 0 };
-      this.observedWaveformData[i] = { x: i / SOUND_DATA.ARRAY_SIZE, y: 0 };
+      // Reset waveform data with t instead of x
+      this.emittedWaveformData[i] = { t: i / SOUND_DATA.ARRAY_SIZE, y: 0 };
+      this.observedWaveformData[i] = { t: i / SOUND_DATA.ARRAY_SIZE, y: 0 };
     }
   }
 
@@ -453,18 +454,15 @@ export class SimModel {
    * @param waveformData The target waveform data array to update
    * @param soundData The source sound data array
    */
-  private updateWaveformData(waveformData: { x: number; y: number }[], soundData: number[]): void {
+  private updateWaveformData(waveformData: WaveformPoint[], soundData: number[]): void {
     // Apply time speed factor to the waveform display
     const timeSpeedFactor = this.getTimeSpeedValue();
     
     for (let i = 0; i < soundData.length; i++) {
-      // Scale x-position by time speed to show proper time compression/expansion
-      // When time is slowed (timeSpeedFactor < 1), waveform should stretch horizontally (wavelength increases)
-      // When time is accelerated (timeSpeedFactor > 1), waveform should compress horizontally (wavelength decreases)
+      // Scale t-position by time speed to show proper time compression/expansion
       waveformData[i] = {
-        // We multiply by timeSpeedFactor to achieve the correct relationship:
-        // slower time = stretched waveform, faster time = compressed waveform
-        x: (i / soundData.length) * timeSpeedFactor,
+        // We multiply by timeSpeedFactor to achieve the correct relationship
+        t: (i / soundData.length) * timeSpeedFactor,
         y: soundData[i]
       };
     }

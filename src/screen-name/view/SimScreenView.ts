@@ -1282,7 +1282,7 @@ export class SimScreenView extends ScreenView {
     graphX: number,
     graphY: number,
     graphWidth: number,
-    waveformData: { x: number; y: number }[]
+    waveformData: WaveformPoint[]
   ): Shape {
     const shape = new Shape();
     
@@ -1292,10 +1292,9 @@ export class SimScreenView extends ScreenView {
     let firstValidPointFound = false;
     
     for (let i = 0; i < waveformData.length; i++) {
-      // Calculate x position, clamping to graph boundaries
-      // This ensures we handle time-scaled x values correctly
-      const xRatio = Math.max(0, Math.min(1, waveformData[i].x));
-      const x = graphX + xRatio * graphWidth;
+      // Calculate x position using t instead of x
+      const tRatio = Math.max(0, Math.min(1, waveformData[i].t));
+      const x = graphX + tRatio * graphWidth;
       const y = graphY - waveformData[i].y;
       
       if (!firstValidPointFound) {
