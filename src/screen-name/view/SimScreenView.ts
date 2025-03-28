@@ -1256,13 +1256,6 @@ export class SimScreenView extends ScreenView {
   }
 
   /**
-   * Convert view distance (pixels) to model distance (meters)
-   */
-  private viewToModelDelta(viewDelta: Vector2): Vector2 {
-    return this.modelViewTransform.viewToModelDelta(viewDelta);
-  }
-
-  /**
    * Update a velocity vector visualization
    */
   private updateVelocityVector(
