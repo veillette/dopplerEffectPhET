@@ -13,8 +13,8 @@ import { Vector2 } from "scenerystack";
 
 // Add this interface near the top of the file with other type definitions
 export interface WaveformPoint {
-  t: number;  // Time value in seconds (s)
-  y: number;  // Amplitude value (dimensionless)
+  t: number; // Time value in seconds (s)
+  y: number; // Amplitude value (dimensionless)
 }
 
 // Physical constants in SI units
@@ -68,11 +68,11 @@ export const SCENARIOS = {
 export const SCALE = {
   // Time scaling: 1 second in model time = 0.1 seconds in real time
   TIME: 0.1, // Dimensionless scaling factor
-  
+
   // Velocity visualization scaling
   // This scales the velocity vectors to make them more visible on screen
   VELOCITY_VECTOR: 0.5, // Dimensionless scaling factor
-  
+
   // Scale factor for converting between model and view coordinates (2 "pixels" per meter)
   MODEL_VIEW: 2, // Pixels per meter (pixels/m)
 } as const;

@@ -9,43 +9,43 @@ import { WAVE } from "./SimConstants";
  */
 export class WaveGenerator {
   // Time tracking (in seconds)
-  private lastWaveTime: number = 0;  // in seconds (s)
+  private lastWaveTime: number = 0; // in seconds (s)
 
   /**
    * Create a new WaveGenerator
    */
   constructor(
     private readonly waves: ObservableArray<Wave>,
-    private readonly getSimulationTime: () => number,  // returns time in seconds (s)
-    private readonly getSourcePosition: () => Vector2,  // returns position in meters (m)
-    private readonly getSourceVelocity: () => Vector2,  // returns velocity in meters/second (m/s)
-    private readonly getEmittedFrequency: () => number,  // returns frequency in Hertz (Hz)
-    private readonly getSoundSpeed: () => number,  // returns speed in meters/second (m/s)
-    private readonly getEmittedPhase: () => number  // returns phase in radians (rad)
+    private readonly getSimulationTime: () => number, // returns time in seconds (s)
+    private readonly getSourcePosition: () => Vector2, // returns position in meters (m)
+    private readonly getSourceVelocity: () => Vector2, // returns velocity in meters/second (m/s)
+    private readonly getEmittedFrequency: () => number, // returns frequency in Hertz (Hz)
+    private readonly getSoundSpeed: () => number, // returns speed in meters/second (m/s)
+    private readonly getEmittedPhase: () => number, // returns phase in radians (rad)
   ) {}
 
   /**
    * Generate new waves based on emitted frequency
    */
   public generateWaves(): void {
-    const simulationTime = this.getSimulationTime();  // in seconds (s)
-    const waveInterval = 1.0 / this.getEmittedFrequency();  // in seconds (s)
+    const simulationTime = this.getSimulationTime(); // in seconds (s)
+    const waveInterval = 1.0 / this.getEmittedFrequency(); // in seconds (s)
 
     // Check if it's time to emit a new wave
     if (simulationTime - this.lastWaveTime > waveInterval) {
       // Create a new wave
       this.waves.add({
-        position: this.getSourcePosition().copy(),  // in meters (m)
-        radius: 0,  // in meters (m)
-        speedOfSound: this.getSoundSpeed(),  // in meters/second (m/s)
-        birthTime: simulationTime,  // in seconds (s)
-        sourceVelocity: this.getSourceVelocity().copy(),  // in meters/second (m/s)
-        sourceFrequency: this.getEmittedFrequency(),  // in Hertz (Hz)
-        phaseAtEmission: this.getEmittedPhase(),  // in radians (rad)
+        position: this.getSourcePosition().copy(), // in meters (m)
+        radius: 0, // in meters (m)
+        speedOfSound: this.getSoundSpeed(), // in meters/second (m/s)
+        birthTime: simulationTime, // in seconds (s)
+        sourceVelocity: this.getSourceVelocity().copy(), // in meters/second (m/s)
+        sourceFrequency: this.getEmittedFrequency(), // in Hertz (Hz)
+        phaseAtEmission: this.getEmittedPhase(), // in radians (rad)
       });
 
       // Update last wave time (in seconds)
-      this.lastWaveTime = simulationTime;  // in seconds (s)
+      this.lastWaveTime = simulationTime; // in seconds (s)
     }
   }
 
@@ -59,18 +59,19 @@ export class WaveGenerator {
       const wave = this.waves.get(i);
 
       // Calculate age in seconds (s)
-      const age = simulationTime - wave.birthTime;  // in seconds (s)
+      const age = simulationTime - wave.birthTime; // in seconds (s)
 
       // Update radius based on age and sound speed (in meters)
-      wave.radius = age * wave.speedOfSound;  // in meters (m)
+      wave.radius = age * wave.speedOfSound; // in meters (m)
 
       // Remove waves that are too old
-      if (age > WAVE.MAX_AGE) {  // WAVE.MAX_AGE in seconds (s)
+      if (age > WAVE.MAX_AGE) {
+        // WAVE.MAX_AGE in seconds (s)
         this.waves.remove(wave);
       }
     }
   }
-  
+
   /**
    * Reset the wave generator state
    */
@@ -78,4 +79,4 @@ export class WaveGenerator {
     this.lastWaveTime = 0;
     this.waves.clear();
   }
-} 
+}

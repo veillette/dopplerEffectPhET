@@ -56,32 +56,32 @@ export const TIME_SPEED = {
  */
 export class SimModel {
   // Properties for physics simulation
-  public readonly soundSpeedProperty: NumberProperty;  // in meters per second (m/s)
-  public readonly emittedFrequencyProperty: NumberProperty;  // in Hertz (Hz)
+  public readonly soundSpeedProperty: NumberProperty; // in meters per second (m/s)
+  public readonly emittedFrequencyProperty: NumberProperty; // in Hertz (Hz)
   public readonly scenarioProperty: StringProperty;
-  public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;  // dimensionless factor
-  public readonly soundSpeedRange: RangeWithValue;  // in meters per second (m/s)
-  public readonly frequencyRange: RangeWithValue;  // in Hertz (Hz)
+  public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>; // dimensionless factor
+  public readonly soundSpeedRange: RangeWithValue; // in meters per second (m/s)
+  public readonly frequencyRange: RangeWithValue; // in Hertz (Hz)
 
   // Source and observer objects
-  private readonly source: MovableObject;  // position in meters (m)
-  private readonly observer: MovableObject;  // position in meters (m)
-  
+  private readonly source: MovableObject; // position in meters (m)
+  private readonly observer: MovableObject; // position in meters (m)
+
   // For convenience, expose properties directly
-  public readonly sourcePositionProperty;  // in meters (m)
-  public readonly sourceVelocityProperty;  // in meters per second (m/s)
+  public readonly sourcePositionProperty; // in meters (m)
+  public readonly sourceVelocityProperty; // in meters per second (m/s)
   public readonly sourceMovingProperty;
-  public readonly observerPositionProperty;  // in meters (m)
-  public readonly observerVelocityProperty;  // in meters per second (m/s)
+  public readonly observerPositionProperty; // in meters (m)
+  public readonly observerVelocityProperty; // in meters per second (m/s)
   public readonly observerMovingProperty;
 
   // Simulation state properties
-  public readonly simulationTimeProperty: NumberProperty;  // in seconds (s)
-  public readonly observedFrequencyProperty: NumberProperty;  // in Hertz (Hz)
+  public readonly simulationTimeProperty: NumberProperty; // in seconds (s)
+  public readonly observedFrequencyProperty: NumberProperty; // in Hertz (Hz)
   public readonly playProperty: BooleanProperty;
 
   // Wave collection
-  public readonly waves: ObservableArray<Wave>;  // radius in meters (m)
+  public readonly waves: ObservableArray<Wave>; // radius in meters (m)
 
   // Specialized component classes
   private readonly waveGenerator: WaveGenerator;
@@ -89,19 +89,19 @@ export class SimModel {
   private readonly dopplerCalculator: DopplerCalculator;
 
   // Expose waveform data for view access
-  public get emittedWaveformData(): WaveformPoint[] { 
+  public get emittedWaveformData(): WaveformPoint[] {
     return this.waveformManager.emittedWaveformData;
   }
-  
+
   public get observedWaveformData(): WaveformPoint[] {
     return this.waveformManager.observedWaveformData;
   }
-  
+
   // Expose sound data for backward compatibility
   public get emittedSoundData(): number[] {
     return this.waveformManager.emittedSoundData;
   }
-  
+
   public get observedSoundData(): number[] {
     return this.waveformManager.observedSoundData;
   }
@@ -136,12 +136,12 @@ export class SimModel {
 
     // Initialize source and observer
     this.source = new MovableObject(
-      new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y)
+      new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y),
     );
     this.observer = new MovableObject(
-      new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y)
+      new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y),
     );
-    
+
     // Link properties for direct access
     this.sourcePositionProperty = this.source.positionProperty;
     this.sourceVelocityProperty = this.source.velocityProperty;
@@ -158,9 +158,9 @@ export class SimModel {
       () => this.sourceVelocityProperty.value,
       () => this.emittedFrequencyProperty.value,
       () => this.soundSpeedProperty.value,
-      () => this.waveformManager.getEmittedPhase()
+      () => this.waveformManager.getEmittedPhase(),
     );
-    
+
     this.waveformManager = new WaveformManager(SOUND_DATA.ARRAY_SIZE);
     this.dopplerCalculator = new DopplerCalculator();
 
@@ -168,7 +168,7 @@ export class SimModel {
     this.scenarioProperty.lazyLink((scenario) => {
       this.applyScenario(scenario);
     });
-    
+
     this.timeSpeedProperty.lazyLink(() => {
       // Just ensure latest data is used when time speed changes
       this.updateWaveforms(0);
@@ -189,8 +189,12 @@ export class SimModel {
     this.playProperty.reset();
 
     // Reset source and observer
-    this.source.reset(new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y));
-    this.observer.reset(new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y));
+    this.source.reset(
+      new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y),
+    );
+    this.observer.reset(
+      new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y),
+    );
 
     // Reset components
     this.waveGenerator.reset();
@@ -219,10 +223,10 @@ export class SimModel {
     if (!this.playProperty.value && !force) return;
 
     // Apply time scaling
-    const modelDt = dt * SCALE.TIME * this.getTimeSpeedValue();  // in seconds (s)
+    const modelDt = dt * SCALE.TIME * this.getTimeSpeedValue(); // in seconds (s)
 
     // Update simulation time
-    this.simulationTimeProperty.value += modelDt;  // in seconds (s)
+    this.simulationTimeProperty.value += modelDt; // in seconds (s)
 
     // Update positions
     this.source.updatePosition(modelDt);
@@ -245,14 +249,14 @@ export class SimModel {
     this.waveformManager.updateEmittedWaveform(
       this.emittedFrequencyProperty.value,
       dt,
-      this.getTimeSpeedValue()
+      this.getTimeSpeedValue(),
     );
 
     // Find waves affecting the observer
     const wavesAtObserver = this.dopplerCalculator.findWavesAtObserver(
       this.waves,
       this.observerPositionProperty.value,
-      this.soundSpeedProperty.value
+      this.soundSpeedProperty.value,
     );
 
     // If no waves have reached observer yet, clear observed waveform
@@ -266,7 +270,7 @@ export class SimModel {
     const arrivalTime = wavesAtObserver[0].arrivalTime;
 
     // Calculate time since wave arrival (in seconds)
-    const timeSinceArrival = this.simulationTimeProperty.value - arrivalTime;  // in seconds (s)
+    const timeSinceArrival = this.simulationTimeProperty.value - arrivalTime; // in seconds (s)
 
     // Get phase at arrival from original wave
     const phaseAtArrival = currentWave.phaseAtEmission;
@@ -276,7 +280,7 @@ export class SimModel {
       currentWave,
       this.observerPositionProperty.value,
       this.observerVelocityProperty.value,
-      this.soundSpeedProperty.value
+      this.soundSpeedProperty.value,
     );
 
     // Update observed frequency property
@@ -287,7 +291,7 @@ export class SimModel {
       observedFrequency,
       phaseAtArrival,
       timeSinceArrival,
-      this.getTimeSpeedValue()
+      this.getTimeSpeedValue(),
     );
   }
 
@@ -297,36 +301,44 @@ export class SimModel {
    */
   public setupScenario(scenario: string): void {
     this.reset();
-    
+
     switch (scenario) {
       case SCENARIO_OPTIONS.SCENARIO_1:
-        this.sourceVelocityProperty.value = SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity.copy();
-        this.observerVelocityProperty.value = SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity.copy();
+        this.sourceVelocityProperty.value =
+          SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity.copy();
+        this.observerVelocityProperty.value =
+          SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity.copy();
         this.sourceMovingProperty.value = true;
         this.observerMovingProperty.value = false;
         break;
-        
+
       case SCENARIO_OPTIONS.SCENARIO_2:
-        this.sourceVelocityProperty.value = SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity.copy();
-        this.observerVelocityProperty.value = SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity.copy();
+        this.sourceVelocityProperty.value =
+          SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity.copy();
+        this.observerVelocityProperty.value =
+          SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity.copy();
         this.sourceMovingProperty.value = false;
         this.observerMovingProperty.value = true;
         break;
-        
+
       case SCENARIO_OPTIONS.SCENARIO_3:
-        this.sourceVelocityProperty.value = SCENARIOS.MOVING_APART.sourceVelocity.copy();
-        this.observerVelocityProperty.value = SCENARIOS.MOVING_APART.observerVelocity.copy();
+        this.sourceVelocityProperty.value =
+          SCENARIOS.MOVING_APART.sourceVelocity.copy();
+        this.observerVelocityProperty.value =
+          SCENARIOS.MOVING_APART.observerVelocity.copy();
         this.sourceMovingProperty.value = true;
         this.observerMovingProperty.value = true;
         break;
-        
+
       case SCENARIO_OPTIONS.SCENARIO_4:
-        this.sourceVelocityProperty.value = SCENARIOS.PERPENDICULAR.sourceVelocity.copy();
-        this.observerVelocityProperty.value = SCENARIOS.PERPENDICULAR.observerVelocity.copy();
+        this.sourceVelocityProperty.value =
+          SCENARIOS.PERPENDICULAR.sourceVelocity.copy();
+        this.observerVelocityProperty.value =
+          SCENARIOS.PERPENDICULAR.observerVelocity.copy();
         this.sourceMovingProperty.value = true;
         this.observerMovingProperty.value = true;
         break;
-        
+
       case SCENARIO_OPTIONS.FREE_PLAY:
       default:
         // Free play mode - no initial velocities
@@ -346,13 +358,13 @@ export class SimModel {
     // Reset positions
     this.sourcePositionProperty.value = new Vector2(
       INITIAL_POSITIONS.SOURCE.x,
-      INITIAL_POSITIONS.SOURCE.y
+      INITIAL_POSITIONS.SOURCE.y,
     );
     this.observerPositionProperty.value = new Vector2(
       INITIAL_POSITIONS.OBSERVER.x,
-      INITIAL_POSITIONS.OBSERVER.y
+      INITIAL_POSITIONS.OBSERVER.y,
     );
-    
+
     // Apply the scenario settings
     this.setupScenario(scenario);
   }

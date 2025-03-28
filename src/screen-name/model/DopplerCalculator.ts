@@ -18,33 +18,31 @@ export class DopplerCalculator {
     wave: Wave,
     observerPosition: Vector2,
     observerVelocity: Vector2,
-    soundSpeed: number
+    soundSpeed: number,
   ): number {
     // Calculate unit vector from source to observer (dimensionless)
-    const direction = observerPosition.minus(wave.position).normalized();  // dimensionless unit vector
-    
+    const direction = observerPosition.minus(wave.position).normalized(); // dimensionless unit vector
+
     // Calculate velocity components along the direction vector
-    const sourceVelocityComponent = wave.sourceVelocity.dot(direction);  // in meters per second (m/s)
-    const observerVelocityComponent = observerVelocity.dot(direction);  // in meters per second (m/s)
-    
+    const sourceVelocityComponent = wave.sourceVelocity.dot(direction); // in meters per second (m/s)
+    const observerVelocityComponent = observerVelocity.dot(direction); // in meters per second (m/s)
+
     // Calculate observed frequency using Doppler formula:
     // f' = f * (v - v_o) / (v - v_s)
     // where f is emitted frequency, v is sound speed,
     // v_o is observer velocity component, v_s is source velocity component
-    const observedFreq = (
-      wave.sourceFrequency *  // in Hertz (Hz)
-      (soundSpeed - observerVelocityComponent)  // in meters per second (m/s)
-    ) / (
-      soundSpeed - sourceVelocityComponent  // in meters per second (m/s)
-    );  // result in Hertz (Hz)
-    
+    const observedFreq =
+      (wave.sourceFrequency * // in Hertz (Hz)
+        (soundSpeed - observerVelocityComponent)) / // in meters per second (m/s)
+      (soundSpeed - sourceVelocityComponent); // in meters per second (m/s) // result in Hertz (Hz)
+
     // Constrain to reasonable limits
     return Math.max(
-      PHYSICS.FREQ_MIN,  // in Hertz (Hz)
-      Math.min(observedFreq, wave.sourceFrequency * PHYSICS.FREQ_MAX_FACTOR)  // in Hertz (Hz)
+      PHYSICS.FREQ_MIN, // in Hertz (Hz)
+      Math.min(observedFreq, wave.sourceFrequency * PHYSICS.FREQ_MAX_FACTOR), // in Hertz (Hz)
     );
   }
-  
+
   /**
    * Find waves that have reached the observer and calculate arrival times
    * @param waves Array of all waves
@@ -55,27 +53,28 @@ export class DopplerCalculator {
   public findWavesAtObserver(
     waves: Wave[],
     observerPosition: Vector2,
-    soundSpeed: number
+    soundSpeed: number,
   ): Array<{ wave: Wave; arrivalTime: number }> {
     const wavesAtObserver: Array<{ wave: Wave; arrivalTime: number }> = [];
-    
+
     for (const wave of waves) {
       // Calculate distance from wave origin to observer
-      const distanceToObserver = wave.position.distance(observerPosition);  // in meters (m)
-      
+      const distanceToObserver = wave.position.distance(observerPosition); // in meters (m)
+
       // Check if wave has reached observer
-      if (wave.radius >= distanceToObserver) {  // both in meters (m)
+      if (wave.radius >= distanceToObserver) {
+        // both in meters (m)
         // Calculate arrival time
-        const travelTime = distanceToObserver / soundSpeed;  // in seconds (s)
-        const arrivalTime = wave.birthTime + travelTime;  // in seconds (s)
-        
-        wavesAtObserver.push({ wave, arrivalTime });  // arrivalTime in seconds (s)
+        const travelTime = distanceToObserver / soundSpeed; // in seconds (s)
+        const arrivalTime = wave.birthTime + travelTime; // in seconds (s)
+
+        wavesAtObserver.push({ wave, arrivalTime }); // arrivalTime in seconds (s)
       }
     }
-    
+
     // Sort by arrival time (most recent first)
     wavesAtObserver.sort((a, b) => b.arrivalTime - a.arrivalTime);
-    
-    return wavesAtObserver;  // arrivalTime in seconds (s)
+
+    return wavesAtObserver; // arrivalTime in seconds (s)
   }
-} 
+}

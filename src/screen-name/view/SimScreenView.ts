@@ -684,7 +684,7 @@ export class SimScreenView extends ScreenView {
     this.model.waves.addItemRemovedListener((wave) => {
       this.removeWaveNode(wave);
     });
-    
+
     // Listen for time speed changes to update waveform displays
     this.model.timeSpeedProperty.lazyLink(() => {
       this.updateGraphics();
@@ -963,21 +963,21 @@ export class SimScreenView extends ScreenView {
     // Update source and observer positions
     const sourcePos = this.model.sourcePositionProperty.value;
     const observerPos = this.model.observerPositionProperty.value;
-    
+
     this.sourceNode.center = this.modelToView(sourcePos);
     this.observerNode.center = this.modelToView(observerPos);
-    
+
     // Update connecting line between source and observer
     const viewSourcePos = this.modelToView(sourcePos);
     const viewObserverPos = this.modelToView(observerPos);
-    
+
     this.connectingLine.setLine(
       viewSourcePos.x,
       viewSourcePos.y,
       viewObserverPos.x,
-      viewObserverPos.y
+      viewObserverPos.y,
     );
-    
+
     // Update selection highlight position
     if (this.selectedObject === "source") {
       this.selectionHighlight.radius = this.UI.SOURCE_RADIUS + 5;
@@ -998,16 +998,16 @@ export class SimScreenView extends ScreenView {
       this.model.sourcePositionProperty.value,
       this.model.sourceVelocityProperty.value,
       this.UI.SOURCE_COLOR,
-      PHYSICS.MIN_VELOCITY_MAG
+      PHYSICS.MIN_VELOCITY_MAG,
     );
-    
+
     // Update observer velocity vector
     this.updateVelocityVector(
       this.observerVelocityVector,
       this.model.observerPositionProperty.value,
       this.model.observerVelocityProperty.value,
       this.UI.OBSERVER_COLOR,
-      PHYSICS.MIN_VELOCITY_MAG
+      PHYSICS.MIN_VELOCITY_MAG,
     );
   }
 
@@ -1019,14 +1019,14 @@ export class SimScreenView extends ScreenView {
     this.statusTexts.selectedObject.string = `Selected: ${
       this.selectedObject === "source" ? "Source" : "Observer"
     }`;
-    
+
     // Update frequency text displays
     const emittedFreq = this.model.emittedFrequencyProperty.value;
     const observedFreq = this.model.observedFrequencyProperty.value;
-    
+
     this.statusTexts.emittedFreq.string = `Emitted Freq.: ${emittedFreq.toFixed(2)} Hz`;
     this.statusTexts.observedFreq.string = `Observed Freq.: ${observedFreq.toFixed(2)} Hz`;
-    
+
     // Update Doppler shift status text (red/blue shift)
     if (observedFreq > emittedFreq) {
       this.statusTexts.shiftStatus.string = "Blueshifted (approaching)";
@@ -1045,7 +1045,7 @@ export class SimScreenView extends ScreenView {
   private updateGraphics(): void {
     // Update waveforms in the graph displays
     this.updateWaveforms();
-    
+
     // Update wave circles
     this.updateWaves();
   }
@@ -1184,7 +1184,7 @@ export class SimScreenView extends ScreenView {
       this.emittedGraph.left,
       this.emittedGraph.centerY,
       this.emittedGraph.width,
-      this.model.emittedWaveformData
+      this.model.emittedWaveformData,
     );
 
     // Update observed sound waveform
@@ -1192,7 +1192,7 @@ export class SimScreenView extends ScreenView {
       this.observedGraph.left,
       this.observedGraph.centerY,
       this.observedGraph.width,
-      this.model.observedWaveformData
+      this.model.observedWaveformData,
     );
   }
 
@@ -1208,21 +1208,21 @@ export class SimScreenView extends ScreenView {
     graphX: number,
     graphY: number,
     graphWidth: number,
-    waveformData: WaveformPoint[]
+    waveformData: WaveformPoint[],
   ): Shape {
     const shape = new Shape();
-    
+
     // Start at left edge
     shape.moveToPoint(new Vector2(graphX, graphY));
-    
+
     let firstValidPointFound = false;
-    
+
     for (let i = 0; i < waveformData.length; i++) {
       // Calculate x position using t instead of x
       const tRatio = Math.max(0, Math.min(1, waveformData[i].t));
       const x = graphX + tRatio * graphWidth;
       const y = graphY - waveformData[i].y;
-      
+
       if (!firstValidPointFound) {
         shape.moveToPoint(new Vector2(x, y));
         firstValidPointFound = true;
@@ -1230,7 +1230,7 @@ export class SimScreenView extends ScreenView {
         shape.lineToPoint(new Vector2(x, y));
       }
     }
-    
+
     return shape;
   }
 
