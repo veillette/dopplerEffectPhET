@@ -84,11 +84,11 @@ export class SimModel {
   private readonly observer: MovableObject; // position in meters (m)
 
   // For convenience, expose properties directly
-  private readonly sourcePositionProperty; // in meters (m)
-  private readonly sourceVelocityProperty; // in meters per second (m/s)
+  public readonly sourcePositionProperty; // in meters (m)
+  public readonly sourceVelocityProperty; // in meters per second (m/s)
   public readonly sourceMovingProperty;
-  private readonly observerPositionProperty; // in meters (m)
-  private readonly observerVelocityProperty; // in meters per second (m/s)
+  public readonly observerPositionProperty; // in meters (m)
+  public readonly observerVelocityProperty; // in meters per second (m/s)
   public readonly observerMovingProperty;
 
   // Position history for trails
