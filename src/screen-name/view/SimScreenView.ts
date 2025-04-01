@@ -316,6 +316,7 @@ export class SimScreenView extends ScreenView {
 
     // Create microphone node
     this.microphoneNode = this.createMicrophoneNode();
+    this.microphoneNode.center = this.modelViewTransform.modelToViewPosition(this.model.microphonePositionProperty.value);
     this.objectLayer.addChild(this.microphoneNode);
 
     // Create graphs
@@ -551,6 +552,12 @@ export class SimScreenView extends ScreenView {
 
     // Reset microphone position
     this.updateMicrophoneVisibility();
+    
+    // Update microphone position to match model's reset position
+    const micViewPos = this.modelViewTransform.modelToViewPosition(
+      this.model.microphonePositionProperty.value
+    );
+    this.microphoneNode.center = micViewPos;
 
     // Update view to match model
     this.updateView();
@@ -1059,6 +1066,12 @@ export class SimScreenView extends ScreenView {
     this.updateGraphics();
     this.updateTrails();
     this.updateMicrophoneVisibility();
+    
+    // Update microphone position
+    const micViewPos = this.modelViewTransform.modelToViewPosition(
+      this.model.microphonePositionProperty.value
+    );
+    this.microphoneNode.center = micViewPos;
   }
 
   /**
@@ -1484,10 +1497,6 @@ export class SimScreenView extends ScreenView {
       cursor: 'pointer'
     });
 
-    // Position microphone at initial position
-    const viewPosition = this.modelToView(this.model.microphonePositionProperty.value);
-    microphoneNode.center = viewPosition;
-
     // Create microphone body - a circle with stem
     const micBody = new Circle(15, {
       fill: new Color(100, 100, 100)
@@ -1540,22 +1549,29 @@ export class SimScreenView extends ScreenView {
     });
     microphoneNode.addChild(detectionRing);
 
-    // Add drag listener
+    // Add drag listener with proper offset handling
     const micDragListener = new DragListener({
       targetNode: microphoneNode,
-      start: () => {
-        // Drag started
+      dragBoundsProperty: new Property(this.layoutBounds),
+      start: (event) => {
+        // Store the initial offset between pointer and microphone position
+        const micViewPos = this.modelViewTransform.modelToViewPosition(
+          this.model.microphonePositionProperty.value
+        );
+        (
+          micDragListener as DragListener & { dragOffset: Vector2 }
+        ).dragOffset = micViewPos.minus(event.pointer.point);
       },
       drag: (event) => {
-        // Convert view coordinates to model coordinates
-        const viewPoint = event.pointer.point;
-        const modelPoint = this.viewToModel(viewPoint);
+        // Convert view coordinates to model coordinates, accounting for initial offset
+        const viewPoint = event.pointer.point.plus(
+          (micDragListener as DragListener & { dragOffset: Vector2 })
+            .dragOffset
+        );
+        const modelPoint = this.modelViewTransform.viewToModelPosition(viewPoint);
         
         // Update microphone position in model
         this.model.microphonePositionProperty.value = modelPoint;
-      },
-      end: () => {
-        // Position is already updated during drag
       }
     });
     microphoneNode.addInputListener(micDragListener);
