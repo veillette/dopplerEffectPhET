@@ -149,8 +149,8 @@ export class SimScreenView extends ScreenView {
   // Wave nodes map for tracking
   private waveNodesMap: Map<Wave, Circle> = new Map();
 
-  // Add a new property for the instructions box
-  private instructionsBox: Node;
+  // Add a new property for the instruction box
+  private readonly instructionsBox: Node;
 
   /**
    * Constructor for the Doppler Effect SimScreenView
@@ -397,7 +397,7 @@ export class SimScreenView extends ScreenView {
     timeControlNode.bottom = this.layoutBounds.maxY - 10;
     this.controlLayer.addChild(timeControlNode);
 
-    // Create instructions box
+    // Create instruction box
     this.instructionsBox = new Node();
     this.instructionsBox.visible = false; // Initially hidden
     this.controlLayer.addChild(this.instructionsBox);

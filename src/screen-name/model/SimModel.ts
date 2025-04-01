@@ -359,7 +359,7 @@ export class SimModel {
   public setupScenario(scenario: Scenario): void {
     // Reset the simulation
     this.reset();
-    
+
     // Reset positions explicitly to ensure consistent starting state
     this.sourcePositionProperty.value = new Vector2(
       INITIAL_POSITIONS.SOURCE.x,
@@ -369,7 +369,7 @@ export class SimModel {
       INITIAL_POSITIONS.OBSERVER.x,
       INITIAL_POSITIONS.OBSERVER.y,
     );
-    
+
     // Configure velocities for the specific scenario
     this.configureScenarioVelocities(scenario);
   }
