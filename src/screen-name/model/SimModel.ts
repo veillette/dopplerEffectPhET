@@ -356,13 +356,7 @@ export class SimModel {
     // Reset the simulation
     this.reset();
 
-    // Reset positions explicitly to ensure consistent starting state
-    this.sourcePositionProperty.value = INITIAL_POSITIONS.SOURCE;
-    this.observerPositionProperty.value = INITIAL_POSITIONS.OBSERVER;
-
-    // Configure velocities for the specific scenario
-    this.configureScenarioVelocities(scenario);
-
+    this.applyScenario(scenario);
   }
 
   /**
