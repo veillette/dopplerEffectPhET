@@ -25,6 +25,7 @@ export const PHYSICS = {
   FREQ_MAX_FACTOR: 5, // Maximum frequency as factor of emitted (dimensionless)
   VELOCITY_DECAY: 0.5, // Decay factor for velocity when not dragging (dimensionless)
   MAX_SPEED: 100.0, // Maximum speed for source and observer (m/s)
+  MIN_VELOCITY_MAG: 0.1, // Minimum velocity magnitude (m/s)
 } as const;
 
 // Wave properties
