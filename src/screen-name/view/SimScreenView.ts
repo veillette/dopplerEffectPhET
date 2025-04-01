@@ -1,24 +1,24 @@
 import {
-  Node,
   Circle,
-  Line,
-  Path,
-  Text,
-  Rectangle,
-  Vector2,
   Color,
-  Shape,
   DragListener,
-  SceneryEvent,
+  Line,
   ModelViewTransform2,
+  Node,
+  Path,
+  Rectangle,
+  SceneryEvent,
+  Shape,
+  Text,
+  Vector2,
 } from "scenerystack";
 import {
-  ResetAllButton,
   ArrowNode,
-  TimeControlNode,
   InfoButton,
-  PhetFont,
   NumberControl,
+  PhetFont,
+  ResetAllButton,
+  TimeControlNode,
 } from "scenerystack/scenery-phet";
 import {
   ComboBox,
@@ -26,8 +26,8 @@ import {
   VerticalCheckboxGroup,
   VerticalCheckboxGroupItem,
 } from "scenerystack/sun";
-import { SimModel, Wave, Scenario } from "../model/SimModel";
-import { PHYSICS, WAVE, SCALE, WaveformPoint } from "../model/SimConstants";
+import { Scenario, SimModel, Wave } from "../model/SimModel";
+import { PHYSICS, SCALE, WAVE, WaveformPoint } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 import strings from "../../strings_en.json";
@@ -1183,8 +1183,7 @@ export class SimScreenView extends ScreenView {
       waveNode.center = this.modelToView(wave.position);
 
       // Update radius to match wave's propagation (convert to view coordinates)
-      const viewRadius = this.modelToViewDelta(new Vector2(wave.radius, 0)).x;
-      waveNode.radius = viewRadius;
+      waveNode.radius = this.modelToViewDelta(new Vector2(wave.radius, 0)).x;
 
       // Update opacity based on age
       const maxAge = WAVE.MAX_AGE;
