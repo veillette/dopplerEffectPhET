@@ -1535,14 +1535,20 @@ export class SimScreenView extends ScreenView {
     microphoneNode.addChild(detectionRing);
 
     // Add drag listener
+    // Track whether we're currently dragging to prevent position feedback loops
+    let isDragging = false;
+    
     const micDragListener = new DragListener({
-      targetNode: microphoneNode,
+      targetNode: this,
       dragBoundsProperty: new Property(this.layoutBounds),
       start: (event) => {
         // Store the initial offset between pointer and mic position
         const micViewPos = microphoneNode.center;
         (micDragListener as DragListener & { dragOffset: Vector2 }).dragOffset = 
           micViewPos.minus(event.pointer.point);
+        
+        // Set dragging flag
+        isDragging = true;
       },
       drag: (event) => {
         // Apply the offset to get the intended position
@@ -1556,11 +1562,24 @@ export class SimScreenView extends ScreenView {
         // Update microphone position in model
         this.model.microphonePositionProperty.value = modelPoint;
         
-        // Update node position immediately to ensure smooth dragging
+        // Update node position directly using the exact view coordinates
+        // This ensures no transformation errors accumulate
         microphoneNode.center = viewPoint;
+      },
+      end: () => {
+        // Clear dragging flag when drag ends
+        isDragging = false;
       }
     });
     microphoneNode.addInputListener(micDragListener);
+    
+    // Update position from model changes, but only when not dragging
+    this.model.microphonePositionProperty.lazyLink(() => {
+      if (!isDragging) {
+        const viewPosition = this.modelToView(this.model.microphonePositionProperty.value);
+        microphoneNode.center = viewPosition;
+      }
+    });
 
     // Add listener for wave detection
     this.model.waveDetectedProperty.lazyLink((detected) => {
@@ -1576,12 +1595,6 @@ export class SimScreenView extends ScreenView {
           detectionRing.visible = false;
         }, 100);
       }
-    });
-
-    // Update position when model position changes
-    this.model.microphonePositionProperty.lazyLink(() => {
-      const viewPosition = this.modelToView(this.model.microphonePositionProperty.value);
-      microphoneNode.center = viewPosition;
     });
 
     return microphoneNode;
