@@ -1055,7 +1055,6 @@ export class SimScreenView extends ScreenView {
       this.sourceVelocityVector,
       this.model.sourcePositionProperty.value,
       this.model.sourceVelocityProperty.value,
-      this.UI.SOURCE_COLOR,
       PHYSICS.MIN_VELOCITY_MAG,
     );
 
@@ -1064,7 +1063,6 @@ export class SimScreenView extends ScreenView {
       this.observerVelocityVector,
       this.model.observerPositionProperty.value,
       this.model.observerVelocityProperty.value,
-      this.UI.OBSERVER_COLOR,
       PHYSICS.MIN_VELOCITY_MAG,
     );
   }
@@ -1294,7 +1292,6 @@ export class SimScreenView extends ScreenView {
     node: ArrowNode,
     position: Vector2,
     velocity: Vector2,
-    color: Color,
     minMagnitude: number,
   ): void {
     // Only show velocity vector if magnitude is significant
