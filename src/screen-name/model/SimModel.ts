@@ -299,12 +299,11 @@ export class SimModel {
   }
 
   /**
-   * Setup a preset scenario
-   * @param scenario - the scenario to apply
+   * Configure velocity settings for a specific scenario
+   * @param scenario - the scenario to configure
+   * @private
    */
-  public setupScenario(scenario: Scenario): void {
-    this.reset();
-
+  private configureScenarioVelocities(scenario: Scenario): void {
     switch (scenario) {
       case Scenario.SCENARIO_1:
         this.sourceVelocityProperty.value =
@@ -354,11 +353,35 @@ export class SimModel {
   }
 
   /**
+   * Setup a preset scenario with initial positions and velocities
+   * @param scenario - the scenario to apply
+   */
+  public setupScenario(scenario: Scenario): void {
+    // Reset the simulation
+    this.reset();
+    
+    // Reset positions explicitly to ensure consistent starting state
+    this.sourcePositionProperty.value = new Vector2(
+      INITIAL_POSITIONS.SOURCE.x,
+      INITIAL_POSITIONS.SOURCE.y,
+    );
+    this.observerPositionProperty.value = new Vector2(
+      INITIAL_POSITIONS.OBSERVER.x,
+      INITIAL_POSITIONS.OBSERVER.y,
+    );
+    
+    // Configure velocities for the specific scenario
+    this.configureScenarioVelocities(scenario);
+  }
+
+  /**
    * Apply the current scenario settings
+   * This is called when the scenario property changes
    * @param scenario - the scenario to apply
    */
   private applyScenario(scenario: Scenario): void {
-    // Reset positions
+    // Apply the scenario without resetting the entire simulation
+    // Reset positions only
     this.sourcePositionProperty.value = new Vector2(
       INITIAL_POSITIONS.SOURCE.x,
       INITIAL_POSITIONS.SOURCE.y,
@@ -368,7 +391,7 @@ export class SimModel {
       INITIAL_POSITIONS.OBSERVER.y,
     );
 
-    // Apply the scenario settings
-    this.setupScenario(scenario);
+    // Configure velocities for the specific scenario
+    this.configureScenarioVelocities(scenario);
   }
 }
