@@ -90,7 +90,7 @@ export class SimModel {
   public readonly microphonePositionProperty: Property<Vector2>;  // Vector2 position of microphone
   public readonly microphoneEnabledProperty: BooleanProperty;  // Whether microphone is enabled
   private lastWaveDetectionTime: number = 0;                   // Time of last wave detection
-  private readonly waveDetectionCooldown: number = 0.1;        // Cooldown between detections (s)
+  private readonly waveDetectionCooldown: number = 0.01;        // Cooldown between detections (s)
   public readonly waveDetectedProperty: BooleanProperty;       // Emits when a wave is detected
 
   // Source and observer objects
