@@ -11,6 +11,7 @@ import {
   Shape,
   Text,
   Vector2,
+  LinearGradient,
 } from "scenerystack";
 import {
   ArrowNode,
@@ -1347,10 +1348,6 @@ export class SimScreenView extends ScreenView {
    * Update motion trails for source and observer
    */
   private updateTrails(): void {
-    // Create new shapes for the trails
-    const sourceShape = new Shape();
-    const observerShape = new Shape();
-
     // Get trail data from model
     const sourceTrail = this.model.sourceTrail;
     const observerTrail = this.model.observerTrail;
@@ -1367,56 +1364,106 @@ export class SimScreenView extends ScreenView {
     // Get current time to calculate age
     const currentTime = this.model.simulationTimeProperty.value;
 
+    // Create shapes for the trails
+    const sourceShape = new Shape();
+    const observerShape = new Shape();
+
     // Draw source trail with gradient
     if (sourceTrail.length > 0) {
-      // Start at the oldest point
-      let firstPoint = this.modelToView(sourceTrail[0].position);
-      sourceShape.moveToPoint(firstPoint);
+      // First, build a new path with all points
+      const oldestPoint = this.modelToView(sourceTrail[0].position);
+      sourceShape.moveToPoint(oldestPoint);
 
-      // Create individual segments to allow for gradient opacity
+      // Add each subsequent point
       for (let i = 1; i < sourceTrail.length; i++) {
         const point = this.modelToView(sourceTrail[i].position);
         sourceShape.lineToPoint(point);
-        
-        // For the next segment, start at current point
-        firstPoint = point;
       }
 
       // Update the path with the new shape
       this.sourceTrail.shape = sourceShape;
       
-      // Calculate opacity based on newest point's age
-      const newestPointAge = currentTime - sourceTrail[sourceTrail.length - 1].timestamp;
-      const oldestPointAge = currentTime - sourceTrail[0].timestamp;
+      // Calculate the gradient direction (from oldest to newest point)
+      const startPoint = this.modelToView(sourceTrail[0].position);
+      const endPoint = this.modelToView(sourceTrail[sourceTrail.length - 1].position);
       
-      // Normalize opacity between 0.2 (oldest) and 0.8 (newest)
-      this.sourceTrail.opacity = 0.8 - (newestPointAge / oldestPointAge) * 0.6;
+      // Create gradient from oldest to newest point
+      const sourceGradient = new LinearGradient(
+        startPoint.x, startPoint.y, 
+        endPoint.x, endPoint.y
+      );
+      
+      // Add color stops - transparent at oldest point, full color at newest
+      sourceGradient.addColorStop(0, new Color(
+        this.UI.SOURCE_COLOR.r, 
+        this.UI.SOURCE_COLOR.g, 
+        this.UI.SOURCE_COLOR.b, 
+        0.1
+      ));
+      sourceGradient.addColorStop(0.5, new Color(
+        this.UI.SOURCE_COLOR.r, 
+        this.UI.SOURCE_COLOR.g, 
+        this.UI.SOURCE_COLOR.b, 
+        0.4
+      ));
+      sourceGradient.addColorStop(1, new Color(
+        this.UI.SOURCE_COLOR.r, 
+        this.UI.SOURCE_COLOR.g, 
+        this.UI.SOURCE_COLOR.b, 
+        0.8
+      ));
+      
+      // Apply the gradient
+      this.sourceTrail.stroke = sourceGradient;
     }
 
     // Draw observer trail with gradient
     if (observerTrail.length > 0) {
-      // Start at the oldest point
-      let firstPoint = this.modelToView(observerTrail[0].position);
-      observerShape.moveToPoint(firstPoint);
+      // First, build a new path with all points
+      const oldestPoint = this.modelToView(observerTrail[0].position);
+      observerShape.moveToPoint(oldestPoint);
 
-      // Create individual segments to allow for gradient opacity
+      // Add each subsequent point
       for (let i = 1; i < observerTrail.length; i++) {
         const point = this.modelToView(observerTrail[i].position);
         observerShape.lineToPoint(point);
-        
-        // For the next segment, start at current point
-        firstPoint = point;
       }
 
       // Update the path with the new shape
       this.observerTrail.shape = observerShape;
-
-      // Calculate opacity based on newest point's age
-      const newestPointAge = currentTime - observerTrail[observerTrail.length - 1].timestamp;
-      const oldestPointAge = currentTime - observerTrail[0].timestamp;
       
-      // Normalize opacity between 0.2 (oldest) and 0.8 (newest)
-      this.observerTrail.opacity = 0.8 - (newestPointAge / oldestPointAge) * 0.6;
+      // Calculate the gradient direction (from oldest to newest point)
+      const startPoint = this.modelToView(observerTrail[0].position);
+      const endPoint = this.modelToView(observerTrail[observerTrail.length - 1].position);
+      
+      // Create gradient from oldest to newest point
+      const observerGradient = new LinearGradient(
+        startPoint.x, startPoint.y, 
+        endPoint.x, endPoint.y
+      );
+      
+      // Add color stops - transparent at oldest point, full color at newest
+      observerGradient.addColorStop(0, new Color(
+        this.UI.OBSERVER_COLOR.r, 
+        this.UI.OBSERVER_COLOR.g, 
+        this.UI.OBSERVER_COLOR.b, 
+        0.1
+      ));
+      observerGradient.addColorStop(0.5, new Color(
+        this.UI.OBSERVER_COLOR.r, 
+        this.UI.OBSERVER_COLOR.g, 
+        this.UI.OBSERVER_COLOR.b, 
+        0.4
+      ));
+      observerGradient.addColorStop(1, new Color(
+        this.UI.OBSERVER_COLOR.r, 
+        this.UI.OBSERVER_COLOR.g, 
+        this.UI.OBSERVER_COLOR.b, 
+        0.8
+      ));
+      
+      // Apply the gradient
+      this.observerTrail.stroke = observerGradient;
     }
   }
 }
