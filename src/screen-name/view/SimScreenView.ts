@@ -26,7 +26,7 @@ import {
   VerticalCheckboxGroup,
   VerticalCheckboxGroupItem,
 } from "scenerystack/sun";
-import { SimModel, SCENARIO_OPTIONS, Wave } from "../model/SimModel";
+import { SimModel, Wave, Scenario } from "../model/SimModel";
 import { PHYSICS, WAVE, SCALE, WaveformPoint } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
@@ -253,24 +253,53 @@ export class SimScreenView extends ScreenView {
 
     // Create scenario combo box
     const scenarioItems = [
-      SCENARIO_OPTIONS.FREE_PLAY,
-      SCENARIO_OPTIONS.SCENARIO_1,
-      SCENARIO_OPTIONS.SCENARIO_2,
-      SCENARIO_OPTIONS.SCENARIO_3,
-      SCENARIO_OPTIONS.SCENARIO_4,
-    ].map((text) => ({
-      value: text,
-      createNode: () =>
-        new Text(text, { font: new PhetFont(14), fill: this.UI.TEXT_COLOR }),
-    }));
-
-    const listParent = new Node();
+      {
+        value: Scenario.FREE_PLAY,
+        createNode: () =>
+          new Text("Free Play", {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+      {
+        value: Scenario.SCENARIO_1,
+        createNode: () =>
+          new Text("Scenario 1", {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+      {
+        value: Scenario.SCENARIO_2,
+        createNode: () =>
+          new Text("Scenario 2", {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+      {
+        value: Scenario.SCENARIO_3,
+        createNode: () =>
+          new Text("Scenario 3", {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+      {
+        value: Scenario.SCENARIO_4,
+        createNode: () =>
+          new Text("Scenario 4", {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+    ];
 
     // Create combo box using SceneryStack API
     const scenarioComboBox = new ComboBox(
       model.scenarioProperty,
       scenarioItems,
-      listParent,
+      this,
     );
 
     // Position the combo box
@@ -279,7 +308,6 @@ export class SimScreenView extends ScreenView {
 
     // Add to control layer
     this.controlLayer.addChild(scenarioComboBox);
-    this.controlLayer.addChild(listParent);
 
     // Setup reset all button
     const resetAllButton = new ResetAllButton({
@@ -876,13 +904,13 @@ export class SimScreenView extends ScreenView {
 
       // Preset scenarios
       if (key === "1") {
-        this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_1);
+        this.model.setupScenario(Scenario.SCENARIO_1);
       } else if (key === "2") {
-        this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_2);
+        this.model.setupScenario(Scenario.SCENARIO_2);
       } else if (key === "3") {
-        this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_3);
+        this.model.setupScenario(Scenario.SCENARIO_3);
       } else if (key === "4") {
-        this.model.setupScenario(SCENARIO_OPTIONS.SCENARIO_4);
+        this.model.setupScenario(Scenario.SCENARIO_4);
       }
 
       // Adjust emitted frequency

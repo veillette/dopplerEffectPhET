@@ -2,10 +2,11 @@ import {
   Vector2,
   NumberProperty,
   BooleanProperty,
-  StringProperty,
   EnumerationProperty,
   TimeSpeed,
   RangeWithValue,
+  EnumerationValue,
+  Enumeration,
 } from "scenerystack";
 import { ObservableArray } from "scenerystack/axon";
 import { createObservableArray } from "scenerystack/axon";
@@ -33,14 +34,16 @@ export interface Wave {
   phaseAtEmission: number;
 }
 
-// Define available scenarios
-export const SCENARIO_OPTIONS = {
-  FREE_PLAY: "Free Play",
-  SCENARIO_1: "Scenario 1: Source Approaching",
-  SCENARIO_2: "Scenario 2: Source Receding",
-  SCENARIO_3: "Scenario 3: Observer Approaching",
-  SCENARIO_4: "Scenario 4: Observer Receding",
-};
+export class Scenario extends EnumerationValue {
+  public static readonly FREE_PLAY = new Scenario();
+  public static readonly SCENARIO_1 = new Scenario();
+  public static readonly SCENARIO_2 = new Scenario();
+  public static readonly SCENARIO_3 = new Scenario();
+  public static readonly SCENARIO_4 = new Scenario();
+
+  // Gets a list of keys, values and mapping between them. For use in EnumerationProperty and PhET-iO
+  public static readonly enumeration = new Enumeration(Scenario);
+}
 
 // Define time speed values - the property will store these values
 export const TIME_SPEED = {
@@ -58,7 +61,7 @@ export class SimModel {
   // Properties for physics simulation
   public readonly soundSpeedProperty: NumberProperty; // in meters per second (m/s)
   public readonly emittedFrequencyProperty: NumberProperty; // in Hertz (Hz)
-  public readonly scenarioProperty: StringProperty;
+  public readonly scenarioProperty: EnumerationProperty<Scenario>;
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>; // dimensionless factor
   public readonly soundSpeedRange: RangeWithValue; // in meters per second (m/s)
   public readonly frequencyRange: RangeWithValue; // in Hertz (Hz)
@@ -123,7 +126,7 @@ export class SimModel {
       PHYSICS.EMITTED_FREQ * 2,
       PHYSICS.EMITTED_FREQ,
     );
-    this.scenarioProperty = new StringProperty(SCENARIO_OPTIONS.FREE_PLAY);
+    this.scenarioProperty = new EnumerationProperty(Scenario.FREE_PLAY);
     this.timeSpeedProperty = new EnumerationProperty(TimeSpeed.NORMAL);
 
     // Initialize simulation state
@@ -299,11 +302,11 @@ export class SimModel {
    * Setup a preset scenario
    * @param scenario - the scenario to apply
    */
-  public setupScenario(scenario: string): void {
+  public setupScenario(scenario: Scenario): void {
     this.reset();
 
     switch (scenario) {
-      case SCENARIO_OPTIONS.SCENARIO_1:
+      case Scenario.SCENARIO_1:
         this.sourceVelocityProperty.value =
           SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity.copy();
         this.observerVelocityProperty.value =
@@ -312,7 +315,7 @@ export class SimModel {
         this.observerMovingProperty.value = false;
         break;
 
-      case SCENARIO_OPTIONS.SCENARIO_2:
+      case Scenario.SCENARIO_2:
         this.sourceVelocityProperty.value =
           SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity.copy();
         this.observerVelocityProperty.value =
@@ -321,7 +324,7 @@ export class SimModel {
         this.observerMovingProperty.value = true;
         break;
 
-      case SCENARIO_OPTIONS.SCENARIO_3:
+      case Scenario.SCENARIO_3:
         this.sourceVelocityProperty.value =
           SCENARIOS.MOVING_APART.sourceVelocity.copy();
         this.observerVelocityProperty.value =
@@ -330,7 +333,7 @@ export class SimModel {
         this.observerMovingProperty.value = true;
         break;
 
-      case SCENARIO_OPTIONS.SCENARIO_4:
+      case Scenario.SCENARIO_4:
         this.sourceVelocityProperty.value =
           SCENARIOS.PERPENDICULAR.sourceVelocity.copy();
         this.observerVelocityProperty.value =
@@ -339,7 +342,7 @@ export class SimModel {
         this.observerMovingProperty.value = true;
         break;
 
-      case SCENARIO_OPTIONS.FREE_PLAY:
+      case Scenario.FREE_PLAY:
       default:
         // Free play mode - no initial velocities
         this.sourceVelocityProperty.value = new Vector2(0, 0);
@@ -354,7 +357,7 @@ export class SimModel {
    * Apply the current scenario settings
    * @param scenario - the scenario to apply
    */
-  private applyScenario(scenario: string): void {
+  private applyScenario(scenario: Scenario): void {
     // Reset positions
     this.sourcePositionProperty.value = new Vector2(
       INITIAL_POSITIONS.SOURCE.x,
