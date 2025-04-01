@@ -134,7 +134,7 @@ export class SimModel {
     this.observedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
     this.playProperty = new BooleanProperty(true);
 
-    // Create waves array
+    // Create the wave array
     this.waves = createObservableArray<Wave>([]);
 
     // Initialize source and observer
