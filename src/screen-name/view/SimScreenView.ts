@@ -936,7 +936,7 @@ export class SimScreenView extends ScreenView {
 
     // Add key listeners to the view
     const keydownListener = {
-      keydown: (event: SceneryEvent<KeyboardEvent>) => {
+      listener: (event: SceneryEvent<KeyboardEvent>) => {
         if (!event.domEvent) return;
         const key = event.domEvent.key.toLowerCase();
         handleKeydown(key);
