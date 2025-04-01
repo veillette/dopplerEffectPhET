@@ -44,6 +44,7 @@ const STRINGS = {
     LINE_OF_SIGHT: strings["doppler-effect.controls.lineOfSight"].value,
     SOUND_SPEED: strings["doppler-effect.controls.soundSpeed"].value,
     FREQUENCY: strings["doppler-effect.controls.frequency"].value,
+    MOTION_TRAILS: "Motion Trails",
   },
   UNITS: {
     METERS_PER_SECOND: strings["doppler-effect.units.metersPerSecond"].value,
@@ -104,6 +105,8 @@ export class SimScreenView extends ScreenView {
   private readonly observerVelocityVector: ArrowNode;
   private readonly connectingLine: Line;
   private readonly selectionHighlight: Circle;
+  private readonly sourceTrail: Path;
+  private readonly observerTrail: Path;
 
   // Graph elements
   private readonly emittedGraph: Rectangle;
@@ -115,6 +118,7 @@ export class SimScreenView extends ScreenView {
   private readonly visibleValuesProperty: Property<boolean>;
   private readonly visibleVelocityArrowProperty: Property<boolean>;
   private readonly visibleLineOfSightProperty: Property<boolean>;
+  private readonly visibleTrailsProperty: Property<boolean>;
 
   // Status text elements
   private readonly statusTexts: {
@@ -142,6 +146,7 @@ export class SimScreenView extends ScreenView {
     GRAPH_WIDTH: 300,
     GRAPH_MARGIN: 20,
     GRAPH_SPACING: 40,
+    TRAIL_WIDTH: 2,
   };
 
   // Selection tracking
@@ -173,6 +178,7 @@ export class SimScreenView extends ScreenView {
     this.visibleValuesProperty = new Property<boolean>(false);
     this.visibleVelocityArrowProperty = new Property<boolean>(false);
     this.visibleLineOfSightProperty = new Property<boolean>(false);
+    this.visibleTrailsProperty = new Property<boolean>(false);
 
     // Create display layers
     this.waveLayer = new Node();
@@ -233,6 +239,16 @@ export class SimScreenView extends ScreenView {
       visibleProperty: this.visibleVelocityArrowProperty,
     });
 
+    // Create trail paths
+    this.sourceTrail = new Path(new Shape(), {
+      stroke: this.UI.SOURCE_COLOR,
+      lineWidth: this.UI.TRAIL_WIDTH,
+    });
+    this.observerTrail = new Path(new Shape(), {
+      stroke: this.UI.OBSERVER_COLOR,
+      lineWidth: this.UI.TRAIL_WIDTH,
+    });
+
     // Add objects to object layer
     this.objectLayer.addChild(this.connectingLine);
     this.objectLayer.addChild(this.sourceNode);
@@ -240,6 +256,8 @@ export class SimScreenView extends ScreenView {
     this.objectLayer.addChild(this.selectionHighlight);
     this.objectLayer.addChild(this.sourceVelocityVector);
     this.objectLayer.addChild(this.observerVelocityVector);
+    this.objectLayer.addChild(this.sourceTrail);
+    this.objectLayer.addChild(this.observerTrail);
 
     // Create graphs
     const graphElements = this.createGraphs();
@@ -446,6 +464,14 @@ export class SimScreenView extends ScreenView {
             fill: this.UI.TEXT_COLOR,
           }),
       },
+      {
+        property: this.visibleTrailsProperty,
+        createNode: () =>
+          new Text(STRINGS.CONTROLS.MOTION_TRAILS, {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
     ];
 
     const checkboxGroup = new VerticalCheckboxGroup(items);
@@ -526,6 +552,7 @@ export class SimScreenView extends ScreenView {
     this.visibleValuesProperty.reset();
     this.visibleVelocityArrowProperty.reset();
     this.visibleLineOfSightProperty.reset();
+    this.visibleTrailsProperty.reset();
 
     // Clear wave nodes
     this.waveNodesMap.forEach((waveNode) => {
@@ -886,6 +913,11 @@ export class SimScreenView extends ScreenView {
         }
       }
 
+      // Handle visibility toggles
+      if (key === "t") {
+        this.visibleTrailsProperty.value = !this.visibleTrailsProperty.value;
+      }
+
       // Handle pause toggle
       if (key === " ") {
         this.model.playProperty.value = !this.model.playProperty.value;
@@ -983,6 +1015,7 @@ export class SimScreenView extends ScreenView {
       STRINGS.HELP.CONTROLS,
       STRINGS.HELP.ADJUST,
       STRINGS.HELP.SCENARIOS,
+      "Press 'T' to toggle motion trails that show object paths.",
     ];
 
     let yPosition = title.bottom + 15;
@@ -1012,6 +1045,7 @@ export class SimScreenView extends ScreenView {
     this.updateVectors();
     this.updateStatus();
     this.updateGraphics();
+    this.updateTrails();
   }
 
   /**
@@ -1307,5 +1341,82 @@ export class SimScreenView extends ScreenView {
       viewPosition.x + viewVelocity.x,
       viewPosition.y + viewVelocity.y,
     );
+  }
+
+  /**
+   * Update motion trails for source and observer
+   */
+  private updateTrails(): void {
+    // Create new shapes for the trails
+    const sourceShape = new Shape();
+    const observerShape = new Shape();
+
+    // Get trail data from model
+    const sourceTrail = this.model.sourceTrail;
+    const observerTrail = this.model.observerTrail;
+
+    // Set visibility based on property
+    this.sourceTrail.visible = this.visibleTrailsProperty.value && sourceTrail.length > 0;
+    this.observerTrail.visible = this.visibleTrailsProperty.value && observerTrail.length > 0;
+
+    // If not visible or no points, return early
+    if (!this.visibleTrailsProperty.value) {
+      return;
+    }
+
+    // Get current time to calculate age
+    const currentTime = this.model.simulationTimeProperty.value;
+
+    // Draw source trail with gradient
+    if (sourceTrail.length > 0) {
+      // Start at the oldest point
+      let firstPoint = this.modelToView(sourceTrail[0].position);
+      sourceShape.moveToPoint(firstPoint);
+
+      // Create individual segments to allow for gradient opacity
+      for (let i = 1; i < sourceTrail.length; i++) {
+        const point = this.modelToView(sourceTrail[i].position);
+        sourceShape.lineToPoint(point);
+        
+        // For the next segment, start at current point
+        firstPoint = point;
+      }
+
+      // Update the path with the new shape
+      this.sourceTrail.shape = sourceShape;
+      
+      // Calculate opacity based on newest point's age
+      const newestPointAge = currentTime - sourceTrail[sourceTrail.length - 1].timestamp;
+      const oldestPointAge = currentTime - sourceTrail[0].timestamp;
+      
+      // Normalize opacity between 0.2 (oldest) and 0.8 (newest)
+      this.sourceTrail.opacity = 0.8 - (newestPointAge / oldestPointAge) * 0.6;
+    }
+
+    // Draw observer trail with gradient
+    if (observerTrail.length > 0) {
+      // Start at the oldest point
+      let firstPoint = this.modelToView(observerTrail[0].position);
+      observerShape.moveToPoint(firstPoint);
+
+      // Create individual segments to allow for gradient opacity
+      for (let i = 1; i < observerTrail.length; i++) {
+        const point = this.modelToView(observerTrail[i].position);
+        observerShape.lineToPoint(point);
+        
+        // For the next segment, start at current point
+        firstPoint = point;
+      }
+
+      // Update the path with the new shape
+      this.observerTrail.shape = observerShape;
+
+      // Calculate opacity based on newest point's age
+      const newestPointAge = currentTime - observerTrail[observerTrail.length - 1].timestamp;
+      const oldestPointAge = currentTime - observerTrail[0].timestamp;
+      
+      // Normalize opacity between 0.2 (oldest) and 0.8 (newest)
+      this.observerTrail.opacity = 0.8 - (newestPointAge / oldestPointAge) * 0.6;
+    }
   }
 }

@@ -34,6 +34,12 @@ export interface Wave {
   phaseAtEmission: number;
 }
 
+// Add a new interface for position history points
+export interface PositionHistoryPoint {
+  position: Vector2;
+  timestamp: number;
+}
+
 export class Scenario extends EnumerationValue {
   public static readonly FREE_PLAY = new Scenario();
   public static readonly SCENARIO_1 = new Scenario();
@@ -49,6 +55,13 @@ export class Scenario extends EnumerationValue {
 export const TIME_SPEED = {
   SLOW: 0.25,
   NORMAL: 1.0,
+};
+
+// Trail constants
+export const TRAIL = {
+  MAX_POINTS: 20,      // Maximum number of points to store in position history
+  MAX_AGE: 2.0,        // Maximum age of trail points in seconds
+  SAMPLE_INTERVAL: 0.1 // Time interval between trail points in seconds
 };
 
 /**
@@ -77,6 +90,11 @@ export class SimModel {
   public readonly observerPositionProperty; // in meters (m)
   public readonly observerVelocityProperty; // in meters per second (m/s)
   public readonly observerMovingProperty;
+
+  // Position history for trails
+  private sourcePositionHistory: PositionHistoryPoint[] = [];
+  private observerPositionHistory: PositionHistoryPoint[] = [];
+  private lastTrailSampleTime: number = 0;
 
   // Simulation state properties
   public readonly simulationTimeProperty: NumberProperty; // in seconds (s)
@@ -107,6 +125,15 @@ export class SimModel {
 
   public get observedSoundData(): number[] {
     return this.waveformManager.observedSoundData;
+  }
+
+  // Expose position history for view access
+  public get sourceTrail(): PositionHistoryPoint[] {
+    return this.sourcePositionHistory;
+  }
+
+  public get observerTrail(): PositionHistoryPoint[] {
+    return this.observerPositionHistory;
   }
 
   /**
@@ -195,6 +222,11 @@ export class SimModel {
     this.sourceVelocityProperty.reset()
     this.observerVelocityProperty.reset()
 
+    // Clear position history
+    this.sourcePositionHistory = [];
+    this.observerPositionHistory = [];
+    this.lastTrailSampleTime = 0;
+
     // Reset components
     this.waveGenerator.reset();
     this.waveformManager.reset(SOUND_DATA.ARRAY_SIZE);
@@ -231,12 +263,64 @@ export class SimModel {
     this.source.updatePosition(modelDt);
     this.observer.updatePosition(modelDt);
 
+    // Record position history for trails
+    this.updatePositionHistory();
+
     // Generate and update waves
     this.waveGenerator.generateWaves();
     this.waveGenerator.updateWaves(this.simulationTimeProperty.value);
 
     // Calculate Doppler effect and update waveforms
     this.updateWaveforms(modelDt);
+  }
+
+  /**
+   * Update position history for source and observer
+   * This method records positions at regular intervals and maintains a fixed-size history
+   */
+  private updatePositionHistory(): void {
+    const currentTime = this.simulationTimeProperty.value;
+    
+    // Only sample at specified intervals
+    if (currentTime - this.lastTrailSampleTime >= TRAIL.SAMPLE_INTERVAL) {
+      // Record source position
+      this.sourcePositionHistory.push({
+        position: this.sourcePositionProperty.value.copy(),
+        timestamp: currentTime
+      });
+
+      // Record observer position
+      this.observerPositionHistory.push({
+        position: this.observerPositionProperty.value.copy(),
+        timestamp: currentTime
+      });
+
+      // Update last sample time
+      this.lastTrailSampleTime = currentTime;
+
+      // Remove old positions based on age
+      this.prunePositionHistory();
+    }
+  }
+
+  /**
+   * Remove old positions from history that exceed the maximum age or count
+   */
+  private prunePositionHistory(): void {
+    const currentTime = this.simulationTimeProperty.value;
+    const maxAge = currentTime - TRAIL.MAX_AGE;
+
+    // Prune source trail
+    while (this.sourcePositionHistory.length > TRAIL.MAX_POINTS || 
+           (this.sourcePositionHistory.length > 0 && this.sourcePositionHistory[0].timestamp < maxAge)) {
+      this.sourcePositionHistory.shift();
+    }
+
+    // Prune observer trail
+    while (this.observerPositionHistory.length > TRAIL.MAX_POINTS || 
+           (this.observerPositionHistory.length > 0 && this.observerPositionHistory[0].timestamp < maxAge)) {
+      this.observerPositionHistory.shift();
+    }
   }
 
   /**
