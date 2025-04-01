@@ -172,7 +172,7 @@ export class SimModel {
 
     // Initialize microphone properties
     this.microphonePositionProperty = new Property<Vector2>(new Vector2(0, 20));
-    this.microphoneEnabledProperty = new BooleanProperty(true);
+    this.microphoneEnabledProperty = new BooleanProperty(false);
     this.waveDetectedProperty = new BooleanProperty(false);
 
     // Initialize simulation state
