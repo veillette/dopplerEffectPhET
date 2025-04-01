@@ -21,3 +21,5 @@ tsconfig.tsbuildinfo
 *.njsproj
 *.sln
 *.sw?
+/dopplerEffectPhET.code-workspace
+/CLAUDE.md
