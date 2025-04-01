@@ -1054,16 +1054,14 @@ export class SimScreenView extends ScreenView {
     this.updateVelocityVector(
       this.sourceVelocityVector,
       this.model.sourcePositionProperty.value,
-      this.model.sourceVelocityProperty.value,
-      PHYSICS.MIN_VELOCITY_MAG,
+      this.model.sourceVelocityProperty.value
     );
 
     // Update observer velocity vector
     this.updateVelocityVector(
       this.observerVelocityVector,
       this.model.observerPositionProperty.value,
-      this.model.observerVelocityProperty.value,
-      PHYSICS.MIN_VELOCITY_MAG,
+      this.model.observerVelocityProperty.value
     );
   }
 
@@ -1291,12 +1289,7 @@ export class SimScreenView extends ScreenView {
     node: ArrowNode,
     position: Vector2,
     velocity: Vector2,
-    minMagnitude: number,
   ): void {
-    // Only show velocity vector if magnitude is significant
-    if (velocity.magnitude < minMagnitude) {
-      return;
-    }
 
     // Convert model coordinates to view coordinates
     const viewPosition = this.modelToView(position);
