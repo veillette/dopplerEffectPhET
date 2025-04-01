@@ -1361,9 +1361,6 @@ export class SimScreenView extends ScreenView {
       return;
     }
 
-    // Get current time to calculate age
-    const currentTime = this.model.simulationTimeProperty.value;
-
     // Create shapes for the trails
     const sourceShape = new Shape();
     const observerShape = new Shape();
@@ -1382,37 +1379,37 @@ export class SimScreenView extends ScreenView {
 
       // Update the path with the new shape
       this.sourceTrail.shape = sourceShape;
-      
+
       // Calculate the gradient direction (from oldest to newest point)
       const startPoint = this.modelToView(sourceTrail[0].position);
       const endPoint = this.modelToView(sourceTrail[sourceTrail.length - 1].position);
-      
+
       // Create gradient from oldest to newest point
       const sourceGradient = new LinearGradient(
-        startPoint.x, startPoint.y, 
+        startPoint.x, startPoint.y,
         endPoint.x, endPoint.y
       );
-      
+
       // Add color stops - transparent at oldest point, full color at newest
       sourceGradient.addColorStop(0, new Color(
-        this.UI.SOURCE_COLOR.r, 
-        this.UI.SOURCE_COLOR.g, 
-        this.UI.SOURCE_COLOR.b, 
+        this.UI.SOURCE_COLOR.r,
+        this.UI.SOURCE_COLOR.g,
+        this.UI.SOURCE_COLOR.b,
         0.1
       ));
       sourceGradient.addColorStop(0.5, new Color(
-        this.UI.SOURCE_COLOR.r, 
-        this.UI.SOURCE_COLOR.g, 
-        this.UI.SOURCE_COLOR.b, 
+        this.UI.SOURCE_COLOR.r,
+        this.UI.SOURCE_COLOR.g,
+        this.UI.SOURCE_COLOR.b,
         0.4
       ));
       sourceGradient.addColorStop(1, new Color(
-        this.UI.SOURCE_COLOR.r, 
-        this.UI.SOURCE_COLOR.g, 
-        this.UI.SOURCE_COLOR.b, 
+        this.UI.SOURCE_COLOR.r,
+        this.UI.SOURCE_COLOR.g,
+        this.UI.SOURCE_COLOR.b,
         0.8
       ));
-      
+
       // Apply the gradient
       this.sourceTrail.stroke = sourceGradient;
     }
@@ -1431,37 +1428,37 @@ export class SimScreenView extends ScreenView {
 
       // Update the path with the new shape
       this.observerTrail.shape = observerShape;
-      
+
       // Calculate the gradient direction (from oldest to newest point)
       const startPoint = this.modelToView(observerTrail[0].position);
       const endPoint = this.modelToView(observerTrail[observerTrail.length - 1].position);
-      
+
       // Create gradient from oldest to newest point
       const observerGradient = new LinearGradient(
-        startPoint.x, startPoint.y, 
+        startPoint.x, startPoint.y,
         endPoint.x, endPoint.y
       );
-      
+
       // Add color stops - transparent at oldest point, full color at newest
       observerGradient.addColorStop(0, new Color(
-        this.UI.OBSERVER_COLOR.r, 
-        this.UI.OBSERVER_COLOR.g, 
-        this.UI.OBSERVER_COLOR.b, 
+        this.UI.OBSERVER_COLOR.r,
+        this.UI.OBSERVER_COLOR.g,
+        this.UI.OBSERVER_COLOR.b,
         0.1
       ));
       observerGradient.addColorStop(0.5, new Color(
-        this.UI.OBSERVER_COLOR.r, 
-        this.UI.OBSERVER_COLOR.g, 
-        this.UI.OBSERVER_COLOR.b, 
+        this.UI.OBSERVER_COLOR.r,
+        this.UI.OBSERVER_COLOR.g,
+        this.UI.OBSERVER_COLOR.b,
         0.4
       ));
       observerGradient.addColorStop(1, new Color(
-        this.UI.OBSERVER_COLOR.r, 
-        this.UI.OBSERVER_COLOR.g, 
-        this.UI.OBSERVER_COLOR.b, 
+        this.UI.OBSERVER_COLOR.r,
+        this.UI.OBSERVER_COLOR.g,
+        this.UI.OBSERVER_COLOR.b,
         0.8
       ));
-      
+
       // Apply the gradient
       this.observerTrail.stroke = observerGradient;
     }
