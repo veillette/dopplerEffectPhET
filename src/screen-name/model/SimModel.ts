@@ -199,6 +199,10 @@ export class SimModel {
       new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y),
     );
 
+    // Reset velocities
+    this.sourceVelocityProperty.reset()
+    this.observerVelocityProperty.reset()
+
     // Reset components
     this.waveGenerator.reset();
     this.waveformManager.reset(SOUND_DATA.ARRAY_SIZE);
