@@ -74,6 +74,56 @@ const STRINGS = {
 };
 
 /**
+ * Simple Sound wrapper class for playing audio
+ */
+class Sound {
+  private audio: HTMLAudioElement;
+  private isLoaded: boolean = false;
+  private isMuted: boolean = false;
+  
+  constructor(src: string) {
+    this.audio = new Audio();
+    
+    // Add error handling for loading sound
+    this.audio.addEventListener('canplaythrough', () => {
+      this.isLoaded = true;
+    });
+    
+    this.audio.addEventListener('error', (e) => {
+      console.warn('Error loading sound:', e);
+      this.isLoaded = false;
+    });
+    
+    // Set source after adding listeners
+    this.audio.src = src;
+    
+    // Try to load the audio
+    this.audio.load();
+  }
+  
+  play() {
+    if (!this.isLoaded || this.isMuted) return;
+    
+    // Create a new audio element for each play to allow overlapping sounds
+    const sound = new Audio(this.audio.src);
+    sound.volume = 0.5; // Lower volume to prevent being too loud
+    
+    // Play and handle errors
+    sound.play().catch(e => {
+      console.warn('Error playing sound:', e);
+    });
+  }
+  
+  mute() {
+    this.isMuted = true;
+  }
+  
+  unmute() {
+    this.isMuted = false;
+  }
+}
+
+/**
  * View for the Doppler Effect simulation
  *
  * This view handles all visualization aspects of the simulation, including:
@@ -102,6 +152,7 @@ export class SimScreenView extends ScreenView {
   // UI elements
   private readonly sourceNode: Circle;
   private readonly observerNode: Circle;
+  private readonly microphoneNode: Node;
   private readonly sourceVelocityVector: ArrowNode;
   private readonly observerVelocityVector: ArrowNode;
   private readonly connectingLine: Line;
@@ -157,6 +208,9 @@ export class SimScreenView extends ScreenView {
 
   // Add a new property for the instruction box
   private readonly instructionsBox: Node;
+
+  // Sound elements
+  private readonly clickSound: Sound;
 
   /**
    * Constructor for the Doppler Effect SimScreenView
@@ -259,6 +313,10 @@ export class SimScreenView extends ScreenView {
     this.objectLayer.addChild(this.observerVelocityVector);
     this.objectLayer.addChild(this.sourceTrail);
     this.objectLayer.addChild(this.observerTrail);
+
+    // Create microphone node
+    this.microphoneNode = this.createMicrophoneNode();
+    this.objectLayer.addChild(this.microphoneNode);
 
     // Create graphs
     const graphElements = this.createGraphs();
@@ -440,86 +498,7 @@ export class SimScreenView extends ScreenView {
     this.controlLayer.addChild(infoButton);
 
     // Create a panel
-    const items: VerticalCheckboxGroupItem[] = [
-      {
-        property: this.visibleValuesProperty,
-        createNode: () =>
-          new Text(STRINGS.CONTROLS.VALUES, {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        property: this.visibleVelocityArrowProperty,
-        createNode: () =>
-          new Text(STRINGS.CONTROLS.VELOCITY_ARROWS, {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        property: this.visibleLineOfSightProperty,
-        createNode: () =>
-          new Text(STRINGS.CONTROLS.LINE_OF_SIGHT, {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        property: this.visibleTrailsProperty,
-        createNode: () =>
-          new Text(STRINGS.CONTROLS.MOTION_TRAILS, {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-    ];
-
-    const checkboxGroup = new VerticalCheckboxGroup(items);
-
-    const soundSpeedControl = new NumberControl(
-      STRINGS.CONTROLS.SOUND_SPEED,
-      this.model.soundSpeedProperty,
-      this.model.soundSpeedRange,
-      {
-        layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
-        numberDisplayOptions: {
-          valuePattern: STRINGS.UNITS.METERS_PER_SECOND,
-        },
-        titleNodeOptions: {
-          font: new PhetFont(12),
-          maxWidth: 140,
-        },
-      },
-    );
-    soundSpeedControl.top = checkboxGroup.bottom + 10;
-
-    const frequencyControl = new NumberControl(
-      STRINGS.CONTROLS.FREQUENCY,
-      this.model.emittedFrequencyProperty,
-      this.model.frequencyRange,
-      {
-        layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
-        numberDisplayOptions: {
-          valuePattern: STRINGS.UNITS.HERTZ,
-        },
-        titleNodeOptions: {
-          font: new PhetFont(12),
-          maxWidth: 140,
-        },
-      },
-    );
-    frequencyControl.top = soundSpeedControl.bottom + 10;
-
-    const panelContent = new Node({
-      children: [checkboxGroup, soundSpeedControl, frequencyControl],
-    });
-    const panel = new Panel(panelContent, {
-      right: this.observedGraph.right,
-      top: this.observedGraph.bottom + 10,
-    });
-
-    this.controlLayer.addChild(panel);
+    this.createControlPanel();
 
     // Setup keyboard handlers
     this.addKeyboardListeners();
@@ -538,6 +517,15 @@ export class SimScreenView extends ScreenView {
 
     this.instructionsBox.centerX = this.layoutBounds.centerX;
     this.instructionsBox.centerY = this.layoutBounds.centerY;
+
+    // Create and load click sound
+    this.clickSound = new Sound('./assets/click.wav');
+
+    // Update microphone visibility based on enabled property
+    this.updateMicrophoneVisibility();
+    this.model.microphoneEnabledProperty.lazyLink(() => {
+      this.updateMicrophoneVisibility();
+    });
   }
 
   /**
@@ -560,6 +548,9 @@ export class SimScreenView extends ScreenView {
       this.waveLayer.removeChild(waveNode);
     });
     this.waveNodesMap.clear();
+
+    // Reset microphone position
+    this.updateMicrophoneVisibility();
 
     // Update view to match model
     this.updateView();
@@ -775,6 +766,13 @@ export class SimScreenView extends ScreenView {
     this.model.timeSpeedProperty.lazyLink(() => {
       this.updateGraphics();
     });
+
+    // Listen for wave detection to play click sound
+    this.model.waveDetectedProperty.lazyLink((detected) => {
+      if (detected) {
+        this.clickSound.play();
+      }
+    });
   }
 
   /**
@@ -965,6 +963,11 @@ export class SimScreenView extends ScreenView {
           this.model.soundSpeedProperty.value - 1.0,
         );
       }
+
+      // Handle microphone toggle with 'm' key
+      if (key === "m") {
+        this.model.microphoneEnabledProperty.value = !this.model.microphoneEnabledProperty.value;
+      }
     };
 
     // Add key listeners to the view
@@ -1017,6 +1020,8 @@ export class SimScreenView extends ScreenView {
       STRINGS.HELP.ADJUST,
       STRINGS.HELP.SCENARIOS,
       "Press 'T' to toggle motion trails that show object paths.",
+      "Press 'M' to toggle the microphone that clicks when waves pass through it.",
+      "Drag the microphone to position it anywhere in the simulation."
     ];
 
     let yPosition = title.bottom + 15;
@@ -1047,6 +1052,7 @@ export class SimScreenView extends ScreenView {
     this.updateStatus();
     this.updateGraphics();
     this.updateTrails();
+    this.updateMicrophoneVisibility();
   }
 
   /**
@@ -1462,5 +1468,220 @@ export class SimScreenView extends ScreenView {
       // Apply the gradient
       this.observerTrail.stroke = observerGradient;
     }
+  }
+
+  /**
+   * Create the microphone node
+   */
+  private createMicrophoneNode(): Node {
+    const microphoneNode = new Node({
+      cursor: 'pointer'
+    });
+
+    // Position microphone at initial position
+    const viewPosition = this.modelToView(this.model.microphonePositionProperty.value);
+    microphoneNode.center = viewPosition;
+
+    // Create microphone body - a circle with stem
+    const micBody = new Circle(15, {
+      fill: new Color(100, 100, 100)
+    });
+
+    // Create microphone stem
+    const micStem = new Rectangle(-5, 10, 10, 30, {
+      fill: new Color(80, 80, 80)
+    });
+
+    // Create microphone base
+    const micBase = new Rectangle(-12, 35, 24, 8, {
+      fill: new Color(50, 50, 50),
+      cornerRadius: 3
+    });
+
+    // Create microphone grid pattern
+    const gridSize = 4;
+    const gridPattern = new Path(new Shape(), {
+      stroke: new Color(40, 40, 40),
+      lineWidth: 1
+    });
+
+    // Draw horizontal grid lines
+    const gridShape = new Shape();
+    for (let y = -10; y <= 10; y += gridSize) {
+      gridShape.moveTo(-10, y);
+      gridShape.lineTo(10, y);
+    }
+    
+    // Draw vertical grid lines
+    for (let x = -10; x <= 10; x += gridSize) {
+      gridShape.moveTo(x, -10);
+      gridShape.lineTo(x, 10);
+    }
+    
+    gridPattern.shape = gridShape;
+
+    // Add components to microphone node
+    microphoneNode.addChild(micStem);
+    microphoneNode.addChild(micBase);
+    microphoneNode.addChild(micBody);
+    microphoneNode.addChild(gridPattern);
+
+    // Add highlight ring that shows when detecting waves
+    const detectionRing = new Circle(20, {
+      stroke: new Color(255, 255, 0),
+      lineWidth: 2,
+      visible: false
+    });
+    microphoneNode.addChild(detectionRing);
+
+    // Add drag listener
+    const micDragListener = new DragListener({
+      targetNode: microphoneNode,
+      dragBoundsProperty: new Property(this.layoutBounds),
+      start: (event) => {
+        // Store the initial offset between pointer and mic position
+        const micViewPos = this.modelToView(
+          this.model.microphonePositionProperty.value
+        );
+        (micDragListener as DragListener & { dragOffset: Vector2 }).dragOffset = 
+          micViewPos.minus(event.pointer.point);
+      },
+      drag: (event) => {
+        // Convert view coordinates to model coordinates, accounting for initial offset
+        const viewPoint = event.pointer.point.plus(
+          (micDragListener as DragListener & { dragOffset: Vector2 }).dragOffset
+        );
+        const modelPoint = this.viewToModel(viewPoint);
+
+        // Update microphone position in model
+        this.model.microphonePositionProperty.value = modelPoint;
+      }
+    });
+    microphoneNode.addInputListener(micDragListener);
+
+    // Add listener for wave detection
+    this.model.waveDetectedProperty.lazyLink((detected) => {
+      if (detected) {
+        // Show detection ring
+        detectionRing.visible = true;
+        
+        // Play click sound
+        this.clickSound.play();
+        
+        // Hide ring after a short delay
+        setTimeout(() => {
+          detectionRing.visible = false;
+        }, 100);
+      }
+    });
+
+    // Update position when model position changes
+    this.model.microphonePositionProperty.lazyLink(() => {
+      const viewPosition = this.modelToView(this.model.microphonePositionProperty.value);
+      microphoneNode.center = viewPosition;
+    });
+
+    return microphoneNode;
+  }
+
+  /**
+   * Create a panel
+   */
+  private createControlPanel(): void {
+    const items: VerticalCheckboxGroupItem[] = [
+      {
+        property: this.visibleValuesProperty,
+        createNode: () =>
+          new Text(STRINGS.CONTROLS.VALUES, {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+      {
+        property: this.visibleVelocityArrowProperty,
+        createNode: () =>
+          new Text(STRINGS.CONTROLS.VELOCITY_ARROWS, {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+      {
+        property: this.visibleLineOfSightProperty,
+        createNode: () =>
+          new Text(STRINGS.CONTROLS.LINE_OF_SIGHT, {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+      {
+        property: this.visibleTrailsProperty,
+        createNode: () =>
+          new Text(STRINGS.CONTROLS.MOTION_TRAILS, {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+      {
+        property: this.model.microphoneEnabledProperty,
+        createNode: () =>
+          new Text("Microphone Clicks", {
+            font: new PhetFont(14),
+            fill: this.UI.TEXT_COLOR,
+          }),
+      },
+    ];
+
+    const checkboxGroup = new VerticalCheckboxGroup(items);
+
+    const soundSpeedControl = new NumberControl(
+      STRINGS.CONTROLS.SOUND_SPEED,
+      this.model.soundSpeedProperty,
+      this.model.soundSpeedRange,
+      {
+        layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
+        numberDisplayOptions: {
+          valuePattern: STRINGS.UNITS.METERS_PER_SECOND,
+        },
+        titleNodeOptions: {
+          font: new PhetFont(12),
+          maxWidth: 140,
+        },
+      },
+    );
+    soundSpeedControl.top = checkboxGroup.bottom + 10;
+
+    const frequencyControl = new NumberControl(
+      STRINGS.CONTROLS.FREQUENCY,
+      this.model.emittedFrequencyProperty,
+      this.model.frequencyRange,
+      {
+        layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
+        numberDisplayOptions: {
+          valuePattern: STRINGS.UNITS.HERTZ,
+        },
+        titleNodeOptions: {
+          font: new PhetFont(12),
+          maxWidth: 140,
+        },
+      },
+    );
+    frequencyControl.top = soundSpeedControl.bottom + 10;
+
+    const panelContent = new Node({
+      children: [checkboxGroup, soundSpeedControl, frequencyControl],
+    });
+    const panel = new Panel(panelContent, {
+      right: this.observedGraph.right,
+      top: this.observedGraph.bottom + 10,
+    });
+
+    this.controlLayer.addChild(panel);
+  }
+  
+  /**
+   * Update the microphone visibility based on the enabled property
+   */
+  private updateMicrophoneVisibility(): void {
+    this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
   }
 }

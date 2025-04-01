@@ -7,6 +7,7 @@ import {
   RangeWithValue,
   EnumerationValue,
   Enumeration,
+  Property,
 } from "scenerystack";
 import { ObservableArray } from "scenerystack/axon";
 import { createObservableArray } from "scenerystack/axon";
@@ -32,6 +33,12 @@ export interface Wave {
   sourceVelocity: Vector2;
   sourceFrequency: number;
   phaseAtEmission: number;
+}
+
+// Wave detection interface for microphone
+export interface WaveDetection {
+  wave: Wave;
+  detectionTime: number;
 }
 
 // Add a new interface for position history points
@@ -78,6 +85,13 @@ export class SimModel {
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>; // dimensionless factor
   public readonly soundSpeedRange: RangeWithValue; // in meters per second (m/s)
   public readonly frequencyRange: RangeWithValue; // in Hertz (Hz)
+
+  // Microphone properties
+  public readonly microphonePositionProperty: Property<Vector2>;  // Vector2 position of microphone
+  public readonly microphoneEnabledProperty: BooleanProperty;  // Whether microphone is enabled
+  private lastWaveDetectionTime: number = 0;                   // Time of last wave detection
+  private readonly waveDetectionCooldown: number = 0.1;        // Cooldown between detections (s)
+  public readonly waveDetectedProperty: BooleanProperty;       // Emits when a wave is detected
 
   // Source and observer objects
   private readonly source: MovableObject; // position in meters (m)
@@ -156,6 +170,11 @@ export class SimModel {
     this.scenarioProperty = new EnumerationProperty(Scenario.FREE_PLAY);
     this.timeSpeedProperty = new EnumerationProperty(TimeSpeed.NORMAL);
 
+    // Initialize microphone properties
+    this.microphonePositionProperty = new Property<Vector2>(new Vector2(0, 20));
+    this.microphoneEnabledProperty = new BooleanProperty(true);
+    this.waveDetectedProperty = new BooleanProperty(false);
+
     // Initialize simulation state
     this.simulationTimeProperty = new NumberProperty(0);
     this.observedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
@@ -214,6 +233,12 @@ export class SimModel {
     this.observedFrequencyProperty.value = PHYSICS.EMITTED_FREQ;
     this.playProperty.reset();
 
+    // Reset microphone properties
+    this.microphonePositionProperty.value = new Vector2(0, 20);
+    this.microphoneEnabledProperty.reset();
+    this.waveDetectedProperty.value = false;
+    this.lastWaveDetectionTime = 0;
+
     // Reset source and observer
     this.source.reset( INITIAL_POSITIONS.SOURCE);
     this.observer.reset(INITIAL_POSITIONS.OBSERVER);
@@ -269,6 +294,11 @@ export class SimModel {
     // Generate and update waves
     this.waveGenerator.generateWaves();
     this.waveGenerator.updateWaves(this.simulationTimeProperty.value);
+
+    // Check for waves at microphone
+    if (this.microphoneEnabledProperty.value) {
+      this.detectWavesAtMicrophone();
+    }
 
     // Calculate Doppler effect and update waveforms
     this.updateWaveforms(modelDt);
@@ -462,5 +492,40 @@ export class SimModel {
 
     // Configure velocities for the specific scenario
     this.configureScenarioVelocities(scenario);
+  }
+
+  /**
+   * Detect waves crossing the microphone position
+   */
+  private detectWavesAtMicrophone(): void {
+    const currentTime = this.simulationTimeProperty.value;
+    
+    // Skip if we're still in cooldown
+    if (currentTime - this.lastWaveDetectionTime < this.waveDetectionCooldown) {
+      this.waveDetectedProperty.value = false;
+      return;
+    }
+    
+    // Reset detection flag
+    this.waveDetectedProperty.value = false;
+    
+    // Check all waves - iterating through ObservableArray
+    for (let i = 0; i < this.waves.length; i++) {
+      const wave = this.waves.get(i);
+      
+      // Calculate distance from wave center to microphone
+      const distance = this.microphonePositionProperty.value.distance(wave.position);
+      
+      // Determine if wave front is crossing the microphone position
+      const waveFrontRadius = wave.radius;
+      const tolerance = 2; // Detection tolerance in meters
+      
+      if (Math.abs(distance - waveFrontRadius) < tolerance) {
+        // Wave detected at microphone
+        this.lastWaveDetectionTime = currentTime;
+        this.waveDetectedProperty.value = true;
+        break; // Only detect one wave per frame
+      }
+    }
   }
 }
