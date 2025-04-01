@@ -311,36 +311,36 @@ export class SimModel {
     switch (scenario) {
       case Scenario.SCENARIO_1:
         this.sourceVelocityProperty.value =
-          SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity.copy();
+          SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity;
         this.observerVelocityProperty.value =
-          SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity.copy();
+          SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity;
         this.sourceMovingProperty.value = true;
         this.observerMovingProperty.value = false;
         break;
 
       case Scenario.SCENARIO_2:
         this.sourceVelocityProperty.value =
-          SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity.copy();
+          SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity;
         this.observerVelocityProperty.value =
-          SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity.copy();
+          SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity;
         this.sourceMovingProperty.value = false;
         this.observerMovingProperty.value = true;
         break;
 
       case Scenario.SCENARIO_3:
         this.sourceVelocityProperty.value =
-          SCENARIOS.MOVING_APART.sourceVelocity.copy();
+          SCENARIOS.MOVING_APART.sourceVelocity;
         this.observerVelocityProperty.value =
-          SCENARIOS.MOVING_APART.observerVelocity.copy();
+          SCENARIOS.MOVING_APART.observerVelocity;
         this.sourceMovingProperty.value = true;
         this.observerMovingProperty.value = true;
         break;
 
       case Scenario.SCENARIO_4:
         this.sourceVelocityProperty.value =
-          SCENARIOS.PERPENDICULAR.sourceVelocity.copy();
+          SCENARIOS.PERPENDICULAR.sourceVelocity;
         this.observerVelocityProperty.value =
-          SCENARIOS.PERPENDICULAR.observerVelocity.copy();
+          SCENARIOS.PERPENDICULAR.observerVelocity;
         this.sourceMovingProperty.value = true;
         this.observerMovingProperty.value = true;
         break;
