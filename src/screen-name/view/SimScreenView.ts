@@ -734,6 +734,12 @@ export class SimScreenView extends ScreenView {
       this.updatePositions();
     });
 
+    // Update microphone position
+    this.model.microphonePositionProperty.lazyLink(() => {
+      const viewPosition = this.modelViewTransform.modelToViewPosition(this.model.microphonePositionProperty.value);
+      this.microphoneNode.center = viewPosition;
+    });
+
     // Update source velocity
     this.model.sourceVelocityProperty.lazyLink(() => {
       this.updateVectors();
@@ -1535,51 +1541,24 @@ export class SimScreenView extends ScreenView {
     microphoneNode.addChild(detectionRing);
 
     // Add drag listener
-    // Track whether we're currently dragging to prevent position feedback loops
-    let isDragging = false;
-    
     const micDragListener = new DragListener({
-      targetNode: this,
-      dragBoundsProperty: new Property(this.layoutBounds),
-      start: (event) => {
-        // Store the initial offset between pointer and mic position
-        const micViewPos = microphoneNode.center;
-        (micDragListener as DragListener & { dragOffset: Vector2 }).dragOffset = 
-          micViewPos.minus(event.pointer.point);
-        
-        // Set dragging flag
-        isDragging = true;
+      targetNode: microphoneNode,
+      start: () => {
+        // Drag started
       },
       drag: (event) => {
-        // Apply the offset to get the intended position
-        const viewPoint = event.pointer.point.plus(
-          (micDragListener as DragListener & { dragOffset: Vector2 }).dragOffset
-        );
-        
         // Convert view coordinates to model coordinates
+        const viewPoint = event.pointer.point;
         const modelPoint = this.viewToModel(viewPoint);
-
+        
         // Update microphone position in model
         this.model.microphonePositionProperty.value = modelPoint;
-        
-        // Update node position directly using the exact view coordinates
-        // This ensures no transformation errors accumulate
-        microphoneNode.center = viewPoint;
       },
       end: () => {
-        // Clear dragging flag when drag ends
-        isDragging = false;
+        // Position is already updated during drag
       }
     });
     microphoneNode.addInputListener(micDragListener);
-    
-    // Update position from model changes, but only when not dragging
-    this.model.microphonePositionProperty.lazyLink(() => {
-      if (!isDragging) {
-        const viewPosition = this.modelToView(this.model.microphonePositionProperty.value);
-        microphoneNode.center = viewPosition;
-      }
-    });
 
     // Add listener for wave detection
     this.model.waveDetectedProperty.lazyLink((detected) => {
