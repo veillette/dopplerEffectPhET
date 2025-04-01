@@ -521,7 +521,7 @@ export class SimScreenView extends ScreenView {
     this.selectedObject = "source";
 
     // Update visibility directly
-    this.instructionsBox.visible = true;
+    this.instructionsBox.visible = false;
 
     this.visibleValuesProperty.reset();
     this.visibleVelocityArrowProperty.reset();
