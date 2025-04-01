@@ -35,8 +35,8 @@ export const WAVE = {
 
 // Initial positions (in meters)
 export const INITIAL_POSITIONS = {
-  SOURCE: { x: -50, y: 0 }, // Source starts 50m left of center (m)
-  OBSERVER: { x: 50, y: 0 }, // Observer starts 50m right of center (m)
+  SOURCE: new Vector2(-50, 0), // Source starts 50m left of center (m)
+  OBSERVER: new Vector2(50, 0), // Observer starts 50m right of center (m)
 } as const;
 
 // Sound data

@@ -138,12 +138,8 @@ export class SimModel {
     this.waves = createObservableArray<Wave>([]);
 
     // Initialize source and observer
-    this.source = new MovableObject(
-      new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y),
-    );
-    this.observer = new MovableObject(
-      new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y),
-    );
+    this.source = new MovableObject(INITIAL_POSITIONS.SOURCE);
+    this.observer = new MovableObject( INITIAL_POSITIONS.OBSERVER);
 
     // Link properties for direct access
     this.sourcePositionProperty = this.source.positionProperty;
@@ -192,12 +188,8 @@ export class SimModel {
     this.playProperty.reset();
 
     // Reset source and observer
-    this.source.reset(
-      new Vector2(INITIAL_POSITIONS.SOURCE.x, INITIAL_POSITIONS.SOURCE.y),
-    );
-    this.observer.reset(
-      new Vector2(INITIAL_POSITIONS.OBSERVER.x, INITIAL_POSITIONS.OBSERVER.y),
-    );
+    this.source.reset( INITIAL_POSITIONS.SOURCE);
+    this.observer.reset(INITIAL_POSITIONS.OBSERVER);
 
     // Reset velocities
     this.sourceVelocityProperty.reset()
@@ -365,14 +357,8 @@ export class SimModel {
     this.reset();
 
     // Reset positions explicitly to ensure consistent starting state
-    this.sourcePositionProperty.value = new Vector2(
-      INITIAL_POSITIONS.SOURCE.x,
-      INITIAL_POSITIONS.SOURCE.y,
-    );
-    this.observerPositionProperty.value = new Vector2(
-      INITIAL_POSITIONS.OBSERVER.x,
-      INITIAL_POSITIONS.OBSERVER.y,
-    );
+    this.sourcePositionProperty.value = INITIAL_POSITIONS.SOURCE;
+    this.observerPositionProperty.value = INITIAL_POSITIONS.OBSERVER;
 
     // Configure velocities for the specific scenario
     this.configureScenarioVelocities(scenario);
@@ -392,14 +378,9 @@ export class SimModel {
     this.waveformManager.reset(SOUND_DATA.ARRAY_SIZE);
 
     // Reset positions
-    this.sourcePositionProperty.value = new Vector2(
-      INITIAL_POSITIONS.SOURCE.x,
-      INITIAL_POSITIONS.SOURCE.y,
-    );
-    this.observerPositionProperty.value = new Vector2(
-      INITIAL_POSITIONS.OBSERVER.x,
-      INITIAL_POSITIONS.OBSERVER.y,
-    );
+    this.sourcePositionProperty.value = INITIAL_POSITIONS.SOURCE;
+    this.observerPositionProperty.value = INITIAL_POSITIONS.OBSERVER;
+
 
     // Configure velocities for the specific scenario
     this.configureScenarioVelocities(scenario);
