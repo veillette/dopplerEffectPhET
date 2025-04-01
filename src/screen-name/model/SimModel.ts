@@ -376,6 +376,7 @@ export class SimModel {
 
     // Configure velocities for the specific scenario
     this.configureScenarioVelocities(scenario);
+
   }
 
   /**
@@ -385,7 +386,12 @@ export class SimModel {
    */
   private applyScenario(scenario: Scenario): void {
     // Apply the scenario without resetting the entire simulation
-    // Reset positions only
+
+    // Reset components
+    this.waveGenerator.reset();
+    this.waveformManager.reset(SOUND_DATA.ARRAY_SIZE);
+
+    // Reset positions
     this.sourcePositionProperty.value = new Vector2(
       INITIAL_POSITIONS.SOURCE.x,
       INITIAL_POSITIONS.SOURCE.y,
