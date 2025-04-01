@@ -264,7 +264,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_1,
         createNode: () =>
-          new Text("Scenario 1", {
+          new Text("Source Moving Toward Observer", {
             font: new PhetFont(14),
             fill: this.UI.TEXT_COLOR,
           }),
@@ -272,7 +272,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_2,
         createNode: () =>
-          new Text("Scenario 2", {
+          new Text("Observer Moving Toward Source", {
             font: new PhetFont(14),
             fill: this.UI.TEXT_COLOR,
           }),
@@ -280,7 +280,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_3,
         createNode: () =>
-          new Text("Scenario 3", {
+          new Text("Observer and Source Moving Away", {
             font: new PhetFont(14),
             fill: this.UI.TEXT_COLOR,
           }),
@@ -288,7 +288,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_4,
         createNode: () =>
-          new Text("Scenario 4", {
+          new Text("Observer and Source Moving Perpendicular", {
             font: new PhetFont(14),
             fill: this.UI.TEXT_COLOR,
           }),
