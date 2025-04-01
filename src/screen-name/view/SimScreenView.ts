@@ -1540,21 +1540,24 @@ export class SimScreenView extends ScreenView {
       dragBoundsProperty: new Property(this.layoutBounds),
       start: (event) => {
         // Store the initial offset between pointer and mic position
-        const micViewPos = this.modelToView(
-          this.model.microphonePositionProperty.value
-        );
+        const micViewPos = microphoneNode.center;
         (micDragListener as DragListener & { dragOffset: Vector2 }).dragOffset = 
           micViewPos.minus(event.pointer.point);
       },
       drag: (event) => {
-        // Convert view coordinates to model coordinates, accounting for initial offset
+        // Apply the offset to get the intended position
         const viewPoint = event.pointer.point.plus(
           (micDragListener as DragListener & { dragOffset: Vector2 }).dragOffset
         );
+        
+        // Convert view coordinates to model coordinates
         const modelPoint = this.viewToModel(viewPoint);
 
         // Update microphone position in model
         this.model.microphonePositionProperty.value = modelPoint;
+        
+        // Update node position immediately to ensure smooth dragging
+        microphoneNode.center = viewPoint;
       }
     });
     microphoneNode.addInputListener(micDragListener);
