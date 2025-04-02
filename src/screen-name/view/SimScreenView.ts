@@ -24,19 +24,20 @@ import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 import strings from "../../strings_en.json";
 import { Sound } from "./Sound";
 import { MicrophoneNode } from "./MicrophoneNode";
-import {
-  ControlPanelNode,
-  GraphDisplayNode,
-  InstructionsNode,
-  StatusTextNode,
-} from "./components";
-import {
-  DragHandlerManager,
-  KeyboardHandlerManager,
-  WaveManager,
-  VectorDisplayManager,
-  TrailManager,
-} from "./managers";
+
+// Import components directly
+import { ControlPanelNode } from "./components/ControlPanelNode";
+import { GraphDisplayNode } from "./components/GraphDisplayNode";
+import { InstructionsNode } from "./components/InstructionsNode";
+import { StatusTextNode } from "./components/StatusTextNode";
+
+// Import managers directly
+import { DragHandlerManager } from "./managers/DragHandlerManager";
+import { KeyboardHandlerManager } from "./managers/KeyboardHandlerManager";
+import { WaveManager } from "./managers/WaveManager";
+import { VectorDisplayManager } from "./managers/VectorDisplayManager";
+import { TrailManager } from "./managers/TrailManager";
+
 import { ViewTransformUtils } from "./utils/ViewTransformUtils";
 
 // Add this section at the top of the file, after imports
