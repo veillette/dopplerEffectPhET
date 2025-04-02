@@ -20,6 +20,38 @@ import {
 } from "scenerystack";
 import { Sound } from "./Sound";
 
+// Constants for microphone visualization and behavior
+const MICROPHONE = {
+  // Size constants
+  BODY_RADIUS: 15,
+  DETECTION_RING_RADIUS: 20,
+  STEM_WIDTH: 10,
+  STEM_HEIGHT: 30,
+  BASE_WIDTH: 24,
+  BASE_HEIGHT: 8,
+  GRID_SIZE: 4,
+  GRID_EXTENT: 10,
+  
+  // Positioning constants
+  STEM_X_OFFSET: -5,
+  STEM_Y_OFFSET: 10,
+  BASE_X_OFFSET: -12,
+  BASE_Y_OFFSET: 35,
+  
+  // Styling constants
+  BODY_COLOR: new Color(100, 100, 100),
+  STEM_COLOR: new Color(80, 80, 80),
+  BASE_COLOR: new Color(50, 50, 50),
+  GRID_COLOR: new Color(40, 40, 40),
+  DETECTION_RING_COLOR: new Color(255, 255, 0),
+  BASE_CORNER_RADIUS: 3,
+  GRID_LINE_WIDTH: 1,
+  DETECTION_RING_LINE_WIDTH: 2,
+  
+  // Timing constants
+  DETECTION_FLASH_DURATION: 100 // milliseconds
+};
+
 /**
  * MicrophoneNode that can be positioned within the simulation and 
  * plays a sound when a wave passes through it
@@ -48,39 +80,50 @@ export class MicrophoneNode extends Node {
     });
 
     // Create microphone body - a circle with stem
-    const micBody = new Circle(15, {
-      fill: new Color(100, 100, 100)
+    const micBody = new Circle(MICROPHONE.BODY_RADIUS, {
+      fill: MICROPHONE.BODY_COLOR
     });
 
     // Create microphone stem
-    const micStem = new Rectangle(-5, 10, 10, 30, {
-      fill: new Color(80, 80, 80)
-    });
+    const micStem = new Rectangle(
+      MICROPHONE.STEM_X_OFFSET, 
+      MICROPHONE.STEM_Y_OFFSET, 
+      MICROPHONE.STEM_WIDTH, 
+      MICROPHONE.STEM_HEIGHT, 
+      {
+        fill: MICROPHONE.STEM_COLOR
+      }
+    );
 
     // Create microphone base
-    const micBase = new Rectangle(-12, 35, 24, 8, {
-      fill: new Color(50, 50, 50),
-      cornerRadius: 3
-    });
+    const micBase = new Rectangle(
+      MICROPHONE.BASE_X_OFFSET, 
+      MICROPHONE.BASE_Y_OFFSET, 
+      MICROPHONE.BASE_WIDTH, 
+      MICROPHONE.BASE_HEIGHT, 
+      {
+        fill: MICROPHONE.BASE_COLOR,
+        cornerRadius: MICROPHONE.BASE_CORNER_RADIUS
+      }
+    );
 
     // Create microphone grid pattern
-    const gridSize = 4;
     const gridPattern = new Path(new Shape(), {
-      stroke: new Color(40, 40, 40),
-      lineWidth: 1
+      stroke: MICROPHONE.GRID_COLOR,
+      lineWidth: MICROPHONE.GRID_LINE_WIDTH
     });
 
     // Draw horizontal grid lines
     const gridShape = new Shape();
-    for (let y = -10; y <= 10; y += gridSize) {
-      gridShape.moveTo(-10, y);
-      gridShape.lineTo(10, y);
+    for (let y = -MICROPHONE.GRID_EXTENT; y <= MICROPHONE.GRID_EXTENT; y += MICROPHONE.GRID_SIZE) {
+      gridShape.moveTo(-MICROPHONE.GRID_EXTENT, y);
+      gridShape.lineTo(MICROPHONE.GRID_EXTENT, y);
     }
     
     // Draw vertical grid lines
-    for (let x = -10; x <= 10; x += gridSize) {
-      gridShape.moveTo(x, -10);
-      gridShape.lineTo(x, 10);
+    for (let x = -MICROPHONE.GRID_EXTENT; x <= MICROPHONE.GRID_EXTENT; x += MICROPHONE.GRID_SIZE) {
+      gridShape.moveTo(x, -MICROPHONE.GRID_EXTENT);
+      gridShape.lineTo(x, MICROPHONE.GRID_EXTENT);
     }
     
     gridPattern.shape = gridShape;
@@ -92,9 +135,9 @@ export class MicrophoneNode extends Node {
     this.addChild(gridPattern);
 
     // Add highlight ring that shows when detecting waves
-    this.detectionRing = new Circle(20, {
-      stroke: new Color(255, 255, 0),
-      lineWidth: 2,
+    this.detectionRing = new Circle(MICROPHONE.DETECTION_RING_RADIUS, {
+      stroke: MICROPHONE.DETECTION_RING_COLOR,
+      lineWidth: MICROPHONE.DETECTION_RING_LINE_WIDTH,
       visible: false
     });
     this.addChild(this.detectionRing);
@@ -166,7 +209,7 @@ export class MicrophoneNode extends Node {
       // Hide ring after a short delay
       setTimeout(() => {
         this.detectionRing.visible = false;
-      }, 100);
+      }, MICROPHONE.DETECTION_FLASH_DURATION);
     }
   }
 } 

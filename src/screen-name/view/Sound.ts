@@ -5,6 +5,20 @@
  * Supports both preloaded audio files and programmatically generated sounds.
  */
 
+// Constants for sound generation and playback
+const SOUND = {
+  // Playback settings
+  DEFAULT_VOLUME: 0.5,
+  
+  // Click sound generation parameters
+  CLICK_FREQUENCY: 1500, // Hz
+  ATTACK_TIME: 0.001, // seconds
+  DECAY_TIME: 0.03, // seconds
+  PEAK_GAIN: 0.3,
+  INITIAL_GAIN: 0,
+  FINAL_GAIN: 0
+};
+
 /**
  * Simple Sound wrapper class for playing audio
  */
@@ -50,7 +64,7 @@ export class Sound {
     } else if (this.isLoaded && this.audio) {
       // Create a new audio element for each play to allow overlapping sounds
       const sound = new Audio(this.audio.src);
-      sound.volume = 0.5; // Lower volume to prevent being too loud
+      sound.volume = SOUND.DEFAULT_VOLUME; // Lower volume to prevent being too loud
       
       // Play and handle errors
       sound.play().catch(e => {
@@ -83,21 +97,21 @@ export class Sound {
       
       // Set up the click parameters
       oscillator.type = 'sine';
-      oscillator.frequency.value = 1500; // High frequency for a click
+      oscillator.frequency.value = SOUND.CLICK_FREQUENCY; // High frequency for a click
       
       // Start with zero gain
-      gainNode.gain.value = 0;
+      gainNode.gain.value = SOUND.INITIAL_GAIN;
       
       // Schedule the envelope - very short attack and decay
       const now = this.audioContext.currentTime;
       // Attack - quick fade in
-      gainNode.gain.linearRampToValueAtTime(0.3, now + 0.001); 
+      gainNode.gain.linearRampToValueAtTime(SOUND.PEAK_GAIN, now + SOUND.ATTACK_TIME); 
       // Decay - quick fade out
-      gainNode.gain.linearRampToValueAtTime(0, now + 0.03);
+      gainNode.gain.linearRampToValueAtTime(SOUND.FINAL_GAIN, now + SOUND.DECAY_TIME);
       
       // Start and stop the oscillator
       oscillator.start(now);
-      oscillator.stop(now + 0.03); // Stop after 30ms - well under 0.1 seconds
+      oscillator.stop(now + SOUND.DECAY_TIME); // Stop after decay time
     } catch (e) {
       console.warn('Error generating click sound:', e);
     }
