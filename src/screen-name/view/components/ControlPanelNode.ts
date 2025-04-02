@@ -26,6 +26,7 @@ type ControlPanelStrings = {
   MOTION_TRAILS: string;
   METERS_PER_SECOND: string;
   HERTZ: string;
+  MICROPHONE_CLICKS: string;
 };
 
 // Configuration options for the control panel
@@ -94,7 +95,7 @@ export class ControlPanelNode extends Node {
       createCheckboxItem(visibleVelocityArrowProperty, strings.VELOCITY_ARROWS),
       createCheckboxItem(visibleLineOfSightProperty, strings.LINE_OF_SIGHT),
       createCheckboxItem(visibleTrailsProperty, strings.MOTION_TRAILS),
-      createCheckboxItem(microphoneEnabledProperty, "Microphone Clicks"),
+      createCheckboxItem(microphoneEnabledProperty, strings.MICROPHONE_CLICKS),
     ];
 
     // Create vertical checkbox group

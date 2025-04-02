@@ -26,6 +26,12 @@
   "doppler-effect.controls.frequency": {
     "value": "Frequency"
   },
+  "doppler-effect.controls.motionTrails": {
+    "value": "Motion Trails"
+  },
+  "doppler-effect.controls.microphoneClicks": {
+    "value": "Microphone Clicks"
+  },
   "doppler-effect.units.metersPerSecond": {
     "value": "{{value}} m/s"
   },
@@ -70,5 +76,29 @@
   },
   "doppler-effect.help.scenarios": {
     "value": "1-4: Load preset scenarios (approaching source, observer, etc.)"
+  },
+  "doppler-effect.help.toggleMotionTrails": {
+    "value": "Press 'T' to toggle motion trails that show object paths."
+  },
+  "doppler-effect.help.toggleMicrophone": {
+    "value": "Press 'M' to toggle the microphone that clicks when waves pass through it."
+  },
+  "doppler-effect.help.dragMicrophone": {
+    "value": "Drag the microphone to position it anywhere in the simulation."
+  },
+  "doppler-effect.scenarios.freePlay": {
+    "value": "Free Play"
+  },
+  "doppler-effect.scenarios.sourceMovingTowardObserver": {
+    "value": "Source Moving Toward Observer"
+  },
+  "doppler-effect.scenarios.observerMovingTowardSource": {
+    "value": "Observer Moving Toward Source"
+  },
+  "doppler-effect.scenarios.movingAway": {
+    "value": "Observer and Source Moving Away"
+  },
+  "doppler-effect.scenarios.perpendicular": {
+    "value": "Observer and Source Moving Perpendicular"
   }
 }

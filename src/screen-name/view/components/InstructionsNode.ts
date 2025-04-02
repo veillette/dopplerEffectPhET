@@ -16,6 +16,9 @@ type InstructionStrings = {
   CONTROLS: string;
   ADJUST: string;
   SCENARIOS: string;
+  TOGGLE_MOTION_TRAILS: string;
+  TOGGLE_MICROPHONE: string;
+  DRAG_MICROPHONE: string;
 };
 
 // Configuration options for the instructions display
@@ -70,9 +73,9 @@ export class InstructionsNode extends Node {
       strings.CONTROLS,
       strings.ADJUST,
       strings.SCENARIOS,
-      "Press 'T' to toggle motion trails that show object paths.",
-      "Press 'M' to toggle the microphone that clicks when waves pass through it.",
-      "Drag the microphone to position it anywhere in the simulation.",
+      strings.TOGGLE_MOTION_TRAILS,
+      strings.TOGGLE_MICROPHONE,
+      strings.DRAG_MICROPHONE,
     ];
 
     // Add instruction lines
@@ -101,5 +104,15 @@ export class InstructionsNode extends Node {
    */
   public toggleVisibility(): void {
     this.visible = !this.visible;
+  }
+
+  /**
+   * Set visibility of the instructions
+   * @param visible - Whether the instructions should be visible
+   * @returns this for chaining
+   */
+  public setVisible(visible: boolean): this {
+    this.visible = visible;
+    return this;
   }
 }

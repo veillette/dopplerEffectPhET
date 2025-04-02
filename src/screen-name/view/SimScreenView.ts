@@ -48,7 +48,8 @@ const STRINGS = {
     LINE_OF_SIGHT: strings["doppler-effect.controls.lineOfSight"].value,
     SOUND_SPEED: strings["doppler-effect.controls.soundSpeed"].value,
     FREQUENCY: strings["doppler-effect.controls.frequency"].value,
-    MOTION_TRAILS: "Motion Trails",
+    MOTION_TRAILS: strings["doppler-effect.controls.motionTrails"].value,
+    MICROPHONE_CLICKS: strings["doppler-effect.controls.microphoneClicks"].value,
   },
   UNITS: {
     METERS_PER_SECOND: strings["doppler-effect.units.metersPerSecond"].value,
@@ -73,6 +74,16 @@ const STRINGS = {
     CONTROLS: strings["doppler-effect.help.controls"].value,
     ADJUST: strings["doppler-effect.help.adjust"].value,
     SCENARIOS: strings["doppler-effect.help.scenarios"].value,
+    TOGGLE_MOTION_TRAILS: strings["doppler-effect.help.toggleMotionTrails"].value,
+    TOGGLE_MICROPHONE: strings["doppler-effect.help.toggleMicrophone"].value,
+    DRAG_MICROPHONE: strings["doppler-effect.help.dragMicrophone"].value,
+  },
+  SCENARIOS: {
+    FREE_PLAY: strings["doppler-effect.scenarios.freePlay"].value,
+    SOURCE_MOVING_TOWARD_OBSERVER: strings["doppler-effect.scenarios.sourceMovingTowardObserver"].value,
+    OBSERVER_MOVING_TOWARD_SOURCE: strings["doppler-effect.scenarios.observerMovingTowardSource"].value,
+    MOVING_AWAY: strings["doppler-effect.scenarios.movingAway"].value,
+    PERPENDICULAR: strings["doppler-effect.scenarios.perpendicular"].value,
   },
 };
 
@@ -367,6 +378,9 @@ export class SimScreenView extends ScreenView {
         CONTROLS: STRINGS.HELP.CONTROLS,
         ADJUST: STRINGS.HELP.ADJUST,
         SCENARIOS: STRINGS.HELP.SCENARIOS,
+        TOGGLE_MOTION_TRAILS: STRINGS.HELP.TOGGLE_MOTION_TRAILS,
+        TOGGLE_MICROPHONE: STRINGS.HELP.TOGGLE_MICROPHONE,
+        DRAG_MICROPHONE: STRINGS.HELP.DRAG_MICROPHONE,
       },
       {
         layoutBounds: {
@@ -390,6 +404,7 @@ export class SimScreenView extends ScreenView {
         MOTION_TRAILS: STRINGS.CONTROLS.MOTION_TRAILS,
         METERS_PER_SECOND: STRINGS.UNITS.METERS_PER_SECOND,
         HERTZ: STRINGS.UNITS.HERTZ,
+        MICROPHONE_CLICKS: STRINGS.CONTROLS.MICROPHONE_CLICKS,
       },
       this.visibleValuesProperty,
       this.visibleVelocityArrowProperty,
@@ -703,7 +718,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.FREE_PLAY,
         createNode: () =>
-          new Text("Free Play", {
+          new Text(STRINGS.SCENARIOS.FREE_PLAY, {
             font: new PhetFont(14),
             fill: textColor,
           }),
@@ -711,7 +726,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_1,
         createNode: () =>
-          new Text("Source Moving Toward Observer", {
+          new Text(STRINGS.SCENARIOS.SOURCE_MOVING_TOWARD_OBSERVER, {
             font: new PhetFont(14),
             fill: textColor,
           }),
@@ -719,7 +734,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_2,
         createNode: () =>
-          new Text("Observer Moving Toward Source", {
+          new Text(STRINGS.SCENARIOS.OBSERVER_MOVING_TOWARD_SOURCE, {
             font: new PhetFont(14),
             fill: textColor,
           }),
@@ -727,7 +742,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_3,
         createNode: () =>
-          new Text("Observer and Source Moving Away", {
+          new Text(STRINGS.SCENARIOS.MOVING_AWAY, {
             font: new PhetFont(14),
             fill: textColor,
           }),
@@ -735,7 +750,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_4,
         createNode: () =>
-          new Text("Observer and Source Moving Perpendicular", {
+          new Text(STRINGS.SCENARIOS.PERPENDICULAR, {
             font: new PhetFont(14),
             fill: textColor,
           }),
