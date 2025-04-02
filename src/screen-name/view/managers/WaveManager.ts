@@ -6,6 +6,7 @@
 
 import { Node, Circle, Color, ModelViewTransform2 } from "scenerystack";
 import { Wave } from "../../model/SimModel";
+import { WAVE } from "../../model/SimConstants";
 
 /**
  * Manager for handling wave visualization
@@ -76,26 +77,22 @@ export class WaveManager {
    *
    * @param wave - The wave model object to update
    * @param simulationTime - Current simulation time
-   * @param maxAge - Maximum age for waves
    */
   public updateWaveNode(
     wave: Wave,
-    simulationTime: number,
-    maxAge: number = 5,
+    simulationTime: number
   ): void {
     const waveNode = this.waveNodesMap.get(wave);
     if (waveNode) {
       // Update position to match wave's origin (convert to view coordinates)
-      waveNode.center = this.modelViewTransform.modelToViewPosition(
-        wave.position,
-      );
+      waveNode.center = this.modelViewTransform.modelToViewPosition(wave.position);
 
       // Update radius to match wave's propagation (convert to view coordinates)
       waveNode.radius = this.modelViewTransform.modelToViewDeltaX(wave.radius);
 
       // Update opacity based on age
       const age = Math.max(0, simulationTime - wave.birthTime); // Ensure age is non-negative
-      const opacity = 0.7 * (1 - age / maxAge);
+      const opacity = 0.7 * (1 - age / WAVE.MAX_AGE);
 
       // Clamp opacity between 0 and 1
       waveNode.opacity = Math.min(1, Math.max(0, opacity));
