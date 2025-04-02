@@ -1,6 +1,6 @@
 /**
  * ViewTransformUtils.ts
- * 
+ *
  * Utility class for model-view coordinate transformations in the Doppler Effect simulation.
  */
 
@@ -12,16 +12,14 @@ import { Vector2, ModelViewTransform2 } from "scenerystack";
 export class ViewTransformUtils {
   /**
    * Constructor for the ViewTransformUtils
-   * 
+   *
    * @param modelViewTransform - Transform to convert model coordinates to view coordinates
    */
-  constructor(
-    private readonly modelViewTransform: ModelViewTransform2
-  ) {}
+  constructor(private readonly modelViewTransform: ModelViewTransform2) {}
 
   /**
    * Convert model coordinates (meters) to view coordinates (pixels)
-   * 
+   *
    * @param modelPoint - Point in model coordinates
    * @returns Point in view coordinates
    */
@@ -31,7 +29,7 @@ export class ViewTransformUtils {
 
   /**
    * Convert view coordinates (pixels) to model coordinates (meters)
-   * 
+   *
    * @param viewPoint - Point in view coordinates
    * @returns Point in model coordinates
    */
@@ -41,7 +39,7 @@ export class ViewTransformUtils {
 
   /**
    * Convert model distance (meters) to view distance (pixels)
-   * 
+   *
    * @param modelDelta - Vector representing distance in model coordinates
    * @returns Vector representing distance in view coordinates
    */
@@ -51,7 +49,7 @@ export class ViewTransformUtils {
 
   /**
    * Convert model X distance (meters) to view X distance (pixels)
-   * 
+   *
    * @param distance - X distance in model coordinates
    * @returns X distance in view coordinates
    */
@@ -61,11 +59,11 @@ export class ViewTransformUtils {
 
   /**
    * Convert model Y distance (meters) to view Y distance (pixels)
-   * 
+   *
    * @param distance - Y distance in model coordinates
    * @returns Y distance in view coordinates
    */
   public modelToViewDeltaY(distance: number): number {
     return this.modelViewTransform.modelToViewDeltaY(distance);
   }
-} 
+}

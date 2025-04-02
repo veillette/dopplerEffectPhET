@@ -1,15 +1,15 @@
 /**
  * DragHandlerManager.ts
- * 
+ *
  * Manages drag handlers for source and observer objects in the Doppler Effect simulation.
  */
 
-import { 
-  DragListener, 
-  ModelViewTransform2, 
-  Vector2, 
+import {
+  DragListener,
+  ModelViewTransform2,
+  Vector2,
   Property,
-  Bounds2 
+  Bounds2,
 } from "scenerystack";
 import { Node } from "scenerystack";
 
@@ -21,26 +21,31 @@ export class DragHandlerManager {
 
   /**
    * Constructor for the DragHandlerManager
-   * 
+   *
    * @param modelViewTransform - Transform between model and view coordinates
    * @param layoutBounds - View bounds for constraining drag
    */
   constructor(
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly layoutBounds: { minX: number; minY: number; maxX: number; maxY: number }
+    private readonly layoutBounds: {
+      minX: number;
+      minY: number;
+      maxX: number;
+      maxY: number;
+    },
   ) {
     // Create a Bounds2 object from the layoutBounds
     this.dragBounds = new Bounds2(
       layoutBounds.minX,
       layoutBounds.minY,
       layoutBounds.maxX,
-      layoutBounds.maxY
+      layoutBounds.maxY,
     );
   }
 
   /**
    * Add drag handlers to source and observer nodes
-   * 
+   *
    * @param sourceNode - The source visual node
    * @param observerNode - The observer visual node
    * @param sourcePositionProperty - Model property for source position
@@ -64,7 +69,7 @@ export class DragHandlerManager {
     observerMovingProperty: Property<boolean>,
     onSourceSelected: () => void,
     onObserverSelected: () => void,
-    maxSpeed: number
+    maxSpeed: number,
   ): void {
     // Source drag handler
     const sourceDragListener = new DragListener({
@@ -84,14 +89,14 @@ export class DragHandlerManager {
       drag: (event) => {
         // Convert view coordinates to model coordinates, accounting for initial offset
         const viewPoint = event.pointer.point.plus(
-          (sourceDragListener as DragListener & { dragOffset: Vector2 }).dragOffset,
+          (sourceDragListener as DragListener & { dragOffset: Vector2 })
+            .dragOffset,
         );
-        const modelPoint = this.modelViewTransform.viewToModelPosition(viewPoint);
+        const modelPoint =
+          this.modelViewTransform.viewToModelPosition(viewPoint);
 
         // Calculate desired velocity (direction to target)
-        const desiredVelocity = modelPoint.minus(
-          sourcePositionProperty.value,
-        );
+        const desiredVelocity = modelPoint.minus(sourcePositionProperty.value);
 
         // Limit velocity to maximum speed
         if (desiredVelocity.magnitude > maxSpeed) {
@@ -123,9 +128,11 @@ export class DragHandlerManager {
       drag: (event) => {
         // Convert view coordinates to model coordinates, accounting for initial offset
         const viewPoint = event.pointer.point.plus(
-          (observerDragListener as DragListener & { dragOffset: Vector2 }).dragOffset,
+          (observerDragListener as DragListener & { dragOffset: Vector2 })
+            .dragOffset,
         );
-        const modelPoint = this.modelViewTransform.viewToModelPosition(viewPoint);
+        const modelPoint =
+          this.modelViewTransform.viewToModelPosition(viewPoint);
 
         // Calculate desired velocity (direction to target)
         const desiredVelocity = modelPoint.minus(
@@ -144,4 +151,4 @@ export class DragHandlerManager {
     });
     observerNode.addInputListener(observerDragListener);
   }
-} 
+}

@@ -1,12 +1,11 @@
 /**
  * WaveManager.ts
- * 
+ *
  * Manages the visualization of propagating waves in the Doppler Effect simulation.
  */
 
 import { Node, Circle, Color, ModelViewTransform2 } from "scenerystack";
 import { Wave } from "../../model/SimModel";
-
 
 /**
  * Manager for handling wave visualization
@@ -17,7 +16,7 @@ export class WaveManager {
 
   /**
    * Constructor for the WaveManager
-   * 
+   *
    * @param waveLayer - Node that will contain the wave visualizations
    * @param modelViewTransform - Transform to convert model coordinates to view coordinates
    * @param waveColor - Color for the wave circles
@@ -25,12 +24,12 @@ export class WaveManager {
   constructor(
     private readonly waveLayer: Node,
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly waveColor: Color
+    private readonly waveColor: Color,
   ) {}
 
   /**
    * Add a wave node for a new wave in the model
-   * 
+   *
    * @param wave - The wave model object
    */
   public addWaveNode(wave: Wave): void {
@@ -51,7 +50,7 @@ export class WaveManager {
 
   /**
    * Remove a wave node when removed from the model
-   * 
+   *
    * @param wave - The wave model object to remove
    */
   public removeWaveNode(wave: Wave): void {
@@ -74,16 +73,22 @@ export class WaveManager {
 
   /**
    * Update visualization for a specific wave
-   * 
+   *
    * @param wave - The wave model object to update
    * @param simulationTime - Current simulation time
    * @param maxAge - Maximum age for waves
    */
-  public updateWaveNode(wave: Wave, simulationTime: number, maxAge: number = 5): void {
+  public updateWaveNode(
+    wave: Wave,
+    simulationTime: number,
+    maxAge: number = 5,
+  ): void {
     const waveNode = this.waveNodesMap.get(wave);
     if (waveNode) {
       // Update position to match wave's origin (convert to view coordinates)
-      waveNode.center = this.modelViewTransform.modelToViewPosition(wave.position);
+      waveNode.center = this.modelViewTransform.modelToViewPosition(
+        wave.position,
+      );
 
       // Update radius to match wave's propagation (convert to view coordinates)
       waveNode.radius = this.modelViewTransform.modelToViewDeltaX(wave.radius);
@@ -99,7 +104,7 @@ export class WaveManager {
 
   /**
    * Update all wave nodes
-   * 
+   *
    * @param waves - Collection of wave objects
    * @param simulationTime - Current simulation time
    * @param maxAge - Maximum age for waves
@@ -107,10 +112,10 @@ export class WaveManager {
   public updateWaves(
     waves: { forEach: (callback: (wave: Wave) => void) => void },
     simulationTime: number,
-    maxAge: number = 5
+    maxAge: number = 5,
   ): void {
     waves.forEach((wave) => {
       this.updateWaveNode(wave, simulationTime, maxAge);
     });
   }
-} 
+}

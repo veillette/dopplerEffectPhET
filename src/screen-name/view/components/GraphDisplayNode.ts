@@ -1,19 +1,19 @@
 /**
  * GraphDisplayNode.ts
- * 
+ *
  * Contains the graph display functionality for the Doppler Effect simulation,
  * including emitted and observed waveforms.
  */
 
-import { 
-  Node, 
-  Rectangle, 
-  Line, 
-  Path, 
-  Shape, 
-  Vector2, 
-  Color, 
-  Text 
+import {
+  Node,
+  Rectangle,
+  Line,
+  Path,
+  Shape,
+  Vector2,
+  Color,
+  Text,
 } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
 
@@ -54,22 +54,20 @@ export class GraphDisplayNode extends Node {
   private readonly observedGraph: Rectangle;
   private readonly emittedWaveform: Path;
   private readonly observedWaveform: Path;
-  
+
   /**
    * Constructor for the GraphDisplayNode
-   * 
+   *
    * @param strings - Text strings for the graphs
    * @param options - Configuration options
    */
-  constructor(
-    strings: GraphStrings,
-    options: GraphDisplayOptions
-  ) {
+  constructor(strings: GraphStrings, options: GraphDisplayOptions) {
     super();
 
     const graphY1 = 30;
     const graphY2 = graphY1 + options.graphHeight + options.graphSpacing;
-    const graphX = options.layoutBounds.maxX - options.graphWidth - options.graphMargin;
+    const graphX =
+      options.layoutBounds.maxX - options.graphWidth - options.graphMargin;
 
     // Create graph containers
     this.emittedGraph = new Rectangle(
@@ -170,11 +168,14 @@ export class GraphDisplayNode extends Node {
 
   /**
    * Update the waveforms based on model data
-   * 
+   *
    * @param emittedWaveformData - Data for the emitted waveform
    * @param observedWaveformData - Data for the observed waveform
    */
-  public updateWaveforms(emittedWaveformData: WaveformPoint[], observedWaveformData: WaveformPoint[]): void {
+  public updateWaveforms(
+    emittedWaveformData: WaveformPoint[],
+    observedWaveformData: WaveformPoint[],
+  ): void {
     // Update emitted sound waveform
     this.emittedWaveform.shape = this.createWaveformShape(
       this.emittedGraph.left,
@@ -194,7 +195,7 @@ export class GraphDisplayNode extends Node {
 
   /**
    * Create a waveform shape from waveform data
-   * 
+   *
    * @param graphX - The x-coordinate of the left edge of the graph
    * @param graphY - The y-coordinate of the center of the graph
    * @param graphWidth - The width of the graph
@@ -240,4 +241,4 @@ export class GraphDisplayNode extends Node {
     this.emittedWaveform.shape = new Shape();
     this.observedWaveform.shape = new Shape();
   }
-} 
+}

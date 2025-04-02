@@ -13,15 +13,11 @@ import {
 import {
   ArrowNode,
   InfoButton,
-
   PhetFont,
   ResetAllButton,
-
 } from "scenerystack/scenery-phet";
-import {
-  ComboBox
-} from "scenerystack/sun";
-import { Scenario, SimModel} from "../model/SimModel";
+import { ComboBox } from "scenerystack/sun";
+import { Scenario, SimModel } from "../model/SimModel";
 import { PHYSICS, SCALE } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
@@ -39,7 +35,7 @@ import {
   KeyboardHandlerManager,
   WaveManager,
   VectorDisplayManager,
-  TrailManager
+  TrailManager,
 } from "./managers";
 import { ViewTransformUtils } from "./utils/ViewTransformUtils";
 
@@ -126,7 +122,7 @@ export class SimScreenView extends ScreenView {
   private readonly statusDisplay: StatusTextNode;
   private readonly controlPanel: ControlPanelNode;
   private readonly instructionsDisplay: InstructionsNode;
-  
+
   // Managers
   private readonly dragManager: DragHandlerManager;
   private readonly keyboardManager: KeyboardHandlerManager;
@@ -141,7 +137,8 @@ export class SimScreenView extends ScreenView {
   private readonly visibleTrailsProperty: Property<boolean>;
 
   // Selection tracking
-  private readonly selectedObjectProperty: Property<"source" | "observer"> = new Property<"source" | "observer">("source");
+  private readonly selectedObjectProperty: Property<"source" | "observer"> =
+    new Property<"source" | "observer">("source");
 
   // UI constants
   private readonly UI = {
@@ -275,7 +272,9 @@ export class SimScreenView extends ScreenView {
       this.modelViewTransform,
       this.model.microphonePositionProperty,
       this.model.waveDetectedProperty,
-      new Property(this.modelViewTransform.viewToModelBounds(this.layoutBounds))
+      new Property(
+        this.modelViewTransform.viewToModelBounds(this.layoutBounds),
+      ),
     );
     this.objectLayer.addChild(this.microphoneNode);
 
@@ -283,32 +282,29 @@ export class SimScreenView extends ScreenView {
     this.waveManager = new WaveManager(
       this.waveLayer,
       this.modelViewTransform,
-      this.UI.WAVE_COLOR
+      this.UI.WAVE_COLOR,
     );
-    
+
     this.vectorManager = new VectorDisplayManager(
       this.modelViewTransform,
-      SCALE.VELOCITY_VECTOR
+      SCALE.VELOCITY_VECTOR,
     );
-    
+
     this.trailManager = new TrailManager(
       this.sourceTrail,
       this.observerTrail,
       this.modelViewTransform,
       this.UI.SOURCE_COLOR,
       this.UI.OBSERVER_COLOR,
-      this.visibleTrailsProperty
+      this.visibleTrailsProperty,
     );
 
-    this.dragManager = new DragHandlerManager(
-      this.modelViewTransform,
-      {
-        minX: this.layoutBounds.minX,
-        minY: this.layoutBounds.minY,
-        maxX: this.layoutBounds.maxX,
-        maxY: this.layoutBounds.maxY
-      }
-    );
+    this.dragManager = new DragHandlerManager(this.modelViewTransform, {
+      minX: this.layoutBounds.minX,
+      minY: this.layoutBounds.minY,
+      maxX: this.layoutBounds.maxX,
+      maxY: this.layoutBounds.maxY,
+    });
 
     this.keyboardManager = new KeyboardHandlerManager();
 
@@ -320,7 +316,7 @@ export class SimScreenView extends ScreenView {
       },
       {
         layoutBounds: {
-          maxX: this.layoutBounds.maxX
+          maxX: this.layoutBounds.maxX,
         },
         textColor: this.UI.TEXT_COLOR,
         graphBackground: this.UI.GRAPH_BACKGROUND,
@@ -330,8 +326,8 @@ export class SimScreenView extends ScreenView {
         graphHeight: this.UI.GRAPH_HEIGHT,
         graphWidth: this.UI.GRAPH_WIDTH,
         graphMargin: this.UI.GRAPH_MARGIN,
-        graphSpacing: this.UI.GRAPH_SPACING
-      }
+        graphSpacing: this.UI.GRAPH_SPACING,
+      },
     );
     this.graphLayer.addChild(this.graphDisplay);
 
@@ -344,13 +340,13 @@ export class SimScreenView extends ScreenView {
         BLUESHIFT: STRINGS.SHIFT.BLUEShift,
         REDSHIFT: STRINGS.SHIFT.REDshift,
         SOURCE: STRINGS.SOURCE,
-        OBSERVER: STRINGS.OBSERVER
+        OBSERVER: STRINGS.OBSERVER,
       },
       this.visibleValuesProperty,
       {
         layoutBounds: {
           maxX: this.layoutBounds.maxX,
-          maxY: this.layoutBounds.maxY
+          maxY: this.layoutBounds.maxY,
         },
         textColor: this.UI.TEXT_COLOR,
         blueshiftColor: this.UI.BLUESHIFT_COLOR,
@@ -359,8 +355,8 @@ export class SimScreenView extends ScreenView {
         graphWidth: this.UI.GRAPH_WIDTH,
         graphHeight: this.UI.GRAPH_HEIGHT,
         graphMargin: this.UI.GRAPH_MARGIN,
-        graphSpacing: this.UI.GRAPH_SPACING
-      }
+        graphSpacing: this.UI.GRAPH_SPACING,
+      },
     );
     this.controlLayer.addChild(this.statusDisplay);
 
@@ -373,16 +369,16 @@ export class SimScreenView extends ScreenView {
         OBJECT_SELECTION: STRINGS.HELP.OBJECT_SELECTION,
         CONTROLS: STRINGS.HELP.CONTROLS,
         ADJUST: STRINGS.HELP.ADJUST,
-        SCENARIOS: STRINGS.HELP.SCENARIOS
+        SCENARIOS: STRINGS.HELP.SCENARIOS,
       },
       {
         layoutBounds: {
           centerX: this.layoutBounds.centerX,
           centerY: this.layoutBounds.centerY,
-          width: this.layoutBounds.width
+          width: this.layoutBounds.width,
         },
-        textColor: this.UI.TEXT_COLOR
-      }
+        textColor: this.UI.TEXT_COLOR,
+      },
     );
     this.controlLayer.addChild(this.instructionsDisplay);
 
@@ -396,7 +392,7 @@ export class SimScreenView extends ScreenView {
         FREQUENCY: STRINGS.CONTROLS.FREQUENCY,
         MOTION_TRAILS: STRINGS.CONTROLS.MOTION_TRAILS,
         METERS_PER_SECOND: STRINGS.UNITS.METERS_PER_SECOND,
-        HERTZ: STRINGS.UNITS.HERTZ
+        HERTZ: STRINGS.UNITS.HERTZ,
       },
       this.visibleValuesProperty,
       this.visibleVelocityArrowProperty,
@@ -410,8 +406,8 @@ export class SimScreenView extends ScreenView {
       {
         textColor: this.UI.TEXT_COLOR,
         graphRight: this.graphDisplay.right,
-        graphBottom: this.graphDisplay.observedGraphBottom
-      }
+        graphBottom: this.graphDisplay.observedGraphBottom,
+      },
     );
     this.controlLayer.addChild(this.controlPanel);
 
@@ -498,7 +494,7 @@ export class SimScreenView extends ScreenView {
 
     // Setup keyboard handlers
     this.keyboardManager.attachKeyboardHandlers(
-      this, 
+      this,
       {
         onSourceSelected: () => this.updateSelectionHighlight(),
         onObserverSelected: () => this.updateSelectionHighlight(),
@@ -511,7 +507,7 @@ export class SimScreenView extends ScreenView {
         onReset: () => {
           this.model.reset();
           this.reset();
-        }
+        },
       },
       this.model.playProperty,
       this.model.setupScenario.bind(this.model),
@@ -522,7 +518,7 @@ export class SimScreenView extends ScreenView {
       this.model.emittedFrequencyProperty,
       this.model.soundSpeedProperty,
       this.model.microphoneEnabledProperty,
-      this.selectedObjectProperty
+      this.selectedObjectProperty,
     );
 
     // Setup drag handlers
@@ -543,11 +539,11 @@ export class SimScreenView extends ScreenView {
         this.selectedObjectProperty.value = "observer";
         this.updateSelectionHighlight();
       },
-      PHYSICS.MAX_SPEED
+      PHYSICS.MAX_SPEED,
     );
 
     // Create and load click sound
-    this.clickSound = new Sound('./assets/click.wav', true);
+    this.clickSound = new Sound("./assets/click.wav", true);
 
     // Setup model listeners
     this.addModelListeners();
@@ -585,10 +581,10 @@ export class SimScreenView extends ScreenView {
 
     // Update microphone visibility
     this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
-    
+
     // Update microphone position to match model's reset position
     const micViewPos = this.modelViewTransform.modelToViewPosition(
-      this.model.microphonePositionProperty.value
+      this.model.microphonePositionProperty.value,
     );
     this.microphoneNode.center = micViewPos;
 
@@ -731,7 +727,7 @@ export class SimScreenView extends ScreenView {
     this.model.simulationTimeProperty.link(() => {
       this.graphDisplay.updateWaveforms(
         this.model.emittedWaveformData,
-        this.model.observedWaveformData
+        this.model.observedWaveformData,
       );
     });
 
@@ -741,7 +737,7 @@ export class SimScreenView extends ScreenView {
 
     // Update when selection changes
     this.selectedObjectProperty.link(() => this.updateText());
-    
+
     // Listen for wave detection to play click sound
     this.model.waveDetectedProperty.link((detected) => {
       if (detected) {
@@ -756,10 +752,10 @@ export class SimScreenView extends ScreenView {
   private updateView(): void {
     // Update object positions
     this.sourceNode.center = this.viewTransformUtils.modelToView(
-      this.model.sourcePositionProperty.value
+      this.model.sourcePositionProperty.value,
     );
     this.observerNode.center = this.viewTransformUtils.modelToView(
-      this.model.observerPositionProperty.value
+      this.model.observerPositionProperty.value,
     );
 
     // Update selection highlight
@@ -767,16 +763,16 @@ export class SimScreenView extends ScreenView {
 
     // Update line of sight
     const sourcePos = this.viewTransformUtils.modelToView(
-      this.model.sourcePositionProperty.value
+      this.model.sourcePositionProperty.value,
     );
     const observerPos = this.viewTransformUtils.modelToView(
-      this.model.observerPositionProperty.value
+      this.model.observerPositionProperty.value,
     );
     this.connectingLine.setLine(
       sourcePos.x,
       sourcePos.y,
       observerPos.x,
-      observerPos.y
+      observerPos.y,
     );
 
     // Update velocity vectors
@@ -786,19 +782,19 @@ export class SimScreenView extends ScreenView {
       this.model.sourcePositionProperty.value,
       this.model.observerPositionProperty.value,
       this.model.sourceVelocityProperty.value,
-      this.model.observerVelocityProperty.value
+      this.model.observerVelocityProperty.value,
     );
 
     // Update motion trails
     this.trailManager.updateTrails(
       this.model.sourceTrail,
-      this.model.observerTrail
+      this.model.observerTrail,
     );
 
     // Update waves
     this.waveManager.updateWaves(
       this.model.waves,
-      this.model.simulationTimeProperty.value
+      this.model.simulationTimeProperty.value,
     );
 
     // Update text displays
@@ -810,16 +806,18 @@ export class SimScreenView extends ScreenView {
    */
   private updateText(): void {
     const selectedObjectName =
-      this.selectedObjectProperty.value === "source" ? STRINGS.SOURCE : STRINGS.OBSERVER;
-      
+      this.selectedObjectProperty.value === "source"
+        ? STRINGS.SOURCE
+        : STRINGS.OBSERVER;
+
     // Update status display with current values
     this.statusDisplay.updateValues(
       this.model.emittedFrequencyProperty.value,
       this.model.observedFrequencyProperty.value,
-      selectedObjectName
+      selectedObjectName,
     );
   }
-  
+
   /**
    * Update the selection highlight position and size
    */
@@ -827,12 +825,12 @@ export class SimScreenView extends ScreenView {
     if (this.selectedObjectProperty.value === "source") {
       this.selectionHighlight.radius = this.UI.SOURCE_RADIUS + 5;
       this.selectionHighlight.center = this.viewTransformUtils.modelToView(
-        this.model.sourcePositionProperty.value
+        this.model.sourcePositionProperty.value,
       );
     } else {
       this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
       this.selectionHighlight.center = this.viewTransformUtils.modelToView(
-        this.model.observerPositionProperty.value
+        this.model.observerPositionProperty.value,
       );
     }
   }

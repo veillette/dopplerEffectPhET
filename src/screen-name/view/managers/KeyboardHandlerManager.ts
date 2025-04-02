@@ -1,6 +1,6 @@
 /**
  * KeyboardHandlerManager.ts
- * 
+ *
  * Manages keyboard input handlers for the Doppler Effect simulation.
  */
 
@@ -30,7 +30,7 @@ export class KeyboardHandlerManager {
 
   /**
    * Attach keyboard event handlers
-   * 
+   *
    * @param targetNode - Node to attach keyboard listeners to
    * @param callbacks - Callback functions for various keyboard actions
    * @param playProperty - Property for simulation play state
@@ -56,7 +56,7 @@ export class KeyboardHandlerManager {
     emittedFrequencyProperty: Property<number>,
     soundSpeedProperty: Property<number>,
     microphoneEnabledProperty: Property<boolean>,
-    selectedObjectProperty: Property<"source" | "observer">
+    selectedObjectProperty: Property<"source" | "observer">,
   ): void {
     // Create a shared handler function for keydown events
     const handleKeydown = (key: string) => {
@@ -180,4 +180,4 @@ export class KeyboardHandlerManager {
       handleKeydown(key);
     });
   }
-} 
+}

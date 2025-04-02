@@ -1,6 +1,6 @@
 /**
  * InstructionsNode.ts
- * 
+ *
  * Contains the help instructions functionality for the Doppler Effect simulation.
  */
 
@@ -34,19 +34,16 @@ interface InstructionsOptions {
 export class InstructionsNode extends Node {
   // Background for the instructions
   private readonly background: Rectangle;
-  
+
   /**
    * Constructor for the InstructionsNode
-   * 
+   *
    * @param strings - Text strings for the instructions
    * @param options - Configuration options
    */
-  constructor(
-    strings: InstructionStrings,
-    options: InstructionsOptions
-  ) {
+  constructor(strings: InstructionStrings, options: InstructionsOptions) {
     super({
-      visible: false // Initially hidden
+      visible: false, // Initially hidden
     });
 
     // Create background rectangle
@@ -75,7 +72,7 @@ export class InstructionsNode extends Node {
       strings.SCENARIOS,
       "Press 'T' to toggle motion trails that show object paths.",
       "Press 'M' to toggle the microphone that clicks when waves pass through it.",
-      "Drag the microphone to position it anywhere in the simulation."
+      "Drag the microphone to position it anywhere in the simulation.",
     ];
 
     // Add instruction lines
@@ -93,7 +90,7 @@ export class InstructionsNode extends Node {
 
     // Adjust background to fit content
     this.background.setRectHeight(yPosition + 10);
-    
+
     // Position the instructions box
     this.centerX = options.layoutBounds.centerX;
     this.centerY = options.layoutBounds.centerY;
@@ -105,4 +102,4 @@ export class InstructionsNode extends Node {
   public toggleVisibility(): void {
     this.visible = !this.visible;
   }
-} 
+}

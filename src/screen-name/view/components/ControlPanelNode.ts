@@ -1,13 +1,17 @@
 /**
  * ControlPanelNode.ts
- * 
+ *
  * Contains the control panel functionality for the Doppler Effect simulation,
  * including checkboxes for visibility options and controls for sound speed and frequency.
  */
 
 import { Node, Color } from "scenerystack";
 import { NumberControl, PhetFont } from "scenerystack/scenery-phet";
-import { Panel, VerticalCheckboxGroup, VerticalCheckboxGroupItem } from "scenerystack/sun";
+import {
+  Panel,
+  VerticalCheckboxGroup,
+  VerticalCheckboxGroupItem,
+} from "scenerystack/sun";
 import { Property } from "scenerystack/axon";
 import { Text } from "scenerystack";
 import { Range } from "scenerystack/dot";
@@ -28,7 +32,7 @@ interface ControlPanelStrings {
 interface ControlPanelOptions {
   // UI colors
   textColor: Color;
-  
+
   // References to graph display for positioning
   graphRight: number;
   graphBottom: number;
@@ -40,10 +44,10 @@ interface ControlPanelOptions {
 export class ControlPanelNode extends Node {
   // The panel component
   private readonly panel: Panel;
-  
+
   /**
    * Constructor for the ControlPanelNode
-   * 
+   *
    * @param strings - Text strings for the controls
    * @param visibleValuesProperty - Property for toggling value displays
    * @param visibleVelocityArrowProperty - Property for toggling velocity arrows
@@ -67,7 +71,7 @@ export class ControlPanelNode extends Node {
     emittedFrequencyProperty: Property<number>,
     soundSpeedRange: Range,
     frequencyRange: Range,
-    options: ControlPanelOptions
+    options: ControlPanelOptions,
   ) {
     super();
 
@@ -158,7 +162,7 @@ export class ControlPanelNode extends Node {
     const panelContent = new Node({
       children: [checkboxGroup, soundSpeedControl, frequencyControl],
     });
-    
+
     // Create the panel with the content
     this.panel = new Panel(panelContent, {
       right: options.graphRight,
@@ -168,4 +172,4 @@ export class ControlPanelNode extends Node {
     // Add the panel to this node
     this.addChild(this.panel);
   }
-} 
+}

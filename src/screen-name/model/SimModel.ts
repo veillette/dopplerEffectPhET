@@ -66,9 +66,9 @@ export const TIME_SPEED = {
 
 // Trail constants
 export const TRAIL = {
-  MAX_POINTS: 20,      // Maximum number of points to store in position history
-  MAX_AGE: 2.0,        // Maximum age of trail points in seconds
-  SAMPLE_INTERVAL: 0.1 // Time interval between trail points in seconds
+  MAX_POINTS: 20, // Maximum number of points to store in position history
+  MAX_AGE: 2.0, // Maximum age of trail points in seconds
+  SAMPLE_INTERVAL: 0.1, // Time interval between trail points in seconds
 };
 
 /**
@@ -87,11 +87,11 @@ export class SimModel {
   public readonly frequencyRange: RangeWithValue; // in Hertz (Hz)
 
   // Microphone properties
-  public readonly microphonePositionProperty: Property<Vector2>;  // Vector2 position of microphone
-  public readonly microphoneEnabledProperty: BooleanProperty;  // Whether microphone is enabled
-  private lastWaveDetectionTime: number = 0;                   // Time of last wave detection
-  private readonly waveDetectionCooldown: number = 0.01;        // Cooldown between detections (s)
-  public readonly waveDetectedProperty: BooleanProperty;       // Emits when a wave is detected
+  public readonly microphonePositionProperty: Property<Vector2>; // Vector2 position of microphone
+  public readonly microphoneEnabledProperty: BooleanProperty; // Whether microphone is enabled
+  private lastWaveDetectionTime: number = 0; // Time of last wave detection
+  private readonly waveDetectionCooldown: number = 0.01; // Cooldown between detections (s)
+  public readonly waveDetectedProperty: BooleanProperty; // Emits when a wave is detected
 
   // Source and observer objects
   private readonly source: MovableObject; // position in meters (m)
@@ -185,7 +185,7 @@ export class SimModel {
 
     // Initialize source and observer
     this.source = new MovableObject(INITIAL_POSITIONS.SOURCE);
-    this.observer = new MovableObject( INITIAL_POSITIONS.OBSERVER);
+    this.observer = new MovableObject(INITIAL_POSITIONS.OBSERVER);
 
     // Link properties for direct access
     this.sourcePositionProperty = this.source.positionProperty;
@@ -240,12 +240,12 @@ export class SimModel {
     this.lastWaveDetectionTime = 0;
 
     // Reset source and observer
-    this.source.reset( INITIAL_POSITIONS.SOURCE);
+    this.source.reset(INITIAL_POSITIONS.SOURCE);
     this.observer.reset(INITIAL_POSITIONS.OBSERVER);
 
     // Reset velocities
-    this.sourceVelocityProperty.reset()
-    this.observerVelocityProperty.reset()
+    this.sourceVelocityProperty.reset();
+    this.observerVelocityProperty.reset();
 
     // Clear position history
     this.sourcePositionHistory = [];
@@ -310,19 +310,19 @@ export class SimModel {
    */
   private updatePositionHistory(): void {
     const currentTime = this.simulationTimeProperty.value;
-    
+
     // Only sample at specified intervals
     if (currentTime - this.lastTrailSampleTime >= TRAIL.SAMPLE_INTERVAL) {
       // Record source position
       this.sourcePositionHistory.push({
         position: this.sourcePositionProperty.value.copy(),
-        timestamp: currentTime
+        timestamp: currentTime,
       });
 
       // Record observer position
       this.observerPositionHistory.push({
         position: this.observerPositionProperty.value.copy(),
-        timestamp: currentTime
+        timestamp: currentTime,
       });
 
       // Update last sample time
@@ -341,14 +341,20 @@ export class SimModel {
     const maxAge = currentTime - TRAIL.MAX_AGE;
 
     // Prune source trail
-    while (this.sourcePositionHistory.length > TRAIL.MAX_POINTS || 
-           (this.sourcePositionHistory.length > 0 && this.sourcePositionHistory[0].timestamp < maxAge)) {
+    while (
+      this.sourcePositionHistory.length > TRAIL.MAX_POINTS ||
+      (this.sourcePositionHistory.length > 0 &&
+        this.sourcePositionHistory[0].timestamp < maxAge)
+    ) {
       this.sourcePositionHistory.shift();
     }
 
     // Prune observer trail
-    while (this.observerPositionHistory.length > TRAIL.MAX_POINTS || 
-           (this.observerPositionHistory.length > 0 && this.observerPositionHistory[0].timestamp < maxAge)) {
+    while (
+      this.observerPositionHistory.length > TRAIL.MAX_POINTS ||
+      (this.observerPositionHistory.length > 0 &&
+        this.observerPositionHistory[0].timestamp < maxAge)
+    ) {
       this.observerPositionHistory.shift();
     }
   }
@@ -489,7 +495,6 @@ export class SimModel {
     this.sourcePositionProperty.value = INITIAL_POSITIONS.SOURCE;
     this.observerPositionProperty.value = INITIAL_POSITIONS.OBSERVER;
 
-
     // Configure velocities for the specific scenario
     this.configureScenarioVelocities(scenario);
   }
@@ -499,27 +504,29 @@ export class SimModel {
    */
   private detectWavesAtMicrophone(): void {
     const currentTime = this.simulationTimeProperty.value;
-    
+
     // Skip if we're still in cooldown
     if (currentTime - this.lastWaveDetectionTime < this.waveDetectionCooldown) {
       this.waveDetectedProperty.value = false;
       return;
     }
-    
+
     // Reset detection flag
     this.waveDetectedProperty.value = false;
-    
+
     // Check all waves - iterating through ObservableArray
     for (let i = 0; i < this.waves.length; i++) {
       const wave = this.waves.get(i);
-      
+
       // Calculate distance from wave center to microphone
-      const distance = this.microphonePositionProperty.value.distance(wave.position);
-      
+      const distance = this.microphonePositionProperty.value.distance(
+        wave.position,
+      );
+
       // Determine if wave front is crossing the microphone position
       const waveFrontRadius = wave.radius;
       const tolerance = 2; // Detection tolerance in meters
-      
+
       if (Math.abs(distance - waveFrontRadius) < tolerance) {
         // Wave detected at microphone
         this.lastWaveDetectionTime = currentTime;
