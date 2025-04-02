@@ -11,9 +11,9 @@ const SOUND = {
   DEFAULT_VOLUME: 0.5,
   
   // Click sound generation parameters
-  CLICK_FREQUENCY: 1500, // Hz
+  CLICK_FREQUENCY: 500, // Hz
   ATTACK_TIME: 0.001, // seconds
-  DECAY_TIME: 0.03, // seconds
+  DECAY_TIME: 0.01, // seconds
   PEAK_GAIN: 0.3,
   INITIAL_GAIN: 0,
   FINAL_GAIN: 0
