@@ -75,48 +75,22 @@ export class ControlPanelNode extends Node {
   ) {
     super();
 
+    // Helper function to create checkbox items with consistent styling
+    const createCheckboxItem = (property: Property<boolean>, label: string): VerticalCheckboxGroupItem => ({
+      property,
+      createNode: () => new Text(label, {
+        font: new PhetFont(14),
+        fill: options.textColor,
+      })
+    });
+
     // Create checkbox items
     const items: VerticalCheckboxGroupItem[] = [
-      {
-        property: visibleValuesProperty,
-        createNode: () =>
-          new Text(strings.VALUES, {
-            font: new PhetFont(14),
-            fill: options.textColor,
-          }),
-      },
-      {
-        property: visibleVelocityArrowProperty,
-        createNode: () =>
-          new Text(strings.VELOCITY_ARROWS, {
-            font: new PhetFont(14),
-            fill: options.textColor,
-          }),
-      },
-      {
-        property: visibleLineOfSightProperty,
-        createNode: () =>
-          new Text(strings.LINE_OF_SIGHT, {
-            font: new PhetFont(14),
-            fill: options.textColor,
-          }),
-      },
-      {
-        property: visibleTrailsProperty,
-        createNode: () =>
-          new Text(strings.MOTION_TRAILS, {
-            font: new PhetFont(14),
-            fill: options.textColor,
-          }),
-      },
-      {
-        property: microphoneEnabledProperty,
-        createNode: () =>
-          new Text("Microphone Clicks", {
-            font: new PhetFont(14),
-            fill: options.textColor,
-          }),
-      },
+      createCheckboxItem(visibleValuesProperty, strings.VALUES),
+      createCheckboxItem(visibleVelocityArrowProperty, strings.VELOCITY_ARROWS),
+      createCheckboxItem(visibleLineOfSightProperty, strings.LINE_OF_SIGHT),
+      createCheckboxItem(visibleTrailsProperty, strings.MOTION_TRAILS),
+      createCheckboxItem(microphoneEnabledProperty, "Microphone Clicks"),
     ];
 
     // Create vertical checkbox group
