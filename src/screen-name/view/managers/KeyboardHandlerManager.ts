@@ -93,9 +93,9 @@ export class KeyboardHandlerManager {
         }
 
         if (key === "arrowup") {
-          velocity.y = -60.0;
-        } else if (key === "arrowdown") {
           velocity.y = 60.0;
+        } else if (key === "arrowdown") {
+          velocity.y = -60.0;
         }
 
         // Apply velocity if any keys were pressed
