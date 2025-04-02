@@ -109,10 +109,9 @@ export class WaveManager {
   public updateWaves(
     waves: { forEach: (callback: (wave: Wave) => void) => void },
     simulationTime: number,
-    maxAge: number = 5,
   ): void {
     waves.forEach((wave) => {
-      this.updateWaveNode(wave, simulationTime, maxAge);
+      this.updateWaveNode(wave, simulationTime);
     });
   }
 }
