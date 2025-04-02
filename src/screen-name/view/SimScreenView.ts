@@ -37,9 +37,6 @@ import { KeyboardHandlerManager } from "./managers/KeyboardHandlerManager";
 import { WaveManager } from "./managers/WaveManager";
 import { VectorDisplayManager } from "./managers/VectorDisplayManager";
 import { TrailManager } from "./managers/TrailManager";
-
-import { ViewTransformUtils } from "./utils/ViewTransformUtils";
-
 // Add this section at the top of the file, after imports
 const STRINGS = {
   TITLE: strings["doppler-effect.title"].value,
@@ -99,7 +96,6 @@ export class SimScreenView extends ScreenView {
 
   // Model-view transform
   private readonly modelViewTransform: ModelViewTransform2;
-  private readonly viewTransformUtils: ViewTransformUtils;
 
   // Display layers
   private readonly waveLayer: Node;
@@ -182,9 +178,6 @@ export class SimScreenView extends ScreenView {
         new Vector2(this.layoutBounds.centerX, this.layoutBounds.centerY),
         SCALE.MODEL_VIEW,
       );
-
-    // Create transform utilities
-    this.viewTransformUtils = new ViewTransformUtils(this.modelViewTransform);
 
     // Create property values
     this.visibleValuesProperty = new Property<boolean>(false);
@@ -752,28 +745,28 @@ export class SimScreenView extends ScreenView {
    */
   private updateView(): void {
     // Update object positions
-    this.sourceNode.center = this.viewTransformUtils.modelToView(
-      this.model.sourcePositionProperty.value,
+    this.sourceNode.center = this.modelViewTransform.modelToViewPosition(
+      this.model.sourcePositionProperty.value
     );
-    this.observerNode.center = this.viewTransformUtils.modelToView(
-      this.model.observerPositionProperty.value,
+    this.observerNode.center = this.modelViewTransform.modelToViewPosition(
+      this.model.observerPositionProperty.value
     );
 
     // Update selection highlight
     this.updateSelectionHighlight();
 
     // Update line of sight
-    const sourcePos = this.viewTransformUtils.modelToView(
-      this.model.sourcePositionProperty.value,
+    const sourcePos = this.modelViewTransform.modelToViewPosition(
+      this.model.sourcePositionProperty.value
     );
-    const observerPos = this.viewTransformUtils.modelToView(
-      this.model.observerPositionProperty.value,
+    const observerPos = this.modelViewTransform.modelToViewPosition(
+      this.model.observerPositionProperty.value
     );
     this.connectingLine.setLine(
       sourcePos.x,
       sourcePos.y,
       observerPos.x,
-      observerPos.y,
+      observerPos.y
     );
 
     // Update velocity vectors
@@ -783,19 +776,19 @@ export class SimScreenView extends ScreenView {
       this.model.sourcePositionProperty.value,
       this.model.observerPositionProperty.value,
       this.model.sourceVelocityProperty.value,
-      this.model.observerVelocityProperty.value,
+      this.model.observerVelocityProperty.value
     );
 
     // Update motion trails
     this.trailManager.updateTrails(
       this.model.sourceTrail,
-      this.model.observerTrail,
+      this.model.observerTrail
     );
 
     // Update waves
     this.waveManager.updateWaves(
       this.model.waves,
-      this.model.simulationTimeProperty.value,
+      this.model.simulationTimeProperty.value
     );
 
     // Update text displays
@@ -825,14 +818,15 @@ export class SimScreenView extends ScreenView {
   private updateSelectionHighlight(): void {
     if (this.selectedObjectProperty.value === "source") {
       this.selectionHighlight.radius = this.UI.SOURCE_RADIUS + 5;
-      this.selectionHighlight.center = this.viewTransformUtils.modelToView(
-        this.model.sourcePositionProperty.value,
+      this.selectionHighlight.center = this.modelViewTransform.modelToViewPosition(
+        this.model.sourcePositionProperty.value
       );
     } else {
       this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
-      this.selectionHighlight.center = this.viewTransformUtils.modelToView(
-        this.model.observerPositionProperty.value,
+      this.selectionHighlight.center = this.modelViewTransform.modelToViewPosition(
+        this.model.observerPositionProperty.value
       );
     }
   }
 }
+
