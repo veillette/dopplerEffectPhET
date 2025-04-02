@@ -271,7 +271,7 @@ export class SimScreenView extends ScreenView {
       this.modelViewTransform,
       this.model.microphonePositionProperty,
       this.model.waveDetectedProperty,
-      new Property(this.layoutBounds)
+      new Property(this.modelViewTransform.viewToModelBounds(this.layoutBounds))
     );
     this.objectLayer.addChild(this.microphoneNode);
 
