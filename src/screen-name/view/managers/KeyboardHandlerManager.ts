@@ -9,15 +9,15 @@ import { Node } from "scenerystack";
 import { Scenario } from "../../model/SimModel";
 
 /**
- * Callback interface for keyboard handling events
+ * Callback type for keyboard handling events
  */
-interface KeyboardCallbacks {
+type KeyboardCallbacks = {
   onSourceSelected: () => void;
   onObserverSelected: () => void;
   onToggleTrails: () => void;
   onToggleHelp: () => void;
   onReset: () => void;
-}
+};
 
 /**
  * Manager for handling keyboard input

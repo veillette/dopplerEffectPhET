@@ -11,11 +11,11 @@
 
 import { Vector2 } from "scenerystack";
 
-// Add this interface near the top of the file with other type definitions
-export interface WaveformPoint {
+// Add this type definition near the top of the file
+export type WaveformPoint = {
   t: number; // Time value in seconds (s)
   y: number; // Amplitude value (dimensionless)
-}
+};
 
 // Physical constants in SI units
 export const PHYSICS = {

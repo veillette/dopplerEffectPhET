@@ -8,8 +8,8 @@
 import { Node, Text, Color, Property } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
 
-// Interface for status text-related strings
-interface StatusStrings {
+// Type for status text-related strings
+type StatusStrings = {
   EMITTED_FREQUENCY: string;
   OBSERVED_FREQUENCY: string;
   SELECTED_OBJECT: string;
@@ -17,10 +17,10 @@ interface StatusStrings {
   REDSHIFT: string;
   SOURCE: string;
   OBSERVER: string;
-}
+};
 
 // Configuration options for the status text display
-interface StatusTextOptions {
+type StatusTextOptions = {
   layoutBounds: {
     maxX: number;
     maxY: number;
@@ -33,7 +33,7 @@ interface StatusTextOptions {
   graphHeight: number;
   graphMargin: number;
   graphSpacing: number;
-}
+};
 
 /**
  * Component that displays status information for the simulation

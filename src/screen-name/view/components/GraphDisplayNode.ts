@@ -18,19 +18,19 @@ import {
 import { PhetFont } from "scenerystack/scenery-phet";
 
 // Waveform data from the model
-export interface WaveformPoint {
+export type WaveformPoint = {
   t: number;
   y: number;
-}
+};
 
-// Interface for graph-related strings
-interface GraphStrings {
+// Type for graph-related strings
+type GraphStrings = {
   EMITTED_SOUND: string;
   OBSERVED_SOUND: string;
-}
+};
 
 // Configuration options for the graph display
-interface GraphDisplayOptions {
+type GraphDisplayOptions = {
   layoutBounds: {
     maxX: number;
   };
@@ -43,7 +43,7 @@ interface GraphDisplayOptions {
   graphWidth: number;
   graphMargin: number;
   graphSpacing: number;
-}
+};
 
 /**
  * Component that renders the waveform graphs for the simulation

@@ -24,8 +24,8 @@ import { WaveformManager } from "./WaveformManager";
 import { MovableObject } from "./MovableObject";
 import { DopplerCalculator } from "./DopplerCalculator";
 
-// Export the Wave interface
-export interface Wave {
+// Export the Wave type
+export type Wave = {
   position: Vector2;
   radius: number;
   speedOfSound: number;
@@ -33,19 +33,19 @@ export interface Wave {
   sourceVelocity: Vector2;
   sourceFrequency: number;
   phaseAtEmission: number;
-}
+};
 
-// Wave detection interface for microphone
-export interface WaveDetection {
+// Wave detection type for microphone
+export type WaveDetection = {
   wave: Wave;
   detectionTime: number;
-}
+};
 
-// Add a new interface for position history points
-export interface PositionHistoryPoint {
+// Position history points type
+export type PositionHistoryPoint = {
   position: Vector2;
   timestamp: number;
-}
+};
 
 export class Scenario extends EnumerationValue {
   public static readonly FREE_PLAY = new Scenario();

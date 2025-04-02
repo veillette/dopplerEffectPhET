@@ -16,8 +16,8 @@ import { Property } from "scenerystack/axon";
 import { Text } from "scenerystack";
 import { Range } from "scenerystack/dot";
 
-// Interface for the text configuration
-interface ControlPanelStrings {
+// Type for the text configuration
+type ControlPanelStrings = {
   VALUES: string;
   VELOCITY_ARROWS: string;
   LINE_OF_SIGHT: string;
@@ -26,17 +26,17 @@ interface ControlPanelStrings {
   MOTION_TRAILS: string;
   METERS_PER_SECOND: string;
   HERTZ: string;
-}
+};
 
 // Configuration options for the control panel
-interface ControlPanelOptions {
+type ControlPanelOptions = {
   // UI colors
   textColor: Color;
 
   // References to graph display for positioning
   graphRight: number;
   graphBottom: number;
-}
+};
 
 /**
  * Component that renders the control panel for the simulation

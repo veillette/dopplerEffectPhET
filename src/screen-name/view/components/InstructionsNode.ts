@@ -7,8 +7,8 @@
 import { Node, Rectangle, Text, Color } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
 
-// Interface for instruction-related strings
-interface InstructionStrings {
+// Type for instruction-related strings
+type InstructionStrings = {
   TITLE: string;
   DRAG_AND_DROP: string;
   KEYBOARD_CONTROLS: string;
@@ -16,17 +16,17 @@ interface InstructionStrings {
   CONTROLS: string;
   ADJUST: string;
   SCENARIOS: string;
-}
+};
 
 // Configuration options for the instructions display
-interface InstructionsOptions {
+type InstructionsOptions = {
   layoutBounds: {
     centerX: number;
     centerY: number;
     width: number;
   };
   textColor: Color;
-}
+};
 
 /**
  * Component that renders the help instructions for the simulation
