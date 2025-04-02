@@ -29,6 +29,7 @@ import { ControlPanelNode } from "./components/ControlPanelNode";
 import { GraphDisplayNode } from "./components/GraphDisplayNode";
 import { InstructionsNode } from "./components/InstructionsNode";
 import { StatusTextNode } from "./components/StatusTextNode";
+import { ScaleMarkNode } from "./components/ScaleMarkNode";
 
 // Import managers directly
 import { DragHandlerManager } from "./managers/DragHandlerManager";
@@ -476,6 +477,22 @@ export class SimScreenView extends ScreenView {
       bottom: this.layoutBounds.maxY - 10,
     });
     this.controlLayer.addChild(resetAllButton);
+
+    // Create scale mark node to show model-to-view scale
+    const scaleMarkNode = new ScaleMarkNode(
+      this.modelViewTransform,
+      this.visibleValuesProperty,
+      {
+        textColor: this.UI.TEXT_COLOR,
+        lineColor: this.UI.CONNECTING_LINE_COLOR,
+        scaleModelLength: 20, // 20 meters scale for better visibility
+      }
+    );
+    
+    // Position the scale mark to the left of the reset all button
+    scaleMarkNode.right = resetAllButton.left - 30;
+    scaleMarkNode.bottom = resetAllButton.bottom;
+    this.controlLayer.addChild(scaleMarkNode);
 
     // Create an info button to toggle instructions
     const infoButton = new InfoButton({
