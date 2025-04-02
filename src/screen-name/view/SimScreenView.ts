@@ -121,12 +121,13 @@ export class SimScreenView extends ScreenView {
   private readonly instructionsDisplay: InstructionsNode;
 
   // Managers
-  private readonly dragManager: DragHandlerManager;
-  private readonly keyboardManager: KeyboardHandlerManager;
   private readonly waveManager: WaveManager;
   private readonly vectorManager: VectorDisplayManager;
   private readonly sourceTrailManager: TrailManager;
   private readonly observerTrailManager: TrailManager;
+  private readonly sourceDragManager: DragHandlerManager;
+  private readonly observerDragManager: DragHandlerManager;
+  private readonly keyboardManager: KeyboardHandlerManager;
 
   // Visibility properties
   private readonly visibleValuesProperty: Property<boolean>;
@@ -299,12 +300,16 @@ export class SimScreenView extends ScreenView {
       this.visibleTrailsProperty,
     );
 
-    this.dragManager = new DragHandlerManager(this.modelViewTransform, {
+    // Create separate drag managers for source and observer
+    const dragBounds = {
       minX: this.layoutBounds.minX,
       minY: this.layoutBounds.minY,
       maxX: this.layoutBounds.maxX,
       maxY: this.layoutBounds.maxY,
-    });
+    };
+
+    this.sourceDragManager = new DragHandlerManager(this.modelViewTransform, dragBounds);
+    this.observerDragManager = new DragHandlerManager(this.modelViewTransform, dragBounds);
 
     this.keyboardManager = new KeyboardHandlerManager();
 
@@ -522,19 +527,23 @@ export class SimScreenView extends ScreenView {
     );
 
     // Setup drag handlers
-    this.dragManager.attachDragHandlers(
+    this.sourceDragManager.attachDragHandler(
       this.sourceNode,
-      this.observerNode,
       this.model.sourcePositionProperty,
-      this.model.observerPositionProperty,
       this.model.sourceVelocityProperty,
-      this.model.observerVelocityProperty,
       this.model.sourceMovingProperty,
-      this.model.observerMovingProperty,
       () => {
         this.selectedObjectProperty.value = "source";
         this.updateSelectionHighlight();
       },
+      PHYSICS.MAX_SPEED,
+    );
+    
+    this.observerDragManager.attachDragHandler(
+      this.observerNode,
+      this.model.observerPositionProperty,
+      this.model.observerVelocityProperty,
+      this.model.observerMovingProperty,
       () => {
         this.selectedObjectProperty.value = "observer";
         this.updateSelectionHighlight();
