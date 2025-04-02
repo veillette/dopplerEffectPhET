@@ -1,7 +1,7 @@
 /**
  * TrailManager.ts
  *
- * Manages motion trails for objects in the Doppler Effect simulation.
+ * Manages a single motion trail for an object in the Doppler Effect simulation.
  */
 
 import {
@@ -17,102 +17,65 @@ import {
 import { PositionHistoryPoint } from "../../model/SimModel";
 
 /**
- * Manager for handling object motion trails
+ * Manager for handling a single object motion trail
  */
 export class TrailManager {
   /**
    * Constructor for the TrailManager
    *
-   * @param sourceTrail - Path node for the source trail
-   * @param observerTrail - Path node for the observer trail
+   * @param trailPath - Path node for the trail
    * @param modelViewTransform - Transform to convert model coordinates to view coordinates
-   * @param sourceColor - Color for the source trail
-   * @param observerColor - Color for the observer trail
+   * @param trailColor - Color for the trail
    * @param visibleProperty - Property controlling trail visibility
    */
   constructor(
-    private readonly sourceTrail: Path,
-    private readonly observerTrail: Path,
+    private readonly trailPath: Path,
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly sourceColor: Color,
-    private readonly observerColor: Color,
+    private readonly trailColor: Color,
     private readonly visibleProperty: Property<boolean>,
   ) {}
 
   /**
-   * Update motion trails for source and observer
+   * Update motion trail
    *
-   * @param sourceTrailPoints - History of source positions
-   * @param observerTrailPoints - History of observer positions
+   * @param trailPoints - History of position points
    */
-  public updateTrails(
-    sourceTrailPoints: PositionHistoryPoint[],
-    observerTrailPoints: PositionHistoryPoint[],
-  ): void {
+  public updateTrail(trailPoints: PositionHistoryPoint[]): void {
     // Set visibility based on property
-    this.sourceTrail.visible =
-      this.visibleProperty.value && sourceTrailPoints.length > 0;
-    this.observerTrail.visible =
-      this.visibleProperty.value && observerTrailPoints.length > 0;
+    this.trailPath.visible =
+      this.visibleProperty.value && trailPoints.length > 0;
 
     // If not visible or no points, return early
-    if (!this.visibleProperty.value) {
+    if (!this.visibleProperty.value || trailPoints.length === 0) {
       return;
     }
 
-    // Update source trail
-    if (sourceTrailPoints.length > 0) {
-      this.updateTrail(this.sourceTrail, sourceTrailPoints, this.sourceColor);
-    }
-
-    // Update observer trail
-    if (observerTrailPoints.length > 0) {
-      this.updateTrail(
-        this.observerTrail,
-        observerTrailPoints,
-        this.observerColor,
-      );
-    }
-  }
-
-  /**
-   * Update a specific trail
-   *
-   * @param trailPath - The path node to update
-   * @param points - The position history points
-   * @param color - The trail color
-   */
-  private updateTrail(
-    trailPath: Path,
-    points: PositionHistoryPoint[],
-    color: Color,
-  ): void {
-    // Create shapes for the trails
+    // Create shape for the trail
     const trailShape = new Shape();
 
     // First, build a new path with all points
     const oldestPoint = this.modelViewTransform.modelToViewPosition(
-      points[0].position,
+      trailPoints[0].position,
     );
     trailShape.moveToPoint(oldestPoint);
 
     // Add each subsequent point
-    for (let i = 1; i < points.length; i++) {
+    for (let i = 1; i < trailPoints.length; i++) {
       const point = this.modelViewTransform.modelToViewPosition(
-        points[i].position,
+        trailPoints[i].position,
       );
       trailShape.lineToPoint(point);
     }
 
     // Update the path with the new shape
-    trailPath.shape = trailShape;
+    this.trailPath.shape = trailShape;
 
     // Calculate the gradient direction (from oldest to newest point)
     const startPoint = this.modelViewTransform.modelToViewPosition(
-      points[0].position,
+      trailPoints[0].position,
     );
     const endPoint = this.modelViewTransform.modelToViewPosition(
-      points[points.length - 1].position,
+      trailPoints[trailPoints.length - 1].position,
     );
 
     // Create gradient from oldest to newest point
@@ -124,25 +87,23 @@ export class TrailManager {
     );
 
     // Add color stops - transparent at oldest point, full color at newest
-    gradient.addColorStop(0, new Color(color.r, color.g, color.b, 0.1));
-    gradient.addColorStop(0.5, new Color(color.r, color.g, color.b, 0.4));
-    gradient.addColorStop(1, new Color(color.r, color.g, color.b, 0.8));
+    gradient.addColorStop(0, new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.1));
+    gradient.addColorStop(0.5, new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.4));
+    gradient.addColorStop(1, new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.8));
 
     // Apply the gradient
-    trailPath.stroke = gradient;
+    this.trailPath.stroke = gradient;
   }
 
   /**
-   * Reset the trail manager
-   * Clears all trail shapes
+   * Reset the trail
+   * Clears the trail shape
    */
   public reset(): void {
-    // Reset trails to empty shapes
-    this.sourceTrail.shape = new Shape();
-    this.observerTrail.shape = new Shape();
+    // Reset trail to empty shape
+    this.trailPath.shape = new Shape();
 
-    // Hide trails
-    this.sourceTrail.visible = false;
-    this.observerTrail.visible = false;
+    // Hide trail
+    this.trailPath.visible = false;
   }
 }

@@ -125,7 +125,8 @@ export class SimScreenView extends ScreenView {
   private readonly keyboardManager: KeyboardHandlerManager;
   private readonly waveManager: WaveManager;
   private readonly vectorManager: VectorDisplayManager;
-  private readonly trailManager: TrailManager;
+  private readonly sourceTrailManager: TrailManager;
+  private readonly observerTrailManager: TrailManager;
 
   // Visibility properties
   private readonly visibleValuesProperty: Property<boolean>;
@@ -284,11 +285,16 @@ export class SimScreenView extends ScreenView {
       SCALE.VELOCITY_VECTOR,
     );
 
-    this.trailManager = new TrailManager(
+    this.sourceTrailManager = new TrailManager(
       this.sourceTrail,
-      this.observerTrail,
       this.modelViewTransform,
       this.UI.SOURCE_COLOR,
+      this.visibleTrailsProperty,
+    );
+
+    this.observerTrailManager = new TrailManager(
+      this.observerTrail,
+      this.modelViewTransform,
       this.UI.OBSERVER_COLOR,
       this.visibleTrailsProperty,
     );
@@ -571,7 +577,8 @@ export class SimScreenView extends ScreenView {
     // Reset components
     this.waveManager.clearWaveNodes();
     this.graphDisplay.reset();
-    this.trailManager.reset();
+    this.sourceTrailManager.reset();
+    this.observerTrailManager.reset();
 
     // Update microphone visibility
     this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
@@ -780,10 +787,8 @@ export class SimScreenView extends ScreenView {
     );
 
     // Update motion trails
-    this.trailManager.updateTrails(
-      this.model.sourceTrail,
-      this.model.observerTrail,
-    );
+    this.sourceTrailManager.updateTrail(this.model.sourceTrail);
+    this.observerTrailManager.updateTrail(this.model.observerTrail);
 
     // Update waves
     this.waveManager.updateWaves(
