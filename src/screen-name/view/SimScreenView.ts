@@ -5,7 +5,6 @@ import {
   ModelViewTransform2,
   Node,
   Path,
-  Rectangle,
   Shape,
   Text,
   Vector2,
@@ -37,7 +36,7 @@ import { KeyboardHandlerManager } from "./managers/KeyboardHandlerManager";
 import { WaveManager } from "./managers/WaveManager";
 import { VectorDisplayManager } from "./managers/VectorDisplayManager";
 import { TrailManager } from "./managers/TrailManager";
-// Add this section at the top of the file, after imports
+
 const STRINGS = {
   TITLE: strings["doppler-effect.title"].value,
   SOURCE: strings["doppler-effect.source"].value,
@@ -187,17 +186,15 @@ export class SimScreenView extends ScreenView {
     this.visibleLineOfSightProperty = new Property<boolean>(false);
     this.visibleTrailsProperty = new Property<boolean>(false);
 
-    // Create display layers
+    // Create display layers and add to the view in correct order (waves behind objects)
     this.waveLayer = new Node();
     this.objectLayer = new Node();
     this.controlLayer = new Node();
     this.graphLayer = new Node();
-
-    // Add layers to the view in correct order (waves behind objects)
-    this.addChild(this.waveLayer);
-    this.addChild(this.objectLayer);
-    this.addChild(this.graphLayer);
-    this.addChild(this.controlLayer);
+    
+    [this.waveLayer, this.objectLayer, this.graphLayer, this.controlLayer].forEach(layer => 
+      this.addChild(layer)
+    );
 
     // Create source and observer nodes
     this.sourceNode = new Circle(this.UI.SOURCE_RADIUS, {
@@ -226,22 +223,17 @@ export class SimScreenView extends ScreenView {
     });
 
     // Create velocity vector nodes
-    this.sourceVelocityVector = new ArrowNode(0, 0, 0, 0, {
+    const velocityVectorOptions = {
       headHeight: 10,
       headWidth: 10,
       tailWidth: 2,
       isHeadDynamic: true,
       scaleTailToo: true,
       visibleProperty: this.visibleVelocityArrowProperty,
-    });
-    this.observerVelocityVector = new ArrowNode(0, 0, 0, 0, {
-      headHeight: 10,
-      headWidth: 10,
-      tailWidth: 2,
-      isHeadDynamic: true,
-      scaleTailToo: true,
-      visibleProperty: this.visibleVelocityArrowProperty,
-    });
+    };
+    
+    this.sourceVelocityVector = new ArrowNode(0, 0, 0, 0, velocityVectorOptions);
+    this.observerVelocityVector = new ArrowNode(0, 0, 0, 0, velocityVectorOptions);
 
     // Create trail paths
     this.sourceTrail = new Path(new Shape(), {
@@ -416,49 +408,8 @@ export class SimScreenView extends ScreenView {
     );
     this.controlLayer.addChild(this.controlPanel);
 
-    // Create scenario combo box
-    const scenarioItems = [
-      {
-        value: Scenario.FREE_PLAY,
-        createNode: () =>
-          new Text("Free Play", {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        value: Scenario.SCENARIO_1,
-        createNode: () =>
-          new Text("Source Moving Toward Observer", {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        value: Scenario.SCENARIO_2,
-        createNode: () =>
-          new Text("Observer Moving Toward Source", {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        value: Scenario.SCENARIO_3,
-        createNode: () =>
-          new Text("Observer and Source Moving Away", {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        value: Scenario.SCENARIO_4,
-        createNode: () =>
-          new Text("Observer and Source Moving Perpendicular", {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-    ];
+    // Create scenario items for the combo box
+    const scenarioItems = this.createScenarioItems(this.UI.TEXT_COLOR);
 
     // Create combo box using SceneryStack API
     const scenarioComboBox = new ComboBox(
@@ -611,118 +562,16 @@ export class SimScreenView extends ScreenView {
   }
 
   /**
-   * Create graph elements
-   */
-  private createGraphs(): {
-    emittedGraph: Rectangle;
-    observedGraph: Rectangle;
-    emittedWaveform: Path;
-    observedWaveform: Path;
-  } {
-    const graphY1 = 30;
-    const graphY2 = graphY1 + this.UI.GRAPH_HEIGHT + this.UI.GRAPH_SPACING;
-    const graphX =
-      this.layoutBounds.maxX - this.UI.GRAPH_WIDTH - this.UI.GRAPH_MARGIN;
-
-    // Create graph containers
-    const emittedGraph = new Rectangle(
-      graphX,
-      graphY1,
-      this.UI.GRAPH_WIDTH,
-      this.UI.GRAPH_HEIGHT,
-      {
-        fill: this.UI.GRAPH_BACKGROUND,
-        stroke: this.UI.GRAPH_GRID_COLOR,
-        lineWidth: 1,
-      },
-    );
-
-    const observedGraph = new Rectangle(
-      graphX,
-      graphY2,
-      this.UI.GRAPH_WIDTH,
-      this.UI.GRAPH_HEIGHT,
-      {
-        fill: this.UI.GRAPH_BACKGROUND,
-        stroke: this.UI.GRAPH_GRID_COLOR,
-        lineWidth: 1,
-      },
-    );
-
-    // Create center lines for graphs
-    const emittedCenterLine = new Line(
-      graphX,
-      graphY1 + this.UI.GRAPH_HEIGHT / 2,
-      graphX + this.UI.GRAPH_WIDTH,
-      graphY1 + this.UI.GRAPH_HEIGHT / 2,
-      {
-        stroke: this.UI.GRAPH_GRID_COLOR,
-      },
-    );
-
-    const observedCenterLine = new Line(
-      graphX,
-      graphY2 + this.UI.GRAPH_HEIGHT / 2,
-      graphX + this.UI.GRAPH_WIDTH,
-      graphY2 + this.UI.GRAPH_HEIGHT / 2,
-      {
-        stroke: this.UI.GRAPH_GRID_COLOR,
-      },
-    );
-
-    // Create waveform paths
-    const emittedWaveform = new Path(new Shape(), {
-      stroke: this.UI.SOURCE_COLOR,
-      lineWidth: 2,
-    });
-
-    const observedWaveform = new Path(new Shape(), {
-      stroke: this.UI.OBSERVER_COLOR,
-      lineWidth: 2,
-    });
-
-    // Add graph titles
-    const emittedTitle = new Text(STRINGS.GRAPHS.EMITTED_SOUND, {
-      font: new PhetFont(12),
-      fill: this.UI.TEXT_COLOR,
-      left: graphX + 5,
-      top: graphY1 + 15,
-    });
-
-    const observedTitle = new Text(STRINGS.GRAPHS.OBSERVED_SOUND, {
-      font: new PhetFont(12),
-      fill: this.UI.TEXT_COLOR,
-      left: graphX + 5,
-      top: graphY2 + 15,
-    });
-
-    // Add to graph layer
-    this.graphLayer.addChild(emittedGraph);
-    this.graphLayer.addChild(observedGraph);
-    this.graphLayer.addChild(emittedCenterLine);
-    this.graphLayer.addChild(observedCenterLine);
-    this.graphLayer.addChild(emittedWaveform);
-    this.graphLayer.addChild(observedWaveform);
-    this.graphLayer.addChild(emittedTitle);
-    this.graphLayer.addChild(observedTitle);
-
-    return {
-      emittedGraph,
-      observedGraph,
-      emittedWaveform,
-      observedWaveform,
-    };
-  }
-
-  /**
    * Add model listeners
    */
   private addModelListeners(): void {
-    // Update source position/velocity visualization when model properties change
-    this.model.sourcePositionProperty.link(() => this.updateView());
-    this.model.observerPositionProperty.link(() => this.updateView());
-    this.model.sourceVelocityProperty.link(() => this.updateView());
-    this.model.observerVelocityProperty.link(() => this.updateView());
+    // Update view whenever position or velocity changes
+    const updateOnChange = () => this.updateView();
+    
+    this.model.sourcePositionProperty.link(updateOnChange);
+    this.model.observerPositionProperty.link(updateOnChange);
+    this.model.sourceVelocityProperty.link(updateOnChange);
+    this.model.observerVelocityProperty.link(updateOnChange);
 
     // Listen for changes to wave collection
     this.model.waves.addItemAddedListener((wave) => {
@@ -741,12 +590,12 @@ export class SimScreenView extends ScreenView {
       );
     });
 
-    // Update text displays when frequency changes
-    this.model.emittedFrequencyProperty.link(() => this.updateText());
-    this.model.observedFrequencyProperty.link(() => this.updateText());
-
-    // Update when selection changes
-    this.selectedObjectProperty.link(() => this.updateText());
+    // Update text displays when relevant properties change
+    const updateTextOnChange = () => this.updateText();
+    
+    this.model.emittedFrequencyProperty.link(updateTextOnChange);
+    this.model.observedFrequencyProperty.link(updateTextOnChange);
+    this.selectedObjectProperty.link(updateTextOnChange);
 
     // Listen for wave detection to play click sound
     this.model.waveDetectedProperty.link((detected) => {
@@ -818,7 +667,6 @@ export class SimScreenView extends ScreenView {
         ? STRINGS.SOURCE
         : STRINGS.OBSERVER;
 
-    // Update status display with current values
     this.statusDisplay.updateValues(
       this.model.emittedFrequencyProperty.value,
       this.model.observedFrequencyProperty.value,
@@ -843,5 +691,55 @@ export class SimScreenView extends ScreenView {
           this.model.observerPositionProperty.value,
         );
     }
+  }
+
+  /**
+   * Create scenario items for the combo box
+   * @param textColor - The color for the scenario text
+   * @returns Array of scenario items for the combo box
+   */
+  private createScenarioItems(textColor: Color) {
+    return [
+      {
+        value: Scenario.FREE_PLAY,
+        createNode: () =>
+          new Text("Free Play", {
+            font: new PhetFont(14),
+            fill: textColor,
+          }),
+      },
+      {
+        value: Scenario.SCENARIO_1,
+        createNode: () =>
+          new Text("Source Moving Toward Observer", {
+            font: new PhetFont(14),
+            fill: textColor,
+          }),
+      },
+      {
+        value: Scenario.SCENARIO_2,
+        createNode: () =>
+          new Text("Observer Moving Toward Source", {
+            font: new PhetFont(14),
+            fill: textColor,
+          }),
+      },
+      {
+        value: Scenario.SCENARIO_3,
+        createNode: () =>
+          new Text("Observer and Source Moving Away", {
+            font: new PhetFont(14),
+            fill: textColor,
+          }),
+      },
+      {
+        value: Scenario.SCENARIO_4,
+        createNode: () =>
+          new Text("Observer and Source Moving Perpendicular", {
+            font: new PhetFont(14),
+            fill: textColor,
+          }),
+      },
+    ];
   }
 }
