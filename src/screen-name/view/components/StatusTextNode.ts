@@ -90,19 +90,20 @@ export class StatusTextNode extends Node {
     // Position text elements
     const textX =
       options.layoutBounds.maxX - options.graphMargin - options.graphWidth / 2;
-    const graphBottom = 30 + options.graphHeight * 2 + options.graphSpacing;
-
-    this.emittedFreqText.centerX = textX;
-    this.emittedFreqText.top = graphBottom + 20;
-
-    this.observedFreqText.centerX = textX;
-    this.observedFreqText.top = this.emittedFreqText.bottom + 5;
-
-    this.selectedObjectText.centerX = textX;
-    this.selectedObjectText.top = this.observedFreqText.bottom + 15;
-
+    
+    // TODO: improve positioning
+    // Position text elements above the graphs
     this.shiftStatusText.centerX = textX;
-    this.shiftStatusText.top = this.selectedObjectText.bottom + 10;
+    this.shiftStatusText.bottom = 25; // Position above the first graph
+    
+    this.selectedObjectText.centerX = textX;
+    this.selectedObjectText.bottom = this.shiftStatusText.top - 10;
+    
+    this.observedFreqText.centerX = textX;
+    this.observedFreqText.bottom = this.selectedObjectText.top - 5;
+    
+    this.emittedFreqText.centerX = textX;
+    this.emittedFreqText.bottom = this.observedFreqText.top - 5;
 
     // Add all elements to this node
     this.addChild(this.emittedFreqText);
