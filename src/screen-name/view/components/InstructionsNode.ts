@@ -105,14 +105,4 @@ export class InstructionsNode extends Node {
   public toggleVisibility(): void {
     this.visible = !this.visible;
   }
-
-  /**
-   * Set visibility of the instructions
-   * @param visible - Whether the instructions should be visible
-   * @returns this for chaining
-   */
-  public setVisible(visible: boolean): this {
-    this.visible = visible;
-    return this;
-  }
 }
