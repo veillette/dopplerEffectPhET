@@ -61,5 +61,5 @@ import type { TBrand } from "scenerystack/brand";
 
   brand.register("Brand", Brand);
 
-  await import("./main.js");
+  await import("./main.ts");
 })();
