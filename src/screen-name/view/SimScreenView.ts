@@ -567,21 +567,21 @@ export class SimScreenView extends ScreenView {
    */
   public reset(): void {
     // Reset selected object
-    this.selectedObjectProperty.value = "source";
+    this.selectedObjectProperty.reset();
 
     // Update visibility directly
-    this.instructionsDisplay.toggleVisibility();
-    if (this.instructionsDisplay.visible) {
-      this.instructionsDisplay.toggleVisibility();
-    }
+    this.instructionsDisplay.setVisible(false);
 
+    // Reset property values
     this.visibleValuesProperty.reset();
     this.visibleVelocityArrowProperty.reset();
     this.visibleLineOfSightProperty.reset();
     this.visibleTrailsProperty.reset();
 
-    // Clear wave nodes
+    // Reset components
     this.waveManager.clearWaveNodes();
+    this.graphDisplay.reset();
+    this.trailManager.reset();
 
     // Update microphone visibility
     this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;

@@ -230,4 +230,14 @@ export class GraphDisplayNode extends Node {
 
     return shape;
   }
+
+  /**
+   * Reset the graph display
+   * Clears waveform shapes
+   */
+  public reset(): void {
+    // Clear waveform displays
+    this.emittedWaveform.shape = new Shape();
+    this.observedWaveform.shape = new Shape();
+  }
 } 

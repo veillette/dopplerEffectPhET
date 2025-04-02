@@ -138,4 +138,18 @@ export class TrailManager {
     // Apply the gradient
     trailPath.stroke = gradient;
   }
+
+  /**
+   * Reset the trail manager
+   * Clears all trail shapes
+   */
+  public reset(): void {
+    // Reset trails to empty shapes
+    this.sourceTrail.shape = new Shape();
+    this.observerTrail.shape = new Shape();
+    
+    // Hide trails
+    this.sourceTrail.visible = false;
+    this.observerTrail.visible = false;
+  }
 } 
