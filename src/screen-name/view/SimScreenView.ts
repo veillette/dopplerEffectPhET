@@ -746,10 +746,10 @@ export class SimScreenView extends ScreenView {
   private updateView(): void {
     // Update object positions
     this.sourceNode.center = this.modelViewTransform.modelToViewPosition(
-      this.model.sourcePositionProperty.value
+      this.model.sourcePositionProperty.value,
     );
     this.observerNode.center = this.modelViewTransform.modelToViewPosition(
-      this.model.observerPositionProperty.value
+      this.model.observerPositionProperty.value,
     );
 
     // Update selection highlight
@@ -757,16 +757,16 @@ export class SimScreenView extends ScreenView {
 
     // Update line of sight
     const sourcePos = this.modelViewTransform.modelToViewPosition(
-      this.model.sourcePositionProperty.value
+      this.model.sourcePositionProperty.value,
     );
     const observerPos = this.modelViewTransform.modelToViewPosition(
-      this.model.observerPositionProperty.value
+      this.model.observerPositionProperty.value,
     );
     this.connectingLine.setLine(
       sourcePos.x,
       sourcePos.y,
       observerPos.x,
-      observerPos.y
+      observerPos.y,
     );
 
     // Update velocity vectors
@@ -776,19 +776,19 @@ export class SimScreenView extends ScreenView {
       this.model.sourcePositionProperty.value,
       this.model.observerPositionProperty.value,
       this.model.sourceVelocityProperty.value,
-      this.model.observerVelocityProperty.value
+      this.model.observerVelocityProperty.value,
     );
 
     // Update motion trails
     this.trailManager.updateTrails(
       this.model.sourceTrail,
-      this.model.observerTrail
+      this.model.observerTrail,
     );
 
     // Update waves
     this.waveManager.updateWaves(
       this.model.waves,
-      this.model.simulationTimeProperty.value
+      this.model.simulationTimeProperty.value,
     );
 
     // Update text displays
@@ -818,15 +818,16 @@ export class SimScreenView extends ScreenView {
   private updateSelectionHighlight(): void {
     if (this.selectedObjectProperty.value === "source") {
       this.selectionHighlight.radius = this.UI.SOURCE_RADIUS + 5;
-      this.selectionHighlight.center = this.modelViewTransform.modelToViewPosition(
-        this.model.sourcePositionProperty.value
-      );
+      this.selectionHighlight.center =
+        this.modelViewTransform.modelToViewPosition(
+          this.model.sourcePositionProperty.value,
+        );
     } else {
       this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
-      this.selectionHighlight.center = this.modelViewTransform.modelToViewPosition(
-        this.model.observerPositionProperty.value
-      );
+      this.selectionHighlight.center =
+        this.modelViewTransform.modelToViewPosition(
+          this.model.observerPositionProperty.value,
+        );
     }
   }
 }
-

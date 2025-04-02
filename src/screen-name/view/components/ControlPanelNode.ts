@@ -76,12 +76,16 @@ export class ControlPanelNode extends Node {
     super();
 
     // Helper function to create checkbox items with consistent styling
-    const createCheckboxItem = (property: Property<boolean>, label: string): VerticalCheckboxGroupItem => ({
+    const createCheckboxItem = (
+      property: Property<boolean>,
+      label: string,
+    ): VerticalCheckboxGroupItem => ({
       property,
-      createNode: () => new Text(label, {
-        font: new PhetFont(14),
-        fill: options.textColor,
-      })
+      createNode: () =>
+        new Text(label, {
+          font: new PhetFont(14),
+          fill: options.textColor,
+        }),
     });
 
     // Create checkbox items
