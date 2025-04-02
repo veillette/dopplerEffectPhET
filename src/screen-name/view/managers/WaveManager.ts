@@ -89,10 +89,11 @@ export class WaveManager {
       waveNode.radius = this.modelViewTransform.modelToViewDeltaX(wave.radius);
 
       // Update opacity based on age
-      const age = simulationTime - wave.birthTime;
+      const age = Math.max(0, simulationTime - wave.birthTime); // Ensure age is non-negative
       const opacity = 0.7 * (1 - age / maxAge);
 
-      waveNode.opacity = Math.max(0, opacity);
+      // Clamp opacity between 0 and 1
+      waveNode.opacity = Math.min(1, Math.max(0, opacity));
     }
   }
 

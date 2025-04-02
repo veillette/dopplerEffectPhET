@@ -6,7 +6,6 @@ import {
   Node,
   Path,
   Rectangle,
-
   Shape,
   Text,
   Vector2,
