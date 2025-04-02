@@ -159,6 +159,8 @@ export class MicrophoneNode extends Node {
     });
     this.addInputListener(micDragListener);
 
+    this.microphonePositionProperty.lazyLink(this.updatePosition.bind(this));
+
     // Add listener for wave detection
     this.waveDetectedProperty.lazyLink(this.handleWaveDetection.bind(this));
   }
@@ -180,5 +182,14 @@ export class MicrophoneNode extends Node {
         this.detectionRing.visible = false;
       }, MICROPHONE.DETECTION_FLASH_DURATION);
     }
+  }
+
+  /**
+   * Update the microphone position based on the model property
+   */
+  private updatePosition(): void {
+    this.center = this.modelViewTransform.modelToViewPosition(
+      this.microphonePositionProperty.value
+    );
   }
 } 
