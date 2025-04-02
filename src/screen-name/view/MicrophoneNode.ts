@@ -153,27 +153,9 @@ export class MicrophoneNode extends Node {
     // Add drag listener with proper offset handling
     const micDragListener = new DragListener({
       targetNode: this,
-      dragBoundsProperty: dragBoundsProperty,
-      start: (event) => {
-        // Store the initial offset between pointer and microphone position
-        const micViewPos = this.modelViewTransform.modelToViewPosition(
-          this.microphonePositionProperty.value
-        );
-        (
-          micDragListener as DragListener & { dragOffset: Vector2 }
-        ).dragOffset = micViewPos.minus(event.pointer.point);
-      },
-      drag: (event) => {
-        // Convert view coordinates to model coordinates, accounting for initial offset
-        const viewPoint = event.pointer.point.plus(
-          (micDragListener as DragListener & { dragOffset: Vector2 })
-            .dragOffset
-        );
-        const modelPoint = this.modelViewTransform.viewToModelPosition(viewPoint);
-        
-        // Update microphone position in model
-        this.microphonePositionProperty.value = modelPoint;
-      }
+      transform: this.modelViewTransform,
+      positionProperty: this.microphonePositionProperty,
+      dragBoundsProperty: dragBoundsProperty
     });
     this.addInputListener(micDragListener);
 
