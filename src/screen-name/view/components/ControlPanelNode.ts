@@ -85,7 +85,7 @@ export class ControlPanelNode extends Node {
       createNode: () =>
         new Text(label, {
           font: new PhetFont(14),
-          fill: options.textColor,
+          fill: options.textColor
         }),
     });
 
@@ -139,13 +139,13 @@ export class ControlPanelNode extends Node {
 
     // Create the panel content with all controls
     const panelContent = new Node({
-      children: [checkboxGroup, soundSpeedControl, frequencyControl],
+      children: [checkboxGroup, soundSpeedControl, frequencyControl]
     });
 
     // Create the panel with the content
     this.panel = new Panel(panelContent, {
       right: options.graphRight,
-      top: options.graphBottom + 10,
+      top: options.graphBottom + 10
     });
 
     // Add the panel to this node

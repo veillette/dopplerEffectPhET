@@ -38,8 +38,7 @@ export class WaveManager {
       stroke: this.waveColor,
       fill: null,
       lineWidth: 2,
-      opacity: 0.7,
-      pickable: false,
+      opacity: 0.7
     });
 
     this.waveLayer.addChild(waveNode);

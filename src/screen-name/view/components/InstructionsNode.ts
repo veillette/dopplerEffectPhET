@@ -52,7 +52,7 @@ export class InstructionsNode extends Node {
     // Create background rectangle
     this.background = new Rectangle(0, 0, options.layoutBounds.width / 2, 200, {
       fill: new Color(255, 255, 255, 0.8),
-      cornerRadius: 5,
+      cornerRadius: 5
     });
     this.addChild(this.background);
 
@@ -61,7 +61,7 @@ export class InstructionsNode extends Node {
       font: new PhetFont({ size: 16, weight: "bold" }),
       fill: options.textColor,
       centerX: this.background.centerX,
-      top: 10,
+      top: 10
     });
     this.addChild(title);
 
@@ -75,7 +75,7 @@ export class InstructionsNode extends Node {
       strings.SCENARIOS,
       strings.TOGGLE_MOTION_TRAILS,
       strings.TOGGLE_MICROPHONE,
-      strings.DRAG_MICROPHONE,
+      strings.DRAG_MICROPHONE
     ];
 
     // Add instruction lines
@@ -85,7 +85,7 @@ export class InstructionsNode extends Node {
         font: new PhetFont(14),
         fill: options.textColor,
         left: 15,
-        top: yPosition,
+        top: yPosition
       });
       this.addChild(line);
       yPosition = line.bottom + 10;

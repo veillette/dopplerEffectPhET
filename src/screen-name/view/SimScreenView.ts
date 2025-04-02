@@ -218,27 +218,25 @@ export class SimScreenView extends ScreenView {
     // Create source and observer nodes
     this.sourceNode = new Circle(this.UI.SOURCE_RADIUS, {
       fill: this.UI.SOURCE_COLOR,
-      cursor: "pointer",
+      cursor: "pointer"
     });
 
     this.observerNode = new Circle(this.UI.OBSERVER_RADIUS, {
       fill: this.UI.OBSERVER_COLOR,
-      cursor: "pointer",
+      cursor: "pointer"
     });
 
     // Create connecting line
     this.connectingLine = new Line(0, 0, 0, 0, {
       visibleProperty: this.visibleLineOfSightProperty,
       stroke: this.UI.CONNECTING_LINE_COLOR,
-      lineWidth: 1,
       lineDash: [10, 5],
     });
 
     // Create selection highlight
     this.selectionHighlight = new Circle(this.UI.SOURCE_RADIUS + 5, {
       stroke: this.UI.SELECTION_COLOR,
-      lineWidth: 2,
-      pickable: false,
+      lineWidth: 2
     });
 
     // Create velocity vector nodes
@@ -246,7 +244,6 @@ export class SimScreenView extends ScreenView {
       headHeight: 10,
       headWidth: 10,
       tailWidth: 2,
-      isHeadDynamic: true,
       scaleTailToo: true,
       visibleProperty: this.visibleVelocityArrowProperty,
     };
@@ -269,18 +266,18 @@ export class SimScreenView extends ScreenView {
     // Create trail paths
     this.sourceTrail = new Path(new Shape(), {
       stroke: this.UI.SOURCE_COLOR,
-      lineWidth: this.UI.TRAIL_WIDTH,
+      lineWidth: this.UI.TRAIL_WIDTH
     });
     this.observerTrail = new Path(new Shape(), {
       stroke: this.UI.OBSERVER_COLOR,
-      lineWidth: this.UI.TRAIL_WIDTH,
+      lineWidth: this.UI.TRAIL_WIDTH
     });
 
     // Add objects to object layer
     this.objectLayer.addChild(this.connectingLine);
+    this.objectLayer.addChild(this.selectionHighlight);
     this.objectLayer.addChild(this.sourceNode);
     this.objectLayer.addChild(this.observerNode);
-    this.objectLayer.addChild(this.selectionHighlight);
     this.objectLayer.addChild(this.sourceVelocityVector);
     this.objectLayer.addChild(this.observerVelocityVector);
     this.objectLayer.addChild(this.sourceTrail);
@@ -762,7 +759,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.FREE_PLAY, {
             font: new PhetFont(14),
-            fill: textColor,
+            fill: textColor
           }),
       },
       {
@@ -770,7 +767,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.SOURCE_MOVING_TOWARD_OBSERVER, {
             font: new PhetFont(14),
-            fill: textColor,
+            fill: textColor
           }),
       },
       {
@@ -778,7 +775,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.OBSERVER_MOVING_TOWARD_SOURCE, {
             font: new PhetFont(14),
-            fill: textColor,
+            fill: textColor
           }),
       },
       {
@@ -786,7 +783,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.MOVING_AWAY, {
             font: new PhetFont(14),
-            fill: textColor,
+            fill: textColor
           }),
       },
       {
@@ -794,7 +791,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.PERPENDICULAR, {
             font: new PhetFont(14),
-            fill: textColor,
+            fill: textColor
           }),
       },
     ];
