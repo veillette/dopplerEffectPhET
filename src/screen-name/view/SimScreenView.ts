@@ -22,8 +22,8 @@ import { PHYSICS, SCALE } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 import strings from "../../strings_en.json";
-import { Sound } from "./Sound";
-import { MicrophoneNode } from "./MicrophoneNode";
+import { Sound } from "./utils/Sound";
+import { MicrophoneNode } from "./components/MicrophoneNode";
 
 // Import components directly
 import { ControlPanelNode } from "./components/ControlPanelNode";

@@ -18,7 +18,7 @@ import {
   Shape,
   Vector2,
 } from "scenerystack";
-import { Sound } from "./Sound";
+import { Sound } from "../utils/Sound";
 
 // Constants for microphone visualization and behavior
 const MICROPHONE = {
