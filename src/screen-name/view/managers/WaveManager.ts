@@ -12,7 +12,7 @@ import { Wave } from "../../model/SimModel";
  */
 export class WaveManager {
   // Map to track wave nodes
-  private waveNodesMap: Map<Wave, Circle> = new Map();
+  private readonly waveNodesMap: Map<Wave, Circle> = new Map();
 
   /**
    * Constructor for the WaveManager
