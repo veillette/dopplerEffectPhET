@@ -87,9 +87,18 @@ export class TrailManager {
     );
 
     // Add color stops - transparent at oldest point, full color at newest
-    gradient.addColorStop(0, new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.1));
-    gradient.addColorStop(0.5, new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.4));
-    gradient.addColorStop(1, new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.8));
+    gradient.addColorStop(
+      0,
+      new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.1),
+    );
+    gradient.addColorStop(
+      0.5,
+      new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.4),
+    );
+    gradient.addColorStop(
+      1,
+      new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.8),
+    );
 
     // Apply the gradient
     this.trailPath.stroke = gradient;

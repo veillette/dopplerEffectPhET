@@ -49,7 +49,8 @@ const STRINGS = {
     SOUND_SPEED: strings["doppler-effect.controls.soundSpeed"].value,
     FREQUENCY: strings["doppler-effect.controls.frequency"].value,
     MOTION_TRAILS: strings["doppler-effect.controls.motionTrails"].value,
-    MICROPHONE_CLICKS: strings["doppler-effect.controls.microphoneClicks"].value,
+    MICROPHONE_CLICKS:
+      strings["doppler-effect.controls.microphoneClicks"].value,
   },
   UNITS: {
     METERS_PER_SECOND: strings["doppler-effect.units.metersPerSecond"].value,
@@ -74,14 +75,17 @@ const STRINGS = {
     CONTROLS: strings["doppler-effect.help.controls"].value,
     ADJUST: strings["doppler-effect.help.adjust"].value,
     SCENARIOS: strings["doppler-effect.help.scenarios"].value,
-    TOGGLE_MOTION_TRAILS: strings["doppler-effect.help.toggleMotionTrails"].value,
+    TOGGLE_MOTION_TRAILS:
+      strings["doppler-effect.help.toggleMotionTrails"].value,
     TOGGLE_MICROPHONE: strings["doppler-effect.help.toggleMicrophone"].value,
     DRAG_MICROPHONE: strings["doppler-effect.help.dragMicrophone"].value,
   },
   SCENARIOS: {
     FREE_PLAY: strings["doppler-effect.scenarios.freePlay"].value,
-    SOURCE_MOVING_TOWARD_OBSERVER: strings["doppler-effect.scenarios.sourceMovingTowardObserver"].value,
-    OBSERVER_MOVING_TOWARD_SOURCE: strings["doppler-effect.scenarios.observerMovingTowardSource"].value,
+    SOURCE_MOVING_TOWARD_OBSERVER:
+      strings["doppler-effect.scenarios.sourceMovingTowardObserver"].value,
+    OBSERVER_MOVING_TOWARD_SOURCE:
+      strings["doppler-effect.scenarios.observerMovingTowardSource"].value,
     MOVING_AWAY: strings["doppler-effect.scenarios.movingAway"].value,
     PERPENDICULAR: strings["doppler-effect.scenarios.perpendicular"].value,
   },
@@ -202,10 +206,13 @@ export class SimScreenView extends ScreenView {
     this.objectLayer = new Node();
     this.controlLayer = new Node();
     this.graphLayer = new Node();
-    
-    [this.waveLayer, this.objectLayer, this.graphLayer, this.controlLayer].forEach(layer => 
-      this.addChild(layer)
-    );
+
+    [
+      this.waveLayer,
+      this.objectLayer,
+      this.graphLayer,
+      this.controlLayer,
+    ].forEach((layer) => this.addChild(layer));
 
     // Create source and observer nodes
     this.sourceNode = new Circle(this.UI.SOURCE_RADIUS, {
@@ -242,9 +249,21 @@ export class SimScreenView extends ScreenView {
       scaleTailToo: true,
       visibleProperty: this.visibleVelocityArrowProperty,
     };
-    
-    this.sourceVelocityVector = new ArrowNode(0, 0, 0, 0, velocityVectorOptions);
-    this.observerVelocityVector = new ArrowNode(0, 0, 0, 0, velocityVectorOptions);
+
+    this.sourceVelocityVector = new ArrowNode(
+      0,
+      0,
+      0,
+      0,
+      velocityVectorOptions,
+    );
+    this.observerVelocityVector = new ArrowNode(
+      0,
+      0,
+      0,
+      0,
+      velocityVectorOptions,
+    );
 
     // Create trail paths
     this.sourceTrail = new Path(new Shape(), {
@@ -311,8 +330,14 @@ export class SimScreenView extends ScreenView {
       maxY: this.layoutBounds.maxY,
     };
 
-    this.sourceDragManager = new DragHandlerManager(this.modelViewTransform, dragBounds);
-    this.observerDragManager = new DragHandlerManager(this.modelViewTransform, dragBounds);
+    this.sourceDragManager = new DragHandlerManager(
+      this.modelViewTransform,
+      dragBounds,
+    );
+    this.observerDragManager = new DragHandlerManager(
+      this.modelViewTransform,
+      dragBounds,
+    );
 
     this.keyboardManager = new KeyboardHandlerManager();
 
@@ -504,7 +529,7 @@ export class SimScreenView extends ScreenView {
       },
       PHYSICS.MAX_SPEED,
     );
-    
+
     this.observerDragManager.attachDragHandler(
       this.observerNode,
       this.model.observerPositionProperty,
@@ -582,7 +607,7 @@ export class SimScreenView extends ScreenView {
   private addModelListeners(): void {
     // Update view whenever position or velocity changes
     const updateOnChange = () => this.updateView();
-    
+
     this.model.sourcePositionProperty.link(updateOnChange);
     this.model.observerPositionProperty.link(updateOnChange);
     this.model.sourceVelocityProperty.link(updateOnChange);
@@ -607,7 +632,7 @@ export class SimScreenView extends ScreenView {
 
     // Update text displays when relevant properties change
     const updateTextOnChange = () => this.updateText();
-    
+
     this.model.emittedFrequencyProperty.link(updateTextOnChange);
     this.model.observedFrequencyProperty.link(updateTextOnChange);
     this.selectedObjectProperty.link(updateTextOnChange);

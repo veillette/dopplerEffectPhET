@@ -99,7 +99,7 @@ export class DragHandlerManager {
         movingProperty.value = true;
       },
     });
-    
+
     // Add the listener to the target node
     targetNode.addInputListener(this.dragListener);
   }
