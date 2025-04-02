@@ -64,19 +64,19 @@ export class ScaleMarkNode extends Node {
     // Create the main scale mark (vertical line)
     this.scaleMark = new Line(0, 0, 0, scaleViewLength, {
       stroke: options.lineColor,
-      lineWidth: 2
+      lineWidth: 2,
     });
 
     // Create end marks for the ruler effect
     this.topEndMark = new Line(-5, 0, 5, 0, {
       stroke: options.lineColor,
-      lineWidth: 2
+      lineWidth: 2,
     });
 
     // Create bottom end mark
     this.bottomEndMark = new Line(-5, scaleViewLength, 5, scaleViewLength, {
       stroke: options.lineColor,
-      lineWidth: 2
+      lineWidth: 2,
     });
 
     // Add intermediate tick marks (every 5 meters if scale length is >10m, otherwise every 2m)
@@ -91,7 +91,7 @@ export class ScaleMarkNode extends Node {
 
       // Create smaller intermediate tick marks
       const tickMark = new Line(-3, tickY, 3, tickY, {
-        stroke: options.lineColor
+        stroke: options.lineColor,
       });
 
       this.addChild(tickMark);
@@ -102,7 +102,7 @@ export class ScaleMarkNode extends Node {
       font: new PhetFont(14),
       fill: options.textColor,
       left: 10, // Position label to the right of the scale mark
-      centerY: scaleViewLength / 2 // Center label vertically
+      centerY: scaleViewLength / 2, // Center label vertically
     });
 
     // Add components to this node

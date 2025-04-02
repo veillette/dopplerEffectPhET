@@ -218,12 +218,12 @@ export class SimScreenView extends ScreenView {
     // Create source and observer nodes
     this.sourceNode = new Circle(this.UI.SOURCE_RADIUS, {
       fill: this.UI.SOURCE_COLOR,
-      cursor: "pointer"
+      cursor: "pointer",
     });
 
     this.observerNode = new Circle(this.UI.OBSERVER_RADIUS, {
       fill: this.UI.OBSERVER_COLOR,
-      cursor: "pointer"
+      cursor: "pointer",
     });
 
     // Create connecting line
@@ -236,7 +236,7 @@ export class SimScreenView extends ScreenView {
     // Create selection highlight
     this.selectionHighlight = new Circle(this.UI.SOURCE_RADIUS + 5, {
       stroke: this.UI.SELECTION_COLOR,
-      lineWidth: 2
+      lineWidth: 2,
     });
 
     // Create velocity vector nodes
@@ -266,11 +266,11 @@ export class SimScreenView extends ScreenView {
     // Create trail paths
     this.sourceTrail = new Path(new Shape(), {
       stroke: this.UI.SOURCE_COLOR,
-      lineWidth: this.UI.TRAIL_WIDTH
+      lineWidth: this.UI.TRAIL_WIDTH,
     });
     this.observerTrail = new Path(new Shape(), {
       stroke: this.UI.OBSERVER_COLOR,
-      lineWidth: this.UI.TRAIL_WIDTH
+      lineWidth: this.UI.TRAIL_WIDTH,
     });
 
     // Add objects to object layer
@@ -320,21 +320,13 @@ export class SimScreenView extends ScreenView {
       this.visibleTrailsProperty,
     );
 
-    // Create separate drag managers for source and observer
-    const dragBounds = {
-      minX: this.layoutBounds.minX,
-      minY: this.layoutBounds.minY,
-      maxX: this.layoutBounds.maxX,
-      maxY: this.layoutBounds.maxY,
-    };
-
     this.sourceDragManager = new DragHandlerManager(
       this.modelViewTransform,
-      dragBounds,
+      this.layoutBounds,
     );
     this.observerDragManager = new DragHandlerManager(
       this.modelViewTransform,
-      dragBounds,
+      this.layoutBounds,
     );
 
     this.keyboardManager = new KeyboardHandlerManager();
@@ -759,7 +751,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.FREE_PLAY, {
             font: new PhetFont(14),
-            fill: textColor
+            fill: textColor,
           }),
       },
       {
@@ -767,7 +759,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.SOURCE_MOVING_TOWARD_OBSERVER, {
             font: new PhetFont(14),
-            fill: textColor
+            fill: textColor,
           }),
       },
       {
@@ -775,7 +767,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.OBSERVER_MOVING_TOWARD_SOURCE, {
             font: new PhetFont(14),
-            fill: textColor
+            fill: textColor,
           }),
       },
       {
@@ -783,7 +775,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.MOVING_AWAY, {
             font: new PhetFont(14),
-            fill: textColor
+            fill: textColor,
           }),
       },
       {
@@ -791,7 +783,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(STRINGS.SCENARIOS.PERPENDICULAR, {
             font: new PhetFont(14),
-            fill: textColor
+            fill: textColor,
           }),
       },
     ];

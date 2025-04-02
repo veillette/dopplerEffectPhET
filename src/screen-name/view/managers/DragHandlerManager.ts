@@ -28,20 +28,10 @@ export class DragHandlerManager {
    */
   constructor(
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly layoutBounds: {
-      minX: number;
-      minY: number;
-      maxX: number;
-      maxY: number;
-    },
+    private readonly layoutBounds: Bounds2,
   ) {
-    // Create a Bounds2 object from the layoutBounds
-    this.dragBounds = new Bounds2(
-      layoutBounds.minX,
-      layoutBounds.minY,
-      layoutBounds.maxX,
-      layoutBounds.maxY,
-    );
+    // drag bounds are the same as the layout bounds
+    this.dragBounds = layoutBounds;
   }
 
   /**

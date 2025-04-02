@@ -77,8 +77,8 @@ export class GraphDisplayNode extends Node {
       options.graphHeight,
       {
         fill: options.graphBackground,
-        stroke: options.graphGridColor
-      }
+        stroke: options.graphGridColor,
+      },
     );
 
     this.observedGraph = new Rectangle(
@@ -88,8 +88,8 @@ export class GraphDisplayNode extends Node {
       options.graphHeight,
       {
         fill: options.graphBackground,
-        stroke: options.graphGridColor
-      }
+        stroke: options.graphGridColor,
+      },
     );
 
     // Create center lines for graphs
@@ -99,8 +99,8 @@ export class GraphDisplayNode extends Node {
       graphX + options.graphWidth,
       graphY1 + options.graphHeight / 2,
       {
-        stroke: options.graphGridColor
-      }
+        stroke: options.graphGridColor,
+      },
     );
 
     const observedCenterLine = new Line(
@@ -109,19 +109,19 @@ export class GraphDisplayNode extends Node {
       graphX + options.graphWidth,
       graphY2 + options.graphHeight / 2,
       {
-        stroke: options.graphGridColor
-      }
+        stroke: options.graphGridColor,
+      },
     );
 
     // Create waveform paths
     this.emittedWaveform = new Path(new Shape(), {
       stroke: options.sourceColor,
-      lineWidth: 2
+      lineWidth: 2,
     });
 
     this.observedWaveform = new Path(new Shape(), {
       stroke: options.observerColor,
-      lineWidth: 2
+      lineWidth: 2,
     });
 
     // Add graph titles
@@ -129,14 +129,14 @@ export class GraphDisplayNode extends Node {
       font: new PhetFont(12),
       fill: options.textColor,
       left: graphX + 5,
-      top: graphY1 + 15
+      top: graphY1 + 15,
     });
 
     const observedTitle = new Text(strings.OBSERVED_SOUND, {
       font: new PhetFont(12),
       fill: options.textColor,
       left: graphX + 5,
-      top: graphY2 + 15
+      top: graphY2 + 15,
     });
 
     // Add all components to this node

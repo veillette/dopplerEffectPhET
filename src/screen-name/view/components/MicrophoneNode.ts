@@ -75,13 +75,13 @@ export class MicrophoneNode extends Node {
     private readonly waveDetectedProperty: Property<boolean>,
     dragBoundsProperty: Property<Bounds2>,
   ) {
- super({
+    super({
       cursor: "pointer",
     });
 
     // Create microphone body - a circle with stem
     const micBody = new Circle(MICROPHONE.BODY_RADIUS, {
-      fill: MICROPHONE.BODY_COLOR
+      fill: MICROPHONE.BODY_COLOR,
     });
 
     // Create microphone stem
@@ -91,7 +91,7 @@ export class MicrophoneNode extends Node {
       MICROPHONE.STEM_WIDTH,
       MICROPHONE.STEM_HEIGHT,
       {
-        fill: MICROPHONE.STEM_COLOR
+        fill: MICROPHONE.STEM_COLOR,
       },
     );
 
@@ -103,14 +103,14 @@ export class MicrophoneNode extends Node {
       MICROPHONE.BASE_HEIGHT,
       {
         fill: MICROPHONE.BASE_COLOR,
-        cornerRadius: MICROPHONE.BASE_CORNER_RADIUS
+        cornerRadius: MICROPHONE.BASE_CORNER_RADIUS,
       },
     );
 
     // Create microphone grid pattern
     const gridPattern = new Path(new Shape(), {
       stroke: MICROPHONE.GRID_COLOR,
-      lineWidth: MICROPHONE.GRID_LINE_WIDTH
+      lineWidth: MICROPHONE.GRID_LINE_WIDTH,
     });
 
     // Draw horizontal grid lines
@@ -146,7 +146,7 @@ export class MicrophoneNode extends Node {
     this.detectionRing = new Circle(MICROPHONE.DETECTION_RING_RADIUS, {
       stroke: MICROPHONE.DETECTION_RING_COLOR,
       lineWidth: MICROPHONE.DETECTION_RING_LINE_WIDTH,
-      visible: false
+      visible: false,
     });
     this.addChild(this.detectionRing);
 

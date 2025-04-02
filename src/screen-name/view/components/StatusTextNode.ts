@@ -65,26 +65,26 @@ export class StatusTextNode extends Node {
     this.emittedFreqText = new Text("", {
       font: new PhetFont(14),
       fill: options.textColor,
-      visibleProperty: visibleValuesProperty
+      visibleProperty: visibleValuesProperty,
     });
 
     this.observedFreqText = new Text("", {
       font: new PhetFont(14),
       fill: options.textColor,
-      visibleProperty: visibleValuesProperty
+      visibleProperty: visibleValuesProperty,
     });
 
     this.selectedObjectText = new Text("", {
       font: new PhetFont(14),
       fill: options.selectionColor,
-      visibleProperty: visibleValuesProperty
+      visibleProperty: visibleValuesProperty,
     });
 
     this.shiftStatusText = new Text("", {
       font: new PhetFont(16),
       fill: options.textColor,
       fontWeight: "bold",
-      visibleProperty: visibleValuesProperty
+      visibleProperty: visibleValuesProperty,
     });
 
     // Position text elements
