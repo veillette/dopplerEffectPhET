@@ -1,39 +1,48 @@
 import {
   Circle,
   Color,
-  DragListener,
   Line,
   ModelViewTransform2,
   Node,
   Path,
   Rectangle,
-  SceneryEvent,
+
   Shape,
   Text,
   Vector2,
-  LinearGradient,
 } from "scenerystack";
 import {
   ArrowNode,
   InfoButton,
-  NumberControl,
+
   PhetFont,
   ResetAllButton,
-  TimeControlNode,
+
 } from "scenerystack/scenery-phet";
 import {
-  ComboBox,
-  Panel,
-  VerticalCheckboxGroup,
-  VerticalCheckboxGroupItem,
+  ComboBox
 } from "scenerystack/sun";
-import { Scenario, SimModel, Wave } from "../model/SimModel";
-import { PHYSICS, SCALE, WAVE, WaveformPoint } from "../model/SimConstants";
+import { Scenario, SimModel} from "../model/SimModel";
+import { PHYSICS, SCALE } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 import strings from "../../strings_en.json";
 import { Sound } from "./Sound";
 import { MicrophoneNode } from "./MicrophoneNode";
+import {
+  ControlPanelNode,
+  GraphDisplayNode,
+  InstructionsNode,
+  StatusTextNode,
+} from "./components";
+import {
+  DragHandlerManager,
+  KeyboardHandlerManager,
+  WaveManager,
+  VectorDisplayManager,
+  TrailManager
+} from "./managers";
+import { ViewTransformUtils } from "./utils/ViewTransformUtils";
 
 // Add this section at the top of the file, after imports
 const STRINGS = {
@@ -62,8 +71,8 @@ const STRINGS = {
       strings["doppler-effect.graphs.observedFrequency"].value,
   },
   SHIFT: {
-    BLUESHIFT: strings["doppler-effect.shift.blueshift"].value,
-    REDSHIFT: strings["doppler-effect.shift.redshift"].value,
+    BLUEShift: strings["doppler-effect.shift.blueshift"].value,
+    REDshift: strings["doppler-effect.shift.redshift"].value,
   },
   HELP: {
     DRAG_AND_DROP: strings["doppler-effect.help.dragAndDrop"].value,
@@ -94,6 +103,7 @@ export class SimScreenView extends ScreenView {
 
   // Model-view transform
   private readonly modelViewTransform: ModelViewTransform2;
+  private readonly viewTransformUtils: ViewTransformUtils;
 
   // Display layers
   private readonly waveLayer: Node;
@@ -112,11 +122,18 @@ export class SimScreenView extends ScreenView {
   private readonly sourceTrail: Path;
   private readonly observerTrail: Path;
 
-  // Graph elements
-  private readonly emittedGraph: Rectangle;
-  private readonly observedGraph: Rectangle;
-  private readonly emittedWaveform: Path;
-  private readonly observedWaveform: Path;
+  // Components
+  private readonly graphDisplay: GraphDisplayNode;
+  private readonly statusDisplay: StatusTextNode;
+  private readonly controlPanel: ControlPanelNode;
+  private readonly instructionsDisplay: InstructionsNode;
+  
+  // Managers
+  private readonly dragManager: DragHandlerManager;
+  private readonly keyboardManager: KeyboardHandlerManager;
+  private readonly waveManager: WaveManager;
+  private readonly vectorManager: VectorDisplayManager;
+  private readonly trailManager: TrailManager;
 
   // Visibility properties
   private readonly visibleValuesProperty: Property<boolean>;
@@ -124,42 +141,29 @@ export class SimScreenView extends ScreenView {
   private readonly visibleLineOfSightProperty: Property<boolean>;
   private readonly visibleTrailsProperty: Property<boolean>;
 
-  // Status text elements
-  private readonly statusTexts: {
-    emittedFreq: Text;
-    observedFreq: Text;
-    shiftStatus: Text;
-    selectedObject: Text;
-  };
+  // Selection tracking
+  private readonly selectedObjectProperty: Property<"source" | "observer"> = new Property<"source" | "observer">("source");
 
   // UI constants
   private readonly UI = {
     SOURCE_RADIUS: 10,
     OBSERVER_RADIUS: 10,
     SOURCE_COLOR: new Color(255, 0, 0),
-    OBSERVER_COLOR: new Color(0, 128, 0),
+    OBSERVER_COLOR: new Color(0, 0, 255),
     CONNECTING_LINE_COLOR: new Color(100, 100, 100),
-    WAVE_COLOR: new Color(0, 0, 255),
-    SELECTION_COLOR: new Color(255, 0, 255),
-    GRAPH_BACKGROUND: new Color(250, 250, 250),
+    WAVE_COLOR: new Color(100, 100, 100),
+    SELECTION_COLOR: new Color(255, 255, 0),
+    GRAPH_BACKGROUND: new Color(240, 240, 240),
     GRAPH_GRID_COLOR: new Color(200, 200, 200),
     TEXT_COLOR: new Color(0, 0, 0),
-    REDSHIFT_COLOR: new Color(255, 0, 0),
-    BLUESHIFT_COLOR: new Color(0, 0, 255),
-    GRAPH_HEIGHT: 100,
+    REDSHIFT_COLOR: new Color(255, 40, 40),
+    BLUESHIFT_COLOR: new Color(40, 40, 255),
+    GRAPH_HEIGHT: 60,
     GRAPH_WIDTH: 300,
     GRAPH_MARGIN: 20,
-    GRAPH_SPACING: 40,
+    GRAPH_SPACING: 10,
     TRAIL_WIDTH: 2,
   };
-
-  // Selection tracking
-  private selectedObject: "source" | "observer" = "source";
-  // Wave nodes map for tracking
-  private waveNodesMap: Map<Wave, Circle> = new Map();
-
-  // Add a new property for the instruction box
-  private readonly instructionsBox: Node;
 
   // Sound elements
   private readonly clickSound: Sound;
@@ -182,6 +186,10 @@ export class SimScreenView extends ScreenView {
         SCALE.MODEL_VIEW,
       );
 
+    // Create transform utilities
+    this.viewTransformUtils = new ViewTransformUtils(this.modelViewTransform);
+
+    // Create property values
     this.visibleValuesProperty = new Property<boolean>(false);
     this.visibleVelocityArrowProperty = new Property<boolean>(false);
     this.visibleLineOfSightProperty = new Property<boolean>(false);
@@ -198,9 +206,6 @@ export class SimScreenView extends ScreenView {
     this.addChild(this.objectLayer);
     this.addChild(this.graphLayer);
     this.addChild(this.controlLayer);
-
-    // Ensure wave layer is visible
-    this.waveLayer.visible = true;
 
     // Create source and observer nodes
     this.sourceNode = new Circle(this.UI.SOURCE_RADIUS, {
@@ -275,15 +280,141 @@ export class SimScreenView extends ScreenView {
     );
     this.objectLayer.addChild(this.microphoneNode);
 
-    // Create graphs
-    const graphElements = this.createGraphs();
-    this.emittedGraph = graphElements.emittedGraph;
-    this.observedGraph = graphElements.observedGraph;
-    this.emittedWaveform = graphElements.emittedWaveform;
-    this.observedWaveform = graphElements.observedWaveform;
+    // Initialize managers
+    this.waveManager = new WaveManager(
+      this.waveLayer,
+      this.modelViewTransform,
+      this.UI.WAVE_COLOR
+    );
+    
+    this.vectorManager = new VectorDisplayManager(
+      this.modelViewTransform,
+      SCALE.VELOCITY_VECTOR
+    );
+    
+    this.trailManager = new TrailManager(
+      this.sourceTrail,
+      this.observerTrail,
+      this.modelViewTransform,
+      this.UI.SOURCE_COLOR,
+      this.UI.OBSERVER_COLOR,
+      this.visibleTrailsProperty
+    );
 
-    // Create status texts
-    this.statusTexts = this.createStatusTexts();
+    this.dragManager = new DragHandlerManager(
+      this.modelViewTransform,
+      {
+        minX: this.layoutBounds.minX,
+        minY: this.layoutBounds.minY,
+        maxX: this.layoutBounds.maxX,
+        maxY: this.layoutBounds.maxY
+      }
+    );
+
+    this.keyboardManager = new KeyboardHandlerManager();
+
+    // Create graph display component
+    this.graphDisplay = new GraphDisplayNode(
+      {
+        EMITTED_SOUND: STRINGS.GRAPHS.EMITTED_SOUND,
+        OBSERVED_SOUND: STRINGS.GRAPHS.OBSERVED_SOUND,
+      },
+      {
+        layoutBounds: {
+          maxX: this.layoutBounds.maxX
+        },
+        textColor: this.UI.TEXT_COLOR,
+        graphBackground: this.UI.GRAPH_BACKGROUND,
+        graphGridColor: this.UI.GRAPH_GRID_COLOR,
+        sourceColor: this.UI.SOURCE_COLOR,
+        observerColor: this.UI.OBSERVER_COLOR,
+        graphHeight: this.UI.GRAPH_HEIGHT,
+        graphWidth: this.UI.GRAPH_WIDTH,
+        graphMargin: this.UI.GRAPH_MARGIN,
+        graphSpacing: this.UI.GRAPH_SPACING
+      }
+    );
+    this.graphLayer.addChild(this.graphDisplay);
+
+    // Create status text display
+    this.statusDisplay = new StatusTextNode(
+      {
+        EMITTED_FREQUENCY: STRINGS.GRAPHS.EMITTED_FREQUENCY,
+        OBSERVED_FREQUENCY: STRINGS.GRAPHS.OBSERVED_FREQUENCY,
+        SELECTED_OBJECT: STRINGS.SELECTED_OBJECT,
+        BLUESHIFT: STRINGS.SHIFT.BLUEShift,
+        REDSHIFT: STRINGS.SHIFT.REDshift,
+        SOURCE: STRINGS.SOURCE,
+        OBSERVER: STRINGS.OBSERVER
+      },
+      this.visibleValuesProperty,
+      {
+        layoutBounds: {
+          maxX: this.layoutBounds.maxX,
+          maxY: this.layoutBounds.maxY
+        },
+        textColor: this.UI.TEXT_COLOR,
+        blueshiftColor: this.UI.BLUESHIFT_COLOR,
+        redshiftColor: this.UI.REDSHIFT_COLOR,
+        selectionColor: this.UI.SELECTION_COLOR,
+        graphWidth: this.UI.GRAPH_WIDTH,
+        graphHeight: this.UI.GRAPH_HEIGHT,
+        graphMargin: this.UI.GRAPH_MARGIN,
+        graphSpacing: this.UI.GRAPH_SPACING
+      }
+    );
+    this.controlLayer.addChild(this.statusDisplay);
+
+    // Create instructions display
+    this.instructionsDisplay = new InstructionsNode(
+      {
+        TITLE: STRINGS.TITLE,
+        DRAG_AND_DROP: STRINGS.HELP.DRAG_AND_DROP,
+        KEYBOARD_CONTROLS: STRINGS.HELP.KEYBOARD_CONTROLS,
+        OBJECT_SELECTION: STRINGS.HELP.OBJECT_SELECTION,
+        CONTROLS: STRINGS.HELP.CONTROLS,
+        ADJUST: STRINGS.HELP.ADJUST,
+        SCENARIOS: STRINGS.HELP.SCENARIOS
+      },
+      {
+        layoutBounds: {
+          centerX: this.layoutBounds.centerX,
+          centerY: this.layoutBounds.centerY,
+          width: this.layoutBounds.width
+        },
+        textColor: this.UI.TEXT_COLOR
+      }
+    );
+    this.controlLayer.addChild(this.instructionsDisplay);
+
+    // Create control panel
+    this.controlPanel = new ControlPanelNode(
+      {
+        VALUES: STRINGS.CONTROLS.VALUES,
+        VELOCITY_ARROWS: STRINGS.CONTROLS.VELOCITY_ARROWS,
+        LINE_OF_SIGHT: STRINGS.CONTROLS.LINE_OF_SIGHT,
+        SOUND_SPEED: STRINGS.CONTROLS.SOUND_SPEED,
+        FREQUENCY: STRINGS.CONTROLS.FREQUENCY,
+        MOTION_TRAILS: STRINGS.CONTROLS.MOTION_TRAILS,
+        METERS_PER_SECOND: STRINGS.UNITS.METERS_PER_SECOND,
+        HERTZ: STRINGS.UNITS.HERTZ
+      },
+      this.visibleValuesProperty,
+      this.visibleVelocityArrowProperty,
+      this.visibleLineOfSightProperty,
+      this.visibleTrailsProperty,
+      this.model.microphoneEnabledProperty,
+      this.model.soundSpeedProperty,
+      this.model.emittedFrequencyProperty,
+      this.model.soundSpeedRange,
+      this.model.frequencyRange,
+      {
+        textColor: this.UI.TEXT_COLOR,
+        graphRight: this.graphDisplay.right,
+        graphBottom: this.graphDisplay.observedGraphBottom
+      }
+    );
+    this.controlLayer.addChild(this.controlPanel);
 
     // Create scenario combo box
     const scenarioItems = [
@@ -355,128 +486,75 @@ export class SimScreenView extends ScreenView {
     });
     this.controlLayer.addChild(resetAllButton);
 
-    // Create scale mark node
-    const scaleMarkNode = new Node({
-      visibleProperty: this.visibleValuesProperty,
-    });
-    scaleMarkNode.left = resetAllButton.left - 50;
-    scaleMarkNode.bottom = resetAllButton.bottom;
-
-    // Create scale mark and label using the modelViewTransform
-    const scaleModelLength = 10;
-    const scaleViewLength =
-      this.modelViewTransform.modelToViewDeltaY(scaleModelLength);
-
-    // Create scale mark and label
-    const scaleMark = new Line(0, 0, 0, scaleViewLength, {
-      stroke: this.UI.CONNECTING_LINE_COLOR,
-      lineWidth: 2,
-    });
-
-    // Position the scale mark to the left of the reset all button
-    scaleMark.left = resetAllButton.left - 50; // Adjust as needed
-    scaleMark.bottom = resetAllButton.bottom; // Align with the bottom of the reset button
-
-    // Create end marks for the ruler effect
-    const topEndMark = new Line(
-      scaleMark.left - 5,
-      scaleMark.top,
-      scaleMark.left + 5,
-      scaleMark.top,
-      {
-        stroke: this.UI.CONNECTING_LINE_COLOR,
-        lineWidth: 2,
-      },
-    );
-
-    // Create bottom end mark
-    const bottomEndMark = new Line(
-      scaleMark.left - 5,
-      scaleMark.bottom,
-      scaleMark.left + 5,
-      scaleMark.bottom,
-      {
-        stroke: this.UI.CONNECTING_LINE_COLOR,
-        lineWidth: 2,
-      },
-    );
-
-    // Create scale label
-    const scaleLabel = new Text(`${scaleModelLength}m`, {
-      font: new PhetFont(14),
-      fill: this.UI.TEXT_COLOR,
-      left: scaleMark.right + 5, // Position label to the left of the scale mark
-      centerY: scaleMark.centerY, // Position label slightly below the scale mark
-    });
-
-    // Add scale mark, end marks, and label to the scale mark node
-    scaleMarkNode.addChild(scaleMark);
-    scaleMarkNode.addChild(topEndMark);
-    scaleMarkNode.addChild(bottomEndMark);
-    scaleMarkNode.addChild(scaleLabel);
-    this.controlLayer.addChild(scaleMarkNode);
-
-    // Add time control node
-    const timeControlNode = new TimeControlNode(this.model.playProperty, {
-      timeSpeedProperty: this.model.timeSpeedProperty,
-      playPauseStepButtonOptions: {
-        stepForwardButtonOptions: {
-          listener: () => {
-            model.step(1 / 60, true);
-          },
-        },
-      },
-    });
-    timeControlNode.centerX = this.layoutBounds.centerX;
-    timeControlNode.bottom = this.layoutBounds.maxY - 10;
-    this.controlLayer.addChild(timeControlNode);
-
-    // Create instruction box
-    this.instructionsBox = new Node();
-    this.instructionsBox.visible = false; // Initially hidden
-    this.controlLayer.addChild(this.instructionsBox);
-
-    // Define padding
-    const padding = 10; // Adjust padding as needed
-
-    // Create the info button using the InfoButton from scenery-phet
+    // Create an info button to toggle instructions
     const infoButton = new InfoButton({
       listener: () => {
-        this.instructionsBox.visible = !this.instructionsBox.visible;
-        if (this.instructionsBox.visible) {
-          this.drawInstructions(); // Draw instructions when shown
-        }
+        this.instructionsDisplay.toggleVisibility();
       },
       // Position the button in the lower left corner with padding
-      left: this.layoutBounds.minX + padding,
-      bottom: this.layoutBounds.maxY - padding,
+      left: this.layoutBounds.minX + 10,
+      bottom: this.layoutBounds.maxY - 10,
     });
-
     this.controlLayer.addChild(infoButton);
 
-    // Create a panel
-    this.createControlPanel();
-
     // Setup keyboard handlers
-    this.addKeyboardListeners();
+    this.keyboardManager.attachKeyboardHandlers(
+      this, 
+      {
+        onSourceSelected: () => this.updateSelectionHighlight(),
+        onObserverSelected: () => this.updateSelectionHighlight(),
+        onToggleTrails: () => {
+          this.visibleTrailsProperty.value = !this.visibleTrailsProperty.value;
+        },
+        onToggleHelp: () => {
+          this.instructionsDisplay.toggleVisibility();
+        },
+        onReset: () => {
+          this.model.reset();
+          this.reset();
+        }
+      },
+      this.model.playProperty,
+      this.model.setupScenario.bind(this.model),
+      this.model.sourceVelocityProperty,
+      this.model.observerVelocityProperty,
+      this.model.sourceMovingProperty,
+      this.model.observerMovingProperty,
+      this.model.emittedFrequencyProperty,
+      this.model.soundSpeedProperty,
+      this.model.microphoneEnabledProperty,
+      this.selectedObjectProperty
+    );
 
     // Setup drag handlers
-    this.addDragHandlers();
+    this.dragManager.attachDragHandlers(
+      this.sourceNode,
+      this.observerNode,
+      this.model.sourcePositionProperty,
+      this.model.observerPositionProperty,
+      this.model.sourceVelocityProperty,
+      this.model.observerVelocityProperty,
+      this.model.sourceMovingProperty,
+      this.model.observerMovingProperty,
+      () => {
+        this.selectedObjectProperty.value = "source";
+        this.updateSelectionHighlight();
+      },
+      () => {
+        this.selectedObjectProperty.value = "observer";
+        this.updateSelectionHighlight();
+      },
+      PHYSICS.MAX_SPEED
+    );
+
+    // Create and load click sound
+    this.clickSound = new Sound('./assets/click.wav', true);
 
     // Setup model listeners
     this.addModelListeners();
 
-    // Draw initial instructions
-    this.drawInstructions();
-
     // Initial view update
     this.updateView();
-
-    this.instructionsBox.centerX = this.layoutBounds.centerX;
-    this.instructionsBox.centerY = this.layoutBounds.centerY;
-
-    // Create and load click sound
-    this.clickSound = new Sound('./assets/click.wav', true);
 
     // Update microphone visibility based on enabled property
     this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
@@ -490,10 +568,13 @@ export class SimScreenView extends ScreenView {
    */
   public reset(): void {
     // Reset selected object
-    this.selectedObject = "source";
+    this.selectedObjectProperty.value = "source";
 
     // Update visibility directly
-    this.instructionsBox.visible = false;
+    this.instructionsDisplay.toggleVisibility();
+    if (this.instructionsDisplay.visible) {
+      this.instructionsDisplay.toggleVisibility();
+    }
 
     this.visibleValuesProperty.reset();
     this.visibleVelocityArrowProperty.reset();
@@ -501,10 +582,7 @@ export class SimScreenView extends ScreenView {
     this.visibleTrailsProperty.reset();
 
     // Clear wave nodes
-    this.waveNodesMap.forEach((waveNode) => {
-      this.waveLayer.removeChild(waveNode);
-    });
-    this.waveNodesMap.clear();
+    this.waveManager.clearWaveNodes();
 
     // Update microphone visibility
     this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
@@ -632,112 +710,41 @@ export class SimScreenView extends ScreenView {
   }
 
   /**
-   * Create status text elements
-   */
-  private createStatusTexts() {
-    const emittedFreq = new Text("", {
-      font: new PhetFont(14),
-      fill: this.UI.TEXT_COLOR,
-      left: this.layoutBounds.maxX - this.UI.GRAPH_WIDTH - this.UI.GRAPH_MARGIN,
-      top: 15,
-      visibleProperty: this.visibleValuesProperty,
-    });
-
-    const observedFreq = new Text("", {
-      font: new PhetFont(14),
-      fill: this.UI.TEXT_COLOR,
-      left: this.layoutBounds.maxX - this.UI.GRAPH_WIDTH - this.UI.GRAPH_MARGIN,
-      top: 30 + this.UI.GRAPH_HEIGHT + this.UI.GRAPH_SPACING - 15,
-      visibleProperty: this.visibleValuesProperty,
-    });
-
-    const shiftStatus = new Text("", {
-      font: new PhetFont(14),
-      fill: this.UI.TEXT_COLOR,
-      left: observedFreq.right + 0.75 * this.UI.GRAPH_WIDTH,
-      top: 30 + this.UI.GRAPH_HEIGHT + this.UI.GRAPH_SPACING - 15,
-      visibleProperty: this.visibleValuesProperty,
-    });
-
-    const selectedObject = new Text(
-      STRINGS.SELECTED_OBJECT.replace("{{object}}", "Source"),
-      {
-        font: new PhetFont(14),
-        fill: this.UI.SELECTION_COLOR,
-        left: 120,
-        bottom: this.layoutBounds.maxY - 15,
-      },
-    );
-
-    // Add to control layer
-    this.controlLayer.addChild(emittedFreq);
-    this.controlLayer.addChild(observedFreq);
-    this.controlLayer.addChild(shiftStatus);
-    this.controlLayer.addChild(selectedObject);
-
-    return {
-      emittedFreq,
-      observedFreq,
-      shiftStatus,
-      selectedObject,
-    };
-  }
-
-  /**
-   * Add model listeners to update view when model changes
+   * Add model listeners
    */
   private addModelListeners(): void {
-    // Update source position
-    this.model.sourcePositionProperty.lazyLink(() => {
-      this.updatePositions();
-    });
+    // Update source position/velocity visualization when model properties change
+    this.model.sourcePositionProperty.link(() => this.updateView());
+    this.model.observerPositionProperty.link(() => this.updateView());
+    this.model.sourceVelocityProperty.link(() => this.updateView());
+    this.model.observerVelocityProperty.link(() => this.updateView());
 
-    // Update observer position
-    this.model.observerPositionProperty.lazyLink(() => {
-      this.updatePositions();
-    });
-
-    // Update microphone position
-    this.model.microphonePositionProperty.lazyLink(() => {
-      const viewPosition = this.modelViewTransform.modelToViewPosition(this.model.microphonePositionProperty.value);
-      this.microphoneNode.center = viewPosition;
-    });
-
-    // Update source velocity
-    this.model.sourceVelocityProperty.lazyLink(() => {
-      this.updateVectors();
-    });
-
-    // Update observer velocity
-    this.model.observerVelocityProperty.lazyLink(() => {
-      this.updateVectors();
-    });
-
-    // Update frequencies
-    this.model.emittedFrequencyProperty.lazyLink(() => {
-      this.updateStatus();
-    });
-
-    this.model.observedFrequencyProperty.lazyLink(() => {
-      this.updateStatus();
-    });
-
-    // Listen to waves collection
+    // Listen for changes to wave collection
     this.model.waves.addItemAddedListener((wave) => {
-      this.addWaveNode(wave);
+      this.waveManager.addWaveNode(wave);
     });
 
     this.model.waves.addItemRemovedListener((wave) => {
-      this.removeWaveNode(wave);
+      this.waveManager.removeWaveNode(wave);
     });
 
-    // Listen for time speed changes to update waveform displays
-    this.model.timeSpeedProperty.lazyLink(() => {
-      this.updateGraphics();
+    // Update waveforms when model changes
+    this.model.simulationTimeProperty.link(() => {
+      this.graphDisplay.updateWaveforms(
+        this.model.emittedWaveformData,
+        this.model.observedWaveformData
+      );
     });
 
+    // Update text displays when frequency changes
+    this.model.emittedFrequencyProperty.link(() => this.updateText());
+    this.model.observedFrequencyProperty.link(() => this.updateText());
+
+    // Update when selection changes
+    this.selectedObjectProperty.link(() => this.updateText());
+    
     // Listen for wave detection to play click sound
-    this.model.waveDetectedProperty.lazyLink((detected) => {
+    this.model.waveDetectedProperty.link((detected) => {
       if (detected) {
         this.clickSound.play();
       }
@@ -745,797 +752,89 @@ export class SimScreenView extends ScreenView {
   }
 
   /**
-   * Add drag handlers to source and observer nodes
-   */
-  private addDragHandlers(): void {
-    // Source drag handler
-    const sourceDragListener = new DragListener({
-      targetNode: this.sourceNode,
-      dragBoundsProperty: new Property(this.layoutBounds),
-      start: (event) => {
-        this.selectedObject = "source";
-        this.updateSelectionHighlight();
-
-        // Store the initial offset between pointer and source position
-        const sourceViewPos = this.modelToView(
-          this.model.sourcePositionProperty.value,
-        );
-        (
-          sourceDragListener as DragListener & { dragOffset: Vector2 }
-        ).dragOffset = sourceViewPos.minus(event.pointer.point);
-      },
-      drag: (event) => {
-        // Convert view coordinates to model coordinates, accounting for initial offset
-        const viewPoint = event.pointer.point.plus(
-          (sourceDragListener as DragListener & { dragOffset: Vector2 })
-            .dragOffset,
-        );
-        const modelPoint = this.viewToModel(viewPoint);
-
-        // Calculate desired velocity (direction to target)
-        const desiredVelocity = modelPoint.minus(
-          this.model.sourcePositionProperty.value,
-        );
-
-        // Limit velocity to maximum speed
-        if (desiredVelocity.magnitude > PHYSICS.MAX_SPEED) {
-          desiredVelocity.normalize().timesScalar(PHYSICS.MAX_SPEED);
-        }
-
-        // Apply velocity
-        this.model.sourceVelocityProperty.value = desiredVelocity;
-        this.model.sourceMovingProperty.value = true;
-      },
-    });
-    this.sourceNode.addInputListener(sourceDragListener);
-
-    // Observer drag handler
-    const observerDragListener = new DragListener({
-      targetNode: this.observerNode,
-      dragBoundsProperty: new Property(this.layoutBounds),
-      start: (event) => {
-        this.selectedObject = "observer";
-        this.updateSelectionHighlight();
-
-        // Store the initial offset between pointer and observer position
-        const observerViewPos = this.modelToView(
-          this.model.observerPositionProperty.value,
-        );
-        (
-          observerDragListener as DragListener & { dragOffset: Vector2 }
-        ).dragOffset = observerViewPos.minus(event.pointer.point);
-      },
-      drag: (event) => {
-        // Convert view coordinates to model coordinates, accounting for initial offset
-        const viewPoint = event.pointer.point.plus(
-          (observerDragListener as DragListener & { dragOffset: Vector2 })
-            .dragOffset,
-        );
-        const modelPoint = this.viewToModel(viewPoint);
-
-        // Calculate desired velocity (direction to target)
-        const desiredVelocity = modelPoint.minus(
-          this.model.observerPositionProperty.value,
-        );
-
-        // Limit velocity to maximum speed
-        if (desiredVelocity.magnitude > PHYSICS.MAX_SPEED) {
-          desiredVelocity.normalize().timesScalar(PHYSICS.MAX_SPEED);
-        }
-
-        // Apply velocity
-        this.model.observerVelocityProperty.value = desiredVelocity;
-        this.model.observerMovingProperty.value = true;
-      },
-    });
-    this.observerNode.addInputListener(observerDragListener);
-  }
-
-  /**
-   * Add keyboard listeners for controls
-   */
-  private addKeyboardListeners(): void {
-    // Create a shared handler function for keydown events
-    const handleKeydown = (key: string) => {
-      // Handle object selection
-      if (key === "s") {
-        this.selectedObject = "source";
-        this.updateSelectionHighlight();
-      } else if (key === "o") {
-        this.selectedObject = "observer";
-        this.updateSelectionHighlight();
-      }
-
-      // Handle arrow key movement
-      if (this.model.playProperty.value) {
-        let targetVel, isMoving;
-
-        // Determine which object to control
-        if (this.selectedObject === "source") {
-          targetVel = this.model.sourceVelocityProperty;
-          isMoving = this.model.sourceMovingProperty;
-        } else {
-          targetVel = this.model.observerVelocityProperty;
-          isMoving = this.model.observerMovingProperty;
-        }
-
-        // Set velocity based on key
-        const velocity = new Vector2(0, 0);
-
-        if (key === "arrowleft") {
-          velocity.x = -60.0;
-        } else if (key === "arrowright") {
-          velocity.x = 60.0;
-        }
-
-        if (key === "arrowup") {
-          velocity.y = -60.0;
-        } else if (key === "arrowdown") {
-          velocity.y = 60.0;
-        }
-
-        // Apply velocity if any keys were pressed
-        if (velocity.magnitude > 0) {
-          targetVel.value = velocity;
-          isMoving.value = true;
-        }
-      }
-
-      // Handle visibility toggles
-      if (key === "t") {
-        this.visibleTrailsProperty.value = !this.visibleTrailsProperty.value;
-      }
-
-      // Handle pause toggle
-      if (key === " ") {
-        this.model.playProperty.value = !this.model.playProperty.value;
-      }
-
-      // Handle reset
-      if (key === "r") {
-        this.model.reset();
-        this.reset();
-      }
-
-      // Handle help toggle
-      if (key === "h") {
-        this.instructionsBox.visible = !this.instructionsBox.visible;
-      }
-
-      // Preset scenarios
-      if (key === "1") {
-        this.model.setupScenario(Scenario.SCENARIO_1);
-      } else if (key === "2") {
-        this.model.setupScenario(Scenario.SCENARIO_2);
-      } else if (key === "3") {
-        this.model.setupScenario(Scenario.SCENARIO_3);
-      } else if (key === "4") {
-        this.model.setupScenario(Scenario.SCENARIO_4);
-      }
-
-      // Adjust emitted frequency
-      if (key === "+" || key === "=") {
-        this.model.emittedFrequencyProperty.value += 0.01;
-      } else if (key === "-" || key === "_") {
-        this.model.emittedFrequencyProperty.value = Math.max(
-          0.1,
-          this.model.emittedFrequencyProperty.value - 0.01,
-        );
-      }
-
-      // Adjust sound speed
-      if (key === "." || key === ">") {
-        this.model.soundSpeedProperty.value += 1.0;
-      } else if (key === "," || key === "<") {
-        this.model.soundSpeedProperty.value = Math.max(
-          1.0,
-          this.model.soundSpeedProperty.value - 1.0,
-        );
-      }
-
-      // Handle microphone toggle with 'm' key
-      if (key === "m") {
-        this.model.microphoneEnabledProperty.value = !this.model.microphoneEnabledProperty.value;
-      }
-    };
-
-    // Add key listeners to the view
-    const keydownListener = {
-      listener: (event: SceneryEvent<KeyboardEvent>) => {
-        if (!event.domEvent) return;
-        const key = event.domEvent.key.toLowerCase();
-        handleKeydown(key);
-      },
-    };
-
-    // Add the keyboard listener to the view
-    this.addInputListener(keydownListener);
-
-    // Also add a global keyboard listener to ensure we catch all keyboard events
-    window.addEventListener("keydown", (event) => {
-      const key = event.key.toLowerCase();
-      handleKeydown(key);
-    });
-  }
-
-  /**
-   * Draw instructions on the instruction layer
-   */
-  private drawInstructions(): void {
-    // Clear previous instructions
-    this.instructionsBox.removeAllChildren();
-
-    const background = new Rectangle(0, 0, this.layoutBounds.width / 2, 200, {
-      fill: new Color(255, 255, 255, 0.8),
-      cornerRadius: 5,
-    });
-    this.instructionsBox.addChild(background);
-
-    // Title
-    const title = new Text(STRINGS.TITLE, {
-      font: new PhetFont({ size: 16, weight: "bold" }),
-      fill: this.UI.TEXT_COLOR,
-      centerX: background.centerX,
-      top: 10,
-    });
-    this.instructionsBox.addChild(title);
-
-    // Instructions text
-    const instructions = [
-      STRINGS.HELP.DRAG_AND_DROP,
-      STRINGS.HELP.KEYBOARD_CONTROLS,
-      STRINGS.HELP.OBJECT_SELECTION,
-      STRINGS.HELP.CONTROLS,
-      STRINGS.HELP.ADJUST,
-      STRINGS.HELP.SCENARIOS,
-      "Press 'T' to toggle motion trails that show object paths.",
-      "Press 'M' to toggle the microphone that clicks when waves pass through it.",
-      "Drag the microphone to position it anywhere in the simulation."
-    ];
-
-    let yPosition = title.bottom + 15;
-
-    instructions.forEach((instruction) => {
-      const line = new Text(instruction, {
-        font: new PhetFont(14),
-        fill: this.UI.TEXT_COLOR,
-        left: 15,
-        top: yPosition,
-      });
-      this.instructionsBox.addChild(line);
-      yPosition = line.bottom + 10;
-    });
-
-    // Adjust background to fit content
-    background.setRectHeight(yPosition + 10);
-    background.centerX = this.layoutBounds.centerX / 2;
-    background.centerY = this.layoutBounds.centerY / 2;
-  }
-
-  /**
-   * Update the view to match the model state
+   * Update the view
    */
   private updateView(): void {
-    this.updatePositions();
-    this.updateVectors();
-    this.updateStatus();
-    this.updateGraphics();
-    this.updateTrails();
-    this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
-    
-    // Update microphone position
-    const micViewPos = this.modelViewTransform.modelToViewPosition(
-      this.model.microphonePositionProperty.value
+    // Update object positions
+    this.sourceNode.center = this.viewTransformUtils.modelToView(
+      this.model.sourcePositionProperty.value
     );
-    this.microphoneNode.center = micViewPos;
-  }
+    this.observerNode.center = this.viewTransformUtils.modelToView(
+      this.model.observerPositionProperty.value
+    );
 
-  /**
-   * Update positions of objects in the view
-   */
-  private updatePositions(): void {
-    // Update source and observer positions
-    const sourcePos = this.model.sourcePositionProperty.value;
-    const observerPos = this.model.observerPositionProperty.value;
+    // Update selection highlight
+    this.updateSelectionHighlight();
 
-    this.sourceNode.center = this.modelToView(sourcePos);
-    this.observerNode.center = this.modelToView(observerPos);
-
-    // Update connecting line between source and observer
-    const viewSourcePos = this.modelToView(sourcePos);
-    const viewObserverPos = this.modelToView(observerPos);
-
+    // Update line of sight
+    const sourcePos = this.viewTransformUtils.modelToView(
+      this.model.sourcePositionProperty.value
+    );
+    const observerPos = this.viewTransformUtils.modelToView(
+      this.model.observerPositionProperty.value
+    );
     this.connectingLine.setLine(
-      viewSourcePos.x,
-      viewSourcePos.y,
-      viewObserverPos.x,
-      viewObserverPos.y,
+      sourcePos.x,
+      sourcePos.y,
+      observerPos.x,
+      observerPos.y
     );
 
-    // Update selection highlight position
-    if (this.selectedObject === "source") {
-      this.selectionHighlight.radius = this.UI.SOURCE_RADIUS + 5;
-      this.selectionHighlight.center = viewSourcePos;
-    } else {
-      this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
-      this.selectionHighlight.center = viewObserverPos;
-    }
-  }
-
-  /**
-   * Update velocity vectors for source and observer
-   */
-  private updateVectors(): void {
-    // Update source velocity vector
-    this.updateVelocityVector(
+    // Update velocity vectors
+    this.vectorManager.updateVectors(
       this.sourceVelocityVector,
-      this.model.sourcePositionProperty.value,
-      this.model.sourceVelocityProperty.value
-    );
-
-    // Update observer velocity vector
-    this.updateVelocityVector(
       this.observerVelocityVector,
+      this.model.sourcePositionProperty.value,
       this.model.observerPositionProperty.value,
+      this.model.sourceVelocityProperty.value,
       this.model.observerVelocityProperty.value
     );
-  }
 
-  /**
-   * Update status displays and text information
-   */
-  private updateStatus(): void {
-    // Update selection status text
-    const selectedObjectName =
-      this.selectedObject === "source" ? STRINGS.SOURCE : STRINGS.OBSERVER;
-
-    this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace(
-      "{{object}}",
-      selectedObjectName,
+    // Update motion trails
+    this.trailManager.updateTrails(
+      this.model.sourceTrail,
+      this.model.observerTrail
     );
 
-    // Update frequency text displays
-    const emittedFreq = this.model.emittedFrequencyProperty.value;
-    const observedFreq = this.model.observedFrequencyProperty.value;
+    // Update waves
+    this.waveManager.updateWaves(
+      this.model.waves,
+      this.model.simulationTimeProperty.value
+    );
 
-    this.statusTexts.emittedFreq.string =
-      STRINGS.GRAPHS.EMITTED_FREQUENCY.replace(
-        "{{value}}",
-        emittedFreq.toFixed(2),
-      );
-    this.statusTexts.observedFreq.string =
-      STRINGS.GRAPHS.OBSERVED_FREQUENCY.replace(
-        "{{value}}",
-        observedFreq.toFixed(2),
-      );
-
-    // Update Doppler shift status text
-    if (observedFreq > emittedFreq) {
-      this.statusTexts.shiftStatus.string = STRINGS.SHIFT.BLUESHIFT;
-      this.statusTexts.shiftStatus.fill = this.UI.BLUESHIFT_COLOR;
-    } else if (observedFreq < emittedFreq) {
-      this.statusTexts.shiftStatus.string = STRINGS.SHIFT.REDSHIFT;
-      this.statusTexts.shiftStatus.fill = this.UI.REDSHIFT_COLOR;
-    } else {
-      this.statusTexts.shiftStatus.string = "";
-    }
+    // Update text displays
+    this.updateText();
   }
 
   /**
-   * Update graphical elements (waves and waveforms)
+   * Update text displays with current values
    */
-  private updateGraphics(): void {
-    // Update waveforms in the graph displays
-    this.updateWaveforms();
-
-    // Update wave circles
-    this.updateWaves();
+  private updateText(): void {
+    const selectedObjectName =
+      this.selectedObjectProperty.value === "source" ? STRINGS.SOURCE : STRINGS.OBSERVER;
+      
+    // Update status display with current values
+    this.statusDisplay.updateValues(
+      this.model.emittedFrequencyProperty.value,
+      this.model.observedFrequencyProperty.value,
+      selectedObjectName
+    );
   }
-
+  
   /**
    * Update the selection highlight position and size
    */
   private updateSelectionHighlight(): void {
-    if (this.selectedObject === "source") {
+    if (this.selectedObjectProperty.value === "source") {
       this.selectionHighlight.radius = this.UI.SOURCE_RADIUS + 5;
-      this.selectionHighlight.center = this.modelToView(
-        this.model.sourcePositionProperty.value,
-      );
-      this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace(
-        "{{object}}",
-        STRINGS.SOURCE,
+      this.selectionHighlight.center = this.viewTransformUtils.modelToView(
+        this.model.sourcePositionProperty.value
       );
     } else {
       this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
-      this.selectionHighlight.center = this.modelToView(
-        this.model.observerPositionProperty.value,
-      );
-      this.statusTexts.selectedObject.string = STRINGS.SELECTED_OBJECT.replace(
-        "{{object}}",
-        STRINGS.OBSERVER,
+      this.selectionHighlight.center = this.viewTransformUtils.modelToView(
+        this.model.observerPositionProperty.value
       );
     }
-  }
-
-  /**
-   * Add a wave node for a new wave in the model
-   */
-  private addWaveNode(wave: Wave): void {
-    const waveNode = new Circle(0, {
-      stroke: this.UI.WAVE_COLOR,
-      fill: null,
-      lineWidth: 2,
-      opacity: 0.7,
-      pickable: false,
-    });
-
-    this.waveLayer.addChild(waveNode);
-    this.waveNodesMap.set(wave, waveNode);
-
-    // Initial update
-    this.updateWaveNode(wave);
-  }
-
-  /**
-   * Remove a wave node when removed from the model
-   */
-  private removeWaveNode(wave: Wave): void {
-    const waveNode = this.waveNodesMap.get(wave);
-    if (waveNode) {
-      this.waveLayer.removeChild(waveNode);
-      this.waveNodesMap.delete(wave);
-    }
-  }
-
-  /**
-   * Update visualization for a specific wave
-   */
-  private updateWaveNode(wave: Wave): void {
-    const waveNode = this.waveNodesMap.get(wave);
-    if (waveNode) {
-      // Update position to match wave's origin (convert to view coordinates)
-      waveNode.center = this.modelToView(wave.position);
-
-      // Update radius to match wave's propagation (convert to view coordinates)
-      waveNode.radius = this.modelToViewDelta(new Vector2(wave.radius, 0)).x;
-
-      // Update opacity based on age
-      const maxAge = WAVE.MAX_AGE;
-      const age = this.model.simulationTimeProperty.value - wave.birthTime;
-      const opacity = 0.7 * (1 - age / maxAge);
-
-      waveNode.opacity = Math.max(0, opacity);
-    }
-  }
-
-  /**
-   * Update all wave nodes to match model
-   */
-  private updateWaves(): void {
-    // Update each wave node
-    this.model.waves.forEach((wave) => {
-      this.updateWaveNode(wave);
-    });
-  }
-
-  /**
-   * Update waveforms in the graph displays
-   */
-  private updateWaveforms(): void {
-    // Update emitted sound waveform
-    this.emittedWaveform.shape = this.createWaveformShape(
-      this.emittedGraph.left,
-      this.emittedGraph.centerY,
-      this.emittedGraph.width,
-      this.model.emittedWaveformData,
-    );
-
-    // Update observed sound waveform
-    this.observedWaveform.shape = this.createWaveformShape(
-      this.observedGraph.left,
-      this.observedGraph.centerY,
-      this.observedGraph.width,
-      this.model.observedWaveformData,
-    );
-  }
-
-  /**
-   * Create a waveform shape from waveform data
-   * @param graphX The x-coordinate of the left edge of the graph
-   * @param graphY The y-coordinate of the center of the graph
-   * @param graphWidth The width of the graph
-   * @param waveformData The waveform data to render
-   * @returns A Shape object representing the waveform
-   */
-  private createWaveformShape(
-    graphX: number,
-    graphY: number,
-    graphWidth: number,
-    waveformData: WaveformPoint[],
-  ): Shape {
-    const shape = new Shape();
-
-    // Start at left edge
-    shape.moveToPoint(new Vector2(graphX, graphY));
-
-    let firstValidPointFound = false;
-
-    for (let i = 0; i < waveformData.length; i++) {
-      // Calculate x position using t instead of x
-      const tRatio = Math.max(0, Math.min(1, waveformData[i].t));
-      const x = graphX + tRatio * graphWidth;
-      const y = graphY - waveformData[i].y;
-
-      if (!firstValidPointFound) {
-        shape.moveToPoint(new Vector2(x, y));
-        firstValidPointFound = true;
-      } else {
-        shape.lineToPoint(new Vector2(x, y));
-      }
-    }
-
-    return shape;
-  }
-
-  /**
-   * Convert model coordinates (meters) to view coordinates (pixels)
-   */
-  private modelToView(modelPoint: Vector2): Vector2 {
-    return this.modelViewTransform.modelToViewPosition(modelPoint);
-  }
-
-  /**
-   * Convert view coordinates (pixels) to model coordinates (meters)
-   */
-  private viewToModel(viewPoint: Vector2): Vector2 {
-    return this.modelViewTransform.viewToModelPosition(viewPoint);
-  }
-
-  /**
-   * Convert model distance (meters) to view distance (pixels)
-   */
-  private modelToViewDelta(modelDelta: Vector2): Vector2 {
-    return this.modelViewTransform.modelToViewDelta(modelDelta);
-  }
-
-  /**
-   * Update a velocity vector visualization
-   */
-  private updateVelocityVector(
-    node: ArrowNode,
-    position: Vector2,
-    velocity: Vector2,
-  ): void {
-
-    // Convert model coordinates to view coordinates
-    const viewPosition = this.modelToView(position);
-
-    // Scale velocity vector for visualization
-    // First scale by the model-view transform to convert m/s to pixels/s
-    // Then scale by VELOCITY_VECTOR_SCALE to make it more visible
-    const scaledVelocity = velocity.timesScalar(SCALE.VELOCITY_VECTOR);
-    const viewVelocity = this.modelToViewDelta(scaledVelocity);
-
-    // Create arrow node
-    node.setTailAndTip(
-      viewPosition.x,
-      viewPosition.y,
-      viewPosition.x + viewVelocity.x,
-      viewPosition.y + viewVelocity.y,
-    );
-  }
-
-  /**
-   * Update motion trails for source and observer
-   */
-  private updateTrails(): void {
-    // Get trail data from model
-    const sourceTrail = this.model.sourceTrail;
-    const observerTrail = this.model.observerTrail;
-
-    // Set visibility based on property
-    this.sourceTrail.visible = this.visibleTrailsProperty.value && sourceTrail.length > 0;
-    this.observerTrail.visible = this.visibleTrailsProperty.value && observerTrail.length > 0;
-
-    // If not visible or no points, return early
-    if (!this.visibleTrailsProperty.value) {
-      return;
-    }
-
-    // Create shapes for the trails
-    const sourceShape = new Shape();
-    const observerShape = new Shape();
-
-    // Draw source trail with gradient
-    if (sourceTrail.length > 0) {
-      // First, build a new path with all points
-      const oldestPoint = this.modelToView(sourceTrail[0].position);
-      sourceShape.moveToPoint(oldestPoint);
-
-      // Add each subsequent point
-      for (let i = 1; i < sourceTrail.length; i++) {
-        const point = this.modelToView(sourceTrail[i].position);
-        sourceShape.lineToPoint(point);
-      }
-
-      // Update the path with the new shape
-      this.sourceTrail.shape = sourceShape;
-
-      // Calculate the gradient direction (from oldest to newest point)
-      const startPoint = this.modelToView(sourceTrail[0].position);
-      const endPoint = this.modelToView(sourceTrail[sourceTrail.length - 1].position);
-
-      // Create gradient from oldest to newest point
-      const sourceGradient = new LinearGradient(
-        startPoint.x, startPoint.y,
-        endPoint.x, endPoint.y
-      );
-
-      // Add color stops - transparent at oldest point, full color at newest
-      sourceGradient.addColorStop(0, new Color(
-        this.UI.SOURCE_COLOR.r,
-        this.UI.SOURCE_COLOR.g,
-        this.UI.SOURCE_COLOR.b,
-        0.1
-      ));
-      sourceGradient.addColorStop(0.5, new Color(
-        this.UI.SOURCE_COLOR.r,
-        this.UI.SOURCE_COLOR.g,
-        this.UI.SOURCE_COLOR.b,
-        0.4
-      ));
-      sourceGradient.addColorStop(1, new Color(
-        this.UI.SOURCE_COLOR.r,
-        this.UI.SOURCE_COLOR.g,
-        this.UI.SOURCE_COLOR.b,
-        0.8
-      ));
-
-      // Apply the gradient
-      this.sourceTrail.stroke = sourceGradient;
-    }
-
-    // Draw observer trail with gradient
-    if (observerTrail.length > 0) {
-      // First, build a new path with all points
-      const oldestPoint = this.modelToView(observerTrail[0].position);
-      observerShape.moveToPoint(oldestPoint);
-
-      // Add each subsequent point
-      for (let i = 1; i < observerTrail.length; i++) {
-        const point = this.modelToView(observerTrail[i].position);
-        observerShape.lineToPoint(point);
-      }
-
-      // Update the path with the new shape
-      this.observerTrail.shape = observerShape;
-
-      // Calculate the gradient direction (from oldest to newest point)
-      const startPoint = this.modelToView(observerTrail[0].position);
-      const endPoint = this.modelToView(observerTrail[observerTrail.length - 1].position);
-
-      // Create gradient from oldest to newest point
-      const observerGradient = new LinearGradient(
-        startPoint.x, startPoint.y,
-        endPoint.x, endPoint.y
-      );
-
-      // Add color stops - transparent at oldest point, full color at newest
-      observerGradient.addColorStop(0, new Color(
-        this.UI.OBSERVER_COLOR.r,
-        this.UI.OBSERVER_COLOR.g,
-        this.UI.OBSERVER_COLOR.b,
-        0.1
-      ));
-      observerGradient.addColorStop(0.5, new Color(
-        this.UI.OBSERVER_COLOR.r,
-        this.UI.OBSERVER_COLOR.g,
-        this.UI.OBSERVER_COLOR.b,
-        0.4
-      ));
-      observerGradient.addColorStop(1, new Color(
-        this.UI.OBSERVER_COLOR.r,
-        this.UI.OBSERVER_COLOR.g,
-        this.UI.OBSERVER_COLOR.b,
-        0.8
-      ));
-
-      // Apply the gradient
-      this.observerTrail.stroke = observerGradient;
-    }
-  }
-
-  /**
-   * Create a panel
-   */
-  private createControlPanel(): void {
-    const items: VerticalCheckboxGroupItem[] = [
-      {
-        property: this.visibleValuesProperty,
-        createNode: () =>
-          new Text(STRINGS.CONTROLS.VALUES, {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        property: this.visibleVelocityArrowProperty,
-        createNode: () =>
-          new Text(STRINGS.CONTROLS.VELOCITY_ARROWS, {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        property: this.visibleLineOfSightProperty,
-        createNode: () =>
-          new Text(STRINGS.CONTROLS.LINE_OF_SIGHT, {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        property: this.visibleTrailsProperty,
-        createNode: () =>
-          new Text(STRINGS.CONTROLS.MOTION_TRAILS, {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-      {
-        property: this.model.microphoneEnabledProperty,
-        createNode: () =>
-          new Text("Microphone Clicks", {
-            font: new PhetFont(14),
-            fill: this.UI.TEXT_COLOR,
-          }),
-      },
-    ];
-
-    const checkboxGroup = new VerticalCheckboxGroup(items);
-
-    const soundSpeedControl = new NumberControl(
-      STRINGS.CONTROLS.SOUND_SPEED,
-      this.model.soundSpeedProperty,
-      this.model.soundSpeedRange,
-      {
-        layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
-        numberDisplayOptions: {
-          valuePattern: STRINGS.UNITS.METERS_PER_SECOND,
-        },
-        titleNodeOptions: {
-          font: new PhetFont(12),
-          maxWidth: 140,
-        },
-      },
-    );
-    soundSpeedControl.top = checkboxGroup.bottom + 10;
-
-    const frequencyControl = new NumberControl(
-      STRINGS.CONTROLS.FREQUENCY,
-      this.model.emittedFrequencyProperty,
-      this.model.frequencyRange,
-      {
-        layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
-        numberDisplayOptions: {
-          valuePattern: STRINGS.UNITS.HERTZ,
-        },
-        titleNodeOptions: {
-          font: new PhetFont(12),
-          maxWidth: 140,
-        },
-      },
-    );
-    frequencyControl.top = soundSpeedControl.bottom + 10;
-
-    const panelContent = new Node({
-      children: [checkboxGroup, soundSpeedControl, frequencyControl],
-    });
-    const panel = new Panel(panelContent, {
-      right: this.observedGraph.right,
-      top: this.observedGraph.bottom + 10,
-    });
-
-    this.controlLayer.addChild(panel);
   }
 }
