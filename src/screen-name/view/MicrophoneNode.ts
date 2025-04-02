@@ -161,19 +161,6 @@ export class MicrophoneNode extends Node {
 
     // Add listener for wave detection
     this.waveDetectedProperty.lazyLink(this.handleWaveDetection.bind(this));
-
-    // Add listener for position changes
-    this.microphonePositionProperty.lazyLink(this.updatePosition.bind(this));
-  }
-
-  /**
-   * Update the microphone position based on the model position
-   */
-  private updatePosition(): void {
-    const viewPosition = this.modelViewTransform.modelToViewPosition(
-      this.microphonePositionProperty.value
-    );
-    this.center = viewPosition;
   }
 
   /**
