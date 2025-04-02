@@ -32,6 +32,8 @@ import { PHYSICS, SCALE, WAVE, WaveformPoint } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 import strings from "../../strings_en.json";
+import { Sound } from "./Sound";
+import { MicrophoneNode } from "./MicrophoneNode";
 
 // Add this section at the top of the file, after imports
 const STRINGS = {
@@ -74,113 +76,6 @@ const STRINGS = {
 };
 
 /**
- * Simple Sound wrapper class for playing audio
- */
-class Sound {
-  private audio: HTMLAudioElement | null = null;
-  private isLoaded: boolean = false;
-  private isMuted: boolean = false;
-  private audioContext: AudioContext | null = null;
-  private useGeneratedSound: boolean;
-  
-  constructor(src: string, useGeneratedSound: boolean = false) {
-    this.useGeneratedSound = useGeneratedSound;
-    
-    if (!useGeneratedSound) {
-      this.audio = new Audio();
-      
-      // Add error handling for loading sound
-      this.audio.addEventListener('canplaythrough', () => {
-        this.isLoaded = true;
-      });
-      
-      this.audio.addEventListener('error', (e) => {
-        console.warn('Error loading sound:', e);
-        this.isLoaded = false;
-      });
-      
-      // Set source after adding listeners
-      this.audio.src = src;
-      
-      // Try to load the audio
-      this.audio.load();
-    } else {
-      // For generated sounds, we don't need to load anything
-      this.isLoaded = true;
-    }
-  }
-  
-  play() {
-    if (this.isMuted) return;
-    
-    if (this.useGeneratedSound) {
-      this.playGeneratedClick();
-    } else if (this.isLoaded && this.audio) {
-      // Create a new audio element for each play to allow overlapping sounds
-      const sound = new Audio(this.audio.src);
-      sound.volume = 0.5; // Lower volume to prevent being too loud
-      
-      // Play and handle errors
-      sound.play().catch(e => {
-        console.warn('Error playing sound:', e);
-      });
-    }
-  }
-  
-  /**
-   * Play a programmatically generated click sound that's very short
-   * (less than 0.1 seconds)
-   */
-  private playGeneratedClick() {
-    try {
-      // Create audio context if it doesn't exist
-      if (!this.audioContext) {
-        // Type assertion for cross-browser compatibility
-        const AudioContextClass = window.AudioContext || 
-          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        this.audioContext = new AudioContextClass();
-      }
-      
-      // Create an oscillator for the click
-      const oscillator = this.audioContext.createOscillator();
-      const gainNode = this.audioContext.createGain();
-      
-      // Connect the nodes
-      oscillator.connect(gainNode);
-      gainNode.connect(this.audioContext.destination);
-      
-      // Set up the click parameters
-      oscillator.type = 'sine';
-      oscillator.frequency.value = 1500; // High frequency for a click
-      
-      // Start with zero gain
-      gainNode.gain.value = 0;
-      
-      // Schedule the envelope - very short attack and decay
-      const now = this.audioContext.currentTime;
-      // Attack - quick fade in
-      gainNode.gain.linearRampToValueAtTime(0.3, now + 0.001); 
-      // Decay - quick fade out
-      gainNode.gain.linearRampToValueAtTime(0, now + 0.03);
-      
-      // Start and stop the oscillator
-      oscillator.start(now);
-      oscillator.stop(now + 0.03); // Stop after 30ms - well under 0.1 seconds
-    } catch (e) {
-      console.warn('Error generating click sound:', e);
-    }
-  }
-  
-  mute() {
-    this.isMuted = true;
-  }
-  
-  unmute() {
-    this.isMuted = false;
-  }
-}
-
-/**
  * View for the Doppler Effect simulation
  *
  * This view handles all visualization aspects of the simulation, including:
@@ -209,7 +104,7 @@ export class SimScreenView extends ScreenView {
   // UI elements
   private readonly sourceNode: Circle;
   private readonly observerNode: Circle;
-  private readonly microphoneNode: Node;
+  private readonly microphoneNode: MicrophoneNode;
   private readonly sourceVelocityVector: ArrowNode;
   private readonly observerVelocityVector: ArrowNode;
   private readonly connectingLine: Line;
@@ -372,8 +267,12 @@ export class SimScreenView extends ScreenView {
     this.objectLayer.addChild(this.observerTrail);
 
     // Create microphone node
-    this.microphoneNode = this.createMicrophoneNode();
-    this.microphoneNode.center = this.modelViewTransform.modelToViewPosition(this.model.microphonePositionProperty.value);
+    this.microphoneNode = new MicrophoneNode(
+      this.modelViewTransform,
+      this.model.microphonePositionProperty,
+      this.model.waveDetectedProperty,
+      new Property(this.layoutBounds)
+    );
     this.objectLayer.addChild(this.microphoneNode);
 
     // Create graphs
@@ -580,9 +479,9 @@ export class SimScreenView extends ScreenView {
     this.clickSound = new Sound('./assets/click.wav', true);
 
     // Update microphone visibility based on enabled property
-    this.updateMicrophoneVisibility();
+    this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
     this.model.microphoneEnabledProperty.lazyLink(() => {
-      this.updateMicrophoneVisibility();
+      this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
     });
   }
 
@@ -607,8 +506,8 @@ export class SimScreenView extends ScreenView {
     });
     this.waveNodesMap.clear();
 
-    // Reset microphone position
-    this.updateMicrophoneVisibility();
+    // Update microphone visibility
+    this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
     
     // Update microphone position to match model's reset position
     const micViewPos = this.modelViewTransform.modelToViewPosition(
@@ -1122,7 +1021,7 @@ export class SimScreenView extends ScreenView {
     this.updateStatus();
     this.updateGraphics();
     this.updateTrails();
-    this.updateMicrophoneVisibility();
+    this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
     
     // Update microphone position
     const micViewPos = this.modelViewTransform.modelToViewPosition(
@@ -1547,112 +1446,6 @@ export class SimScreenView extends ScreenView {
   }
 
   /**
-   * Create the microphone node
-   */
-  private createMicrophoneNode(): Node {
-    const microphoneNode = new Node({
-      cursor: 'pointer'
-    });
-
-    // Create microphone body - a circle with stem
-    const micBody = new Circle(15, {
-      fill: new Color(100, 100, 100)
-    });
-
-    // Create microphone stem
-    const micStem = new Rectangle(-5, 10, 10, 30, {
-      fill: new Color(80, 80, 80)
-    });
-
-    // Create microphone base
-    const micBase = new Rectangle(-12, 35, 24, 8, {
-      fill: new Color(50, 50, 50),
-      cornerRadius: 3
-    });
-
-    // Create microphone grid pattern
-    const gridSize = 4;
-    const gridPattern = new Path(new Shape(), {
-      stroke: new Color(40, 40, 40),
-      lineWidth: 1
-    });
-
-    // Draw horizontal grid lines
-    const gridShape = new Shape();
-    for (let y = -10; y <= 10; y += gridSize) {
-      gridShape.moveTo(-10, y);
-      gridShape.lineTo(10, y);
-    }
-    
-    // Draw vertical grid lines
-    for (let x = -10; x <= 10; x += gridSize) {
-      gridShape.moveTo(x, -10);
-      gridShape.lineTo(x, 10);
-    }
-    
-    gridPattern.shape = gridShape;
-
-    // Add components to microphone node
-    microphoneNode.addChild(micStem);
-    microphoneNode.addChild(micBase);
-    microphoneNode.addChild(micBody);
-    microphoneNode.addChild(gridPattern);
-
-    // Add highlight ring that shows when detecting waves
-    const detectionRing = new Circle(20, {
-      stroke: new Color(255, 255, 0),
-      lineWidth: 2,
-      visible: false
-    });
-    microphoneNode.addChild(detectionRing);
-
-    // Add drag listener with proper offset handling
-    const micDragListener = new DragListener({
-      targetNode: microphoneNode,
-      dragBoundsProperty: new Property(this.layoutBounds),
-      start: (event) => {
-        // Store the initial offset between pointer and microphone position
-        const micViewPos = this.modelViewTransform.modelToViewPosition(
-          this.model.microphonePositionProperty.value
-        );
-        (
-          micDragListener as DragListener & { dragOffset: Vector2 }
-        ).dragOffset = micViewPos.minus(event.pointer.point);
-      },
-      drag: (event) => {
-        // Convert view coordinates to model coordinates, accounting for initial offset
-        const viewPoint = event.pointer.point.plus(
-          (micDragListener as DragListener & { dragOffset: Vector2 })
-            .dragOffset
-        );
-        const modelPoint = this.modelViewTransform.viewToModelPosition(viewPoint);
-        
-        // Update microphone position in model
-        this.model.microphonePositionProperty.value = modelPoint;
-      }
-    });
-    microphoneNode.addInputListener(micDragListener);
-
-    // Add listener for wave detection
-    this.model.waveDetectedProperty.lazyLink((detected) => {
-      if (detected) {
-        // Show detection ring
-        detectionRing.visible = true;
-        
-        // Play click sound
-        this.clickSound.play();
-        
-        // Hide ring after a short delay
-        setTimeout(() => {
-          detectionRing.visible = false;
-        }, 100);
-      }
-    });
-
-    return microphoneNode;
-  }
-
-  /**
    * Create a panel
    */
   private createControlPanel(): void {
@@ -1744,12 +1537,5 @@ export class SimScreenView extends ScreenView {
     });
 
     this.controlLayer.addChild(panel);
-  }
-  
-  /**
-   * Update the microphone visibility based on the enabled property
-   */
-  private updateMicrophoneVisibility(): void {
-    this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
   }
 }
