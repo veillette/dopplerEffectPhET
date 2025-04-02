@@ -6,7 +6,14 @@
  * indicating the model length represented.
  */
 
-import { Node, Line, Text, Color, Property, ModelViewTransform2 } from "scenerystack";
+import {
+  Node,
+  Line,
+  Text,
+  Color,
+  Property,
+  ModelViewTransform2,
+} from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
 
 // Configuration options for the scale mark display
@@ -40,10 +47,10 @@ export class ScaleMarkNode extends Node {
   constructor(
     private readonly modelViewTransform: ModelViewTransform2,
     visibleValuesProperty: Property<boolean>,
-    options: ScaleMarkOptions
+    options: ScaleMarkOptions,
   ) {
     super({
-      visibleProperty: visibleValuesProperty
+      visibleProperty: visibleValuesProperty,
     });
 
     // Default scale model length is 10 meters
@@ -51,7 +58,7 @@ export class ScaleMarkNode extends Node {
 
     // Calculate the view length that corresponds to the model length
     const scaleViewLength = Math.abs(
-      this.modelViewTransform.modelToViewDeltaY(this.scaleModelLength)
+      this.modelViewTransform.modelToViewDeltaY(this.scaleModelLength),
     );
 
     // Create the main scale mark (vertical line)
@@ -61,45 +68,33 @@ export class ScaleMarkNode extends Node {
     });
 
     // Create end marks for the ruler effect
-    this.topEndMark = new Line(
-      -5, 0,
-      5, 0,
-      {
-        stroke: options.lineColor,
-        lineWidth: 2,
-      }
-    );
+    this.topEndMark = new Line(-5, 0, 5, 0, {
+      stroke: options.lineColor,
+      lineWidth: 2,
+    });
 
     // Create bottom end mark
-    this.bottomEndMark = new Line(
-      -5, scaleViewLength,
-      5, scaleViewLength,
-      {
-        stroke: options.lineColor,
-        lineWidth: 2,
-      }
-    );
+    this.bottomEndMark = new Line(-5, scaleViewLength, 5, scaleViewLength, {
+      stroke: options.lineColor,
+      lineWidth: 2,
+    });
 
     // Add intermediate tick marks (every 5 meters if scale length is >10m, otherwise every 2m)
     const tickInterval = this.scaleModelLength > 10 ? 5 : 2;
     const numberOfTicks = Math.floor(this.scaleModelLength / tickInterval) - 1;
-    
+
     for (let i = 1; i <= numberOfTicks; i++) {
       const tickPosition = i * tickInterval;
       const tickY = Math.abs(
-        this.modelViewTransform.modelToViewDeltaY(tickPosition)
+        this.modelViewTransform.modelToViewDeltaY(tickPosition),
       );
-      
+
       // Create smaller intermediate tick marks
-      const tickMark = new Line(
-        -3, tickY,
-        3, tickY,
-        {
-          stroke: options.lineColor,
-          lineWidth: 1,
-        }
-      );
-      
+      const tickMark = new Line(-3, tickY, 3, tickY, {
+        stroke: options.lineColor,
+        lineWidth: 1,
+      });
+
       this.addChild(tickMark);
     }
 
@@ -117,4 +112,4 @@ export class ScaleMarkNode extends Node {
     this.addChild(this.bottomEndMark);
     this.addChild(this.scaleLabel);
   }
-} 
+}

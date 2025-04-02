@@ -78,14 +78,13 @@ export class WaveManager {
    * @param wave - The wave model object to update
    * @param simulationTime - Current simulation time
    */
-  public updateWaveNode(
-    wave: Wave,
-    simulationTime: number
-  ): void {
+  public updateWaveNode(wave: Wave, simulationTime: number): void {
     const waveNode = this.waveNodesMap.get(wave);
     if (waveNode) {
       // Update position to match wave's origin (convert to view coordinates)
-      waveNode.center = this.modelViewTransform.modelToViewPosition(wave.position);
+      waveNode.center = this.modelViewTransform.modelToViewPosition(
+        wave.position,
+      );
 
       // Update radius to match wave's propagation (convert to view coordinates)
       waveNode.radius = this.modelViewTransform.modelToViewDeltaX(wave.radius);

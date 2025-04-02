@@ -486,9 +486,9 @@ export class SimScreenView extends ScreenView {
         textColor: this.UI.TEXT_COLOR,
         lineColor: this.UI.CONNECTING_LINE_COLOR,
         scaleModelLength: 20, // 20 meters scale for better visibility
-      }
+      },
     );
-    
+
     // Position the scale mark to the left of the reset all button
     scaleMarkNode.right = resetAllButton.left - 30;
     scaleMarkNode.bottom = resetAllButton.bottom;
