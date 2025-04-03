@@ -253,37 +253,6 @@ export class SimModel {
   }
 
   /**
-   * Dispose of all resources to prevent memory leaks
-   */
-  public dispose(): void {
-    // Dispose of listeners and properties
-    this.soundSpeedProperty.dispose();
-    this.emittedFrequencyProperty.dispose();
-    this.scenarioProperty.dispose();
-    this.timeSpeedProperty.dispose();
-    this.simulationTimeProperty.dispose();
-    this.observedFrequencyProperty.dispose();
-    this.playProperty.dispose();
-    this.microphonePositionProperty.dispose();
-    this.microphoneEnabledProperty.dispose();
-    this.waveDetectedProperty.dispose();
-
-    // Dispose of objects
-    this.source.dispose();
-    this.observer.dispose();
-
-    // Dispose of specialized component classes
-    this.waveGenerator.dispose();
-    this.waveformManager.dispose();
-    this.dopplerCalculator.dispose();
-
-    // Clear arrays
-    this.waves.dispose();
-    this.sourcePositionHistory = [];
-    this.observerPositionHistory = [];
-  }
-
-  /**
    * Get the numeric value associated with the current TimeSpeed enum value
    */
   private getTimeSpeedValue(): number {
