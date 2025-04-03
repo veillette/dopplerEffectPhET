@@ -95,10 +95,22 @@ export class ControlPanelNode extends Node {
     // Create checkbox items
     const items: VerticalCheckboxGroupItem[] = [
       createCheckboxItem(visibleValuesProperty, strings.valuesStringProperty),
-      createCheckboxItem(visibleVelocityArrowProperty, strings.velocityArrowsStringProperty),
-      createCheckboxItem(visibleLineOfSightProperty, strings.lineOfSightStringProperty),
-      createCheckboxItem(visibleTrailsProperty, strings.motionTrailsStringProperty),
-      createCheckboxItem(microphoneEnabledProperty, strings.microphoneClicksStringProperty),
+      createCheckboxItem(
+        visibleVelocityArrowProperty,
+        strings.velocityArrowsStringProperty,
+      ),
+      createCheckboxItem(
+        visibleLineOfSightProperty,
+        strings.lineOfSightStringProperty,
+      ),
+      createCheckboxItem(
+        visibleTrailsProperty,
+        strings.motionTrailsStringProperty,
+      ),
+      createCheckboxItem(
+        microphoneEnabledProperty,
+        strings.microphoneClicksStringProperty,
+      ),
     ];
 
     // Create vertical checkbox group

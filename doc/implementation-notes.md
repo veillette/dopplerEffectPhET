@@ -14,23 +14,26 @@ The simulation follows a modular architecture:
 Data flows primarily from Model → View, with user interactions in the View triggering updates to the Model. We use the AXON property system (from PhET/SceneryStack libraries) to create observable properties that automatically notify components of changes.
 
 ### Model-View Transform
-A coordinate transformation system maps between model space (physical units) and view space (screen units). This abstraction allows the physics model to work in physically meaningful units (meters, seconds) while the view handles screen-specific units (view coordinates). We have chosen to place the physical origin at the center of the layout bounds and selected an inverted Y-axis in screen coordinates. We use an isometric scaling along the x and the y that is specified in SCALE.MODEL_VIEW. 
+
+A coordinate transformation system maps between model space (physical units) and view space (screen units). This abstraction allows the physics model to work in physically meaningful units (meters, seconds) while the view handles screen-specific units (view coordinates). We have chosen to place the physical origin at the center of the layout bounds and selected an inverted Y-axis in screen coordinates. We use an isometric scaling along the x and the y that is specified in SCALE.MODEL_VIEW.
 
 ## Model Components
 
 ### Core Model Design
+
 The `SimModel` class serves as the central coordinator, connecting specialized components:
 
 ### Component Specialization
+
 Each model component has a single responsibility:
 
 1. **MovableObject**: Encapsulates position and velocity for source and observer
-2. **WaveGenerator**: Manages wave creation and propagation 
+2. **WaveGenerator**: Manages wave creation and propagation
 3. **WaveformManager**: Handles sound waveform data for visualization
 4. **DopplerCalculator**: Performs Doppler effect physics calculations
 
-
 ### Physics Simulation Approach
+
 - **Wave Propagation**: Circular waves expanding at the speed of sound
 - **Doppler Calculation**: Classical Doppler formula implemented in `DopplerCalculator`
 - **Trail System**: Position history maintained with age and count constraints
@@ -71,12 +74,13 @@ public step(dt: number, force: boolean = false): void {
 
 ### Model-View Communication with AXON Properties
 
-The simulation uses PhET's AXON property system extensively. Observable properties are defined in model classes and components subscribe to property changes via `link()` and 
+The simulation uses PhET's AXON property system extensively. Observable properties are defined in model classes and components subscribe to property changes via `link()` and
 `lazyLink()`. For instance, we use AXON properties to update the values:
 
 ```typescript
 public readonly scenarioProperty: EnumerationProperty<Scenario>;
 ```
+
 Property changes trigger specific updates through AXON linking:
 
 ```typescript
@@ -87,19 +91,16 @@ this.scenarioProperty.lazyLink((scenario) => {
 
 For the Waves components, we have created an ObservableArray. In some cases, we resorted to `DerivedProperty` for values that depend on multiple properties.
 
-
 ## View Components
 
 ### SimScreenView as Coordinator
+
 The `SimScreenView` coordinates all visual elements and user interactions. Visual elements are organized in layers for proper stacking:
 
 ```typescript
-[
-  this.waveLayer,
-  this.objectLayer,
-  this.graphLayer,
-  this.controlLayer,
-].forEach((layer) => this.addChild(layer));
+[this.waveLayer, this.objectLayer, this.graphLayer, this.controlLayer].forEach(
+  (layer) => this.addChild(layer),
+);
 ```
 
 Specialized manager classes handle specific visualization aspects:

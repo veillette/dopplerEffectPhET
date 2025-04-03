@@ -7,7 +7,11 @@
 
 import { Node, Text, Color } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
-import { ReadOnlyProperty, PatternStringProperty, DerivedProperty } from "scenerystack/axon";
+import {
+  ReadOnlyProperty,
+  PatternStringProperty,
+  DerivedProperty,
+} from "scenerystack/axon";
 
 // Type for status text-related strings, renamed according to convention
 type StatusStringProperties = {
@@ -70,27 +74,36 @@ export class StatusTextNode extends Node {
       font: new PhetFont(14),
       fill: options.textColor,
       visibleProperty: visibleValuesProperty,
-      stringProperty: new PatternStringProperty(statusStringProperties.emittedFrequencyPatternStringProperty, {
-        value: emittedFrequencyProperty,
-      }),
+      stringProperty: new PatternStringProperty(
+        statusStringProperties.emittedFrequencyPatternStringProperty,
+        {
+          value: emittedFrequencyProperty,
+        },
+      ),
     });
 
     this.observedFreqText = new Text(observedFrequencyProperty.value, {
       font: new PhetFont(14),
       fill: options.textColor,
       visibleProperty: visibleValuesProperty,
-      stringProperty: new PatternStringProperty(statusStringProperties.observedFrequencyPatternStringProperty, {
-        value: observedFrequencyProperty,
-      }),
+      stringProperty: new PatternStringProperty(
+        statusStringProperties.observedFrequencyPatternStringProperty,
+        {
+          value: observedFrequencyProperty,
+        },
+      ),
     });
 
     this.selectedObjectText = new Text("", {
       font: new PhetFont(14),
       fill: options.selectionColor,
       visibleProperty: visibleValuesProperty,
-      stringProperty: new PatternStringProperty(statusStringProperties.selectedObjectPatternStringProperty, {
-        object: selectedObjectNameProperty,
-      }),
+      stringProperty: new PatternStringProperty(
+        statusStringProperties.selectedObjectPatternStringProperty,
+        {
+          object: selectedObjectNameProperty,
+        },
+      ),
     });
 
     // Derived property for shift status text content

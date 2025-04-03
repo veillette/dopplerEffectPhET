@@ -4,7 +4,7 @@
  * Contains the help instructions functionality for the Doppler Effect simulation.
  */
 
-import { Node, Rectangle, Text, Color} from "scenerystack";
+import { Node, Rectangle, Text, Color } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
 import { ReadOnlyProperty } from "scenerystack/axon";
 
