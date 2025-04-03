@@ -18,6 +18,7 @@ import {
   SCENARIOS,
   SCALE,
   WaveformPoint,
+  TIME_SPEED,
 } from "./SimConstants";
 import { WaveGenerator } from "./WaveGenerator";
 import { WaveformManager } from "./WaveformManager";
@@ -57,12 +58,6 @@ export class Scenario extends EnumerationValue {
   // Gets a list of keys, values and mapping between them. For use in EnumerationProperty and PhET-iO
   public static readonly enumeration = new Enumeration(Scenario);
 }
-
-// Define time speed values - the property will store these values
-export const TIME_SPEED = {
-  SLOW: 0.25,
-  NORMAL: 1.0,
-};
 
 // Trail constants
 export const TRAIL = {
@@ -255,6 +250,37 @@ export class SimModel {
     // Reset components
     this.waveGenerator.reset();
     this.waveformManager.reset(SOUND_DATA.ARRAY_SIZE);
+  }
+
+  /**
+   * Dispose of all resources to prevent memory leaks
+   */
+  public dispose(): void {
+    // Dispose of listeners and properties
+    this.soundSpeedProperty.dispose();
+    this.emittedFrequencyProperty.dispose();
+    this.scenarioProperty.dispose();
+    this.timeSpeedProperty.dispose();
+    this.simulationTimeProperty.dispose();
+    this.observedFrequencyProperty.dispose();
+    this.playProperty.dispose();
+    this.microphonePositionProperty.dispose();
+    this.microphoneEnabledProperty.dispose();
+    this.waveDetectedProperty.dispose();
+
+    // Dispose of objects
+    this.source.dispose();
+    this.observer.dispose();
+
+    // Dispose of specialized component classes
+    this.waveGenerator.dispose();
+    this.waveformManager.dispose();
+    this.dopplerCalculator.dispose();
+
+    // Clear arrays
+    this.waves.dispose();
+    this.sourcePositionHistory = [];
+    this.observerPositionHistory = [];
   }
 
   /**

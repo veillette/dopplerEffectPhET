@@ -44,6 +44,12 @@ export const SOUND_DATA = {
   ARRAY_SIZE: 200, // Number of points in sound waveform arrays (dimensionless)
 } as const;
 
+// Time speed constants for simulation
+export const TIME_SPEED = {
+  SLOW: 0.25, // Slow simulation speed (dimensionless)
+  NORMAL: 1.0, // Normal simulation speed (dimensionless)
+} as const;
+
 // Preset scenarios (velocities in m/s)
 export const SCENARIOS = {
   SOURCE_TOWARD_OBSERVER: {
