@@ -81,6 +81,7 @@ export class WaveformManager {
     this.observedSoundData.push(Math.sin(this.observedPhase) * 30); // dimensionless scaling
     this.observedSoundData.shift();
 
+    // TODO: this seems an expensive operation, we should try to optimize it
     // Apply time speed factor to the waveform display
     for (let i = 0; i < this.observedSoundData.length; i++) {
       this.observedWaveformData[i] = {
