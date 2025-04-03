@@ -1,104 +1,48 @@
 {
-  "doppler-effect.title": {
-    "value": "Doppler Effect Simulation Controls"
+  "title": "Doppler Effect Simulation Controls",
+  "source": "Source",
+  "observer": "Observer",
+  "selectedObject": "Selected: {{object}}",
+  "controls": {
+    "values": "Values",
+    "velocityArrows": "Velocity Arrows",
+    "lineOfSight": "Line of Sight",
+    "soundSpeed": "Speed of Sound",
+    "frequency": "Frequency",
+    "motionTrails": "Motion Trails",
+    "microphoneClicks": "Microphone Clicks"
   },
-  "doppler-effect.source": {
-    "value": "Source"
+  "units": {
+    "metersPerSecond": "{{value}} m/s",
+    "hertz": "{{value}} Hz",
+    "meters": "{{value}}m"
   },
-  "doppler-effect.observer": {
-    "value": "Observer"
+  "graphs": {
+    "emittedSound": "Emitted Sound",
+    "observedSound": "Observed Sound",
+    "emittedFrequency": "Emitted Freq.: {{value}} Hz",
+    "observedFrequency": "Observed Freq.: {{value}} Hz"
   },
-  "doppler-effect.selectedObject": {
-    "value": "Selected: {{object}}"
+  "shift": {
+    "blueshift": "Blueshifted (approaching)",
+    "redshift": "Redshifted (receding)"
   },
-  "doppler-effect.controls.values": {
-    "value": "Values"
+  "help": {
+    "dragAndDrop": "Click and drag source (red) or observer (green) to move them",
+    "keyboardControls": "Keyboard Controls:",
+    "objectSelection": "S: Select source | O: Select observer | Arrow keys: Move selected object",
+    "controls": "Space: Pause/Resume | R: Reset | H: Toggle help",
+    "adjust": "+/-: Adjust emitted frequency | ,/.: Adjust sound speed",
+    "scenarios": "1-4: Load preset scenarios (approaching source, observer, etc.)",
+    "toggleMotionTrails": "Press 'T' to toggle motion trails that show object paths.",
+    "toggleMicrophone": "Press 'M' to toggle the microphone that clicks when waves pass through it.",
+    "dragMicrophone": "Drag the microphone to position it anywhere in the simulation."
   },
-  "doppler-effect.controls.velocityArrows": {
-    "value": "Velocity Arrows"
-  },
-  "doppler-effect.controls.lineOfSight": {
-    "value": "Line of Sight"
-  },
-  "doppler-effect.controls.soundSpeed": {
-    "value": "Speed of Sound"
-  },
-  "doppler-effect.controls.frequency": {
-    "value": "Frequency"
-  },
-  "doppler-effect.controls.motionTrails": {
-    "value": "Motion Trails"
-  },
-  "doppler-effect.controls.microphoneClicks": {
-    "value": "Microphone Clicks"
-  },
-  "doppler-effect.units.metersPerSecond": {
-    "value": "{{value}} m/s"
-  },
-  "doppler-effect.units.hertz": {
-    "value": "{{value}} Hz"
-  },
-  "doppler-effect.units.meters": {
-    "value": "{{value}}m"
-  },
-  "doppler-effect.graphs.emittedSound": {
-    "value": "Emitted Sound"
-  },
-  "doppler-effect.graphs.observedSound": {
-    "value": "Observed Sound"
-  },
-  "doppler-effect.graphs.emittedFrequency": {
-    "value": "Emitted Freq.: {{value}} Hz"
-  },
-  "doppler-effect.graphs.observedFrequency": {
-    "value": "Observed Freq.: {{value}} Hz"
-  },
-  "doppler-effect.shift.blueshift": {
-    "value": "Blueshifted (approaching)"
-  },
-  "doppler-effect.shift.redshift": {
-    "value": "Redshifted (receding)"
-  },
-  "doppler-effect.help.dragAndDrop": {
-    "value": "Click and drag source (red) or observer (green) to move them"
-  },
-  "doppler-effect.help.keyboardControls": {
-    "value": "Keyboard Controls:"
-  },
-  "doppler-effect.help.objectSelection": {
-    "value": "S: Select source | O: Select observer | Arrow keys: Move selected object"
-  },
-  "doppler-effect.help.controls": {
-    "value": "Space: Pause/Resume | R: Reset | H: Toggle help"
-  },
-  "doppler-effect.help.adjust": {
-    "value": "+/-: Adjust emitted frequency | ,/.: Adjust sound speed"
-  },
-  "doppler-effect.help.scenarios": {
-    "value": "1-4: Load preset scenarios (approaching source, observer, etc.)"
-  },
-  "doppler-effect.help.toggleMotionTrails": {
-    "value": "Press 'T' to toggle motion trails that show object paths."
-  },
-  "doppler-effect.help.toggleMicrophone": {
-    "value": "Press 'M' to toggle the microphone that clicks when waves pass through it."
-  },
-  "doppler-effect.help.dragMicrophone": {
-    "value": "Drag the microphone to position it anywhere in the simulation."
-  },
-  "doppler-effect.scenarios.freePlay": {
-    "value": "Free Play"
-  },
-  "doppler-effect.scenarios.sourceMovingTowardObserver": {
-    "value": "Source Moving Toward Observer"
-  },
-  "doppler-effect.scenarios.observerMovingTowardSource": {
-    "value": "Observer Moving Toward Source"
-  },
-  "doppler-effect.scenarios.movingAway": {
-    "value": "Observer and Source Moving Away"
-  },
-  "doppler-effect.scenarios.perpendicular": {
-    "value": "Observer and Source Moving Perpendicular"
+  "scenarios": {
+    "freePlay": "Free Play",
+    "sourceMovingTowardObserver": "Source Moving Toward Observer",
+    "observerMovingTowardSource": "Observer Moving Toward Source",
+    "movingAway": "Observer and Source Moving Away",
+    "perpendicular": "Observer and Source Moving Perpendicular"
   }
 }

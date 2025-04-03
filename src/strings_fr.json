@@ -1,104 +1,48 @@
 {
-  "doppler-effect.title": {
-    "value": "Contrôles de simulation de l'effet Doppler"
+  "title": "Contrôles de simulation de l'effet Doppler",
+  "source": "Source",
+  "observer": "Observateur",
+  "selectedObject": "Sélectionné : {{object}}",
+  "controls": {
+    "values": "Valeurs",
+    "velocityArrows": "Flèches de vitesse",
+    "lineOfSight": "Ligne de vue",
+    "soundSpeed": "Vitesse du son",
+    "frequency": "Fréquence",
+    "motionTrails": "Trajectoires",
+    "microphoneClicks": "Clics du microphone"
   },
-  "doppler-effect.source": {
-    "value": "Source"
+  "units": {
+    "metersPerSecond": "{{value}} m/s",
+    "hertz": "{{value}} Hz",
+    "meters": "{{value}}m"
   },
-  "doppler-effect.observer": {
-    "value": "Observateur"
+  "graphs": {
+    "emittedSound": "Son émis",
+    "observedSound": "Son observé",
+    "emittedFrequency": "Fréq. émise : {{value}} Hz",
+    "observedFrequency": "Fréq. observée : {{value}} Hz"
   },
-  "doppler-effect.selectedObject": {
-    "value": "Sélectionné : {{object}}"
+  "shift": {
+    "blueshift": "Décalage vers le bleu (en approche)",
+    "redshift": "Décalage vers le rouge (en éloignement)"
   },
-  "doppler-effect.controls.values": {
-    "value": "Valeurs"
+  "help": {
+    "dragAndDrop": "Cliquez et faites glisser la source (rouge) ou l'observateur (vert) pour les déplacer",
+    "keyboardControls": "Contrôles clavier :",
+    "objectSelection": "S : Sélectionner la source | O : Sélectionner l'observateur | Flèches : Déplacer l'objet sélectionné",
+    "controls": "Espace : Pause/Reprendre | R : Réinitialiser | H : Afficher/Masquer l'aide",
+    "adjust": "+/- : Ajuster la fréquence émise | ,/. : Ajuster la vitesse du son",
+    "scenarios": "1-4 : Charger des scénarios prédéfinis (source en approche, observateur, etc.)",
+    "toggleMotionTrails": "Appuyez sur 'T' pour activer/désactiver les trajectoires qui montrent les chemins des objets.",
+    "toggleMicrophone": "Appuyez sur 'M' pour activer/désactiver le microphone qui clique lorsque les ondes le traversent.",
+    "dragMicrophone": "Faites glisser le microphone pour le positionner n'importe où dans la simulation."
   },
-  "doppler-effect.controls.velocityArrows": {
-    "value": "Flèches de vitesse"
-  },
-  "doppler-effect.controls.lineOfSight": {
-    "value": "Ligne de vue"
-  },
-  "doppler-effect.controls.soundSpeed": {
-    "value": "Vitesse du son"
-  },
-  "doppler-effect.controls.frequency": {
-    "value": "Fréquence"
-  },
-  "doppler-effect.controls.motionTrails": {
-    "value": "Trajectoires"
-  },
-  "doppler-effect.controls.microphoneClicks": {
-    "value": "Clics du microphone"
-  },
-  "doppler-effect.units.metersPerSecond": {
-    "value": "{{value}} m/s"
-  },
-  "doppler-effect.units.hertz": {
-    "value": "{{value}} Hz"
-  },
-  "doppler-effect.units.meters": {
-    "value": "{{value}}m"
-  },
-  "doppler-effect.graphs.emittedSound": {
-    "value": "Son émis"
-  },
-  "doppler-effect.graphs.observedSound": {
-    "value": "Son observé"
-  },
-  "doppler-effect.graphs.emittedFrequency": {
-    "value": "Fréq. émise : {{value}} Hz"
-  },
-  "doppler-effect.graphs.observedFrequency": {
-    "value": "Fréq. observée : {{value}} Hz"
-  },
-  "doppler-effect.shift.blueshift": {
-    "value": "Décalage vers le bleu (en approche)"
-  },
-  "doppler-effect.shift.redshift": {
-    "value": "Décalage vers le rouge (en éloignement)"
-  },
-  "doppler-effect.help.dragAndDrop": {
-    "value": "Cliquez et faites glisser la source (rouge) ou l'observateur (vert) pour les déplacer"
-  },
-  "doppler-effect.help.keyboardControls": {
-    "value": "Contrôles clavier :"
-  },
-  "doppler-effect.help.objectSelection": {
-    "value": "S : Sélectionner la source | O : Sélectionner l'observateur | Flèches : Déplacer l'objet sélectionné"
-  },
-  "doppler-effect.help.controls": {
-    "value": "Espace : Pause/Reprendre | R : Réinitialiser | H : Afficher/Masquer l'aide"
-  },
-  "doppler-effect.help.adjust": {
-    "value": "+/- : Ajuster la fréquence émise | ,/. : Ajuster la vitesse du son"
-  },
-  "doppler-effect.help.scenarios": {
-    "value": "1-4 : Charger des scénarios prédéfinis (source en approche, observateur, etc.)"
-  },
-  "doppler-effect.help.toggleMotionTrails": {
-    "value": "Appuyez sur 'T' pour activer/désactiver les trajectoires qui montrent les chemins des objets."
-  },
-  "doppler-effect.help.toggleMicrophone": {
-    "value": "Appuyez sur 'M' pour activer/désactiver le microphone qui clique lorsque les ondes le traversent."
-  },
-  "doppler-effect.help.dragMicrophone": {
-    "value": "Faites glisser le microphone pour le positionner n'importe où dans la simulation."
-  },
-  "doppler-effect.scenarios.freePlay": {
-    "value": "Mode libre"
-  },
-  "doppler-effect.scenarios.sourceMovingTowardObserver": {
-    "value": "Source se déplaçant vers l'observateur"
-  },
-  "doppler-effect.scenarios.observerMovingTowardSource": {
-    "value": "Observateur se déplaçant vers la source"
-  },
-  "doppler-effect.scenarios.movingAway": {
-    "value": "Observateur et source s'éloignant"
-  },
-  "doppler-effect.scenarios.perpendicular": {
-    "value": "Observateur et source se déplaçant perpendiculairement"
+  "scenarios": {
+    "freePlay": "Mode libre",
+    "sourceMovingTowardObserver": "Source se déplaçant vers l'observateur",
+    "observerMovingTowardSource": "Observateur se déplaçant vers la source",
+    "movingAway": "Observateur et source s'éloignant",
+    "perpendicular": "Observateur et source se déplaçant perpendiculairement"
   }
 } 
