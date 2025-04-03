@@ -15,18 +15,19 @@ import {
 import { Property } from "scenerystack/axon";
 import { Text } from "scenerystack";
 import { Range } from "scenerystack/dot";
+import { ReadOnlyProperty } from "scenerystack/axon";
 
 // Type for the text configuration
 type ControlPanelStrings = {
-  VALUES: string;
-  VELOCITY_ARROWS: string;
-  LINE_OF_SIGHT: string;
-  SOUND_SPEED: string;
-  FREQUENCY: string;
-  MOTION_TRAILS: string;
-  METERS_PER_SECOND: string;
-  HERTZ: string;
-  MICROPHONE_CLICKS: string;
+  valuesStringProperty: ReadOnlyProperty<string>;
+  velocityArrowsStringProperty: ReadOnlyProperty<string>;
+  lineOfSightStringProperty: ReadOnlyProperty<string>;
+  soundSpeedStringProperty: ReadOnlyProperty<string>;
+  frequencyStringProperty: ReadOnlyProperty<string>;
+  motionTrailsStringProperty: ReadOnlyProperty<string>;
+  metersPerSecondStringProperty: ReadOnlyProperty<string>;
+  hertzStringProperty: ReadOnlyProperty<string>;
+  microphoneClicksStringProperty: ReadOnlyProperty<string>;
 };
 
 // Configuration options for the control panel
@@ -76,26 +77,28 @@ export class ControlPanelNode extends Node {
   ) {
     super();
 
-    // Helper function to create checkbox items with consistent styling
+    // Helper function to create checkbox item with consistent styling
+    // and handle StringProperty
     const createCheckboxItem = (
       property: Property<boolean>,
-      label: string,
+      labelProp: ReadOnlyProperty<string>,
     ): VerticalCheckboxGroupItem => ({
       property,
-      createNode: () =>
-        new Text(label, {
+      createNode: () => {
+        return new Text(labelProp, {
           font: new PhetFont(14),
           fill: options.textColor,
-        }),
+        });
+      },
     });
 
     // Create checkbox items
     const items: VerticalCheckboxGroupItem[] = [
-      createCheckboxItem(visibleValuesProperty, strings.VALUES),
-      createCheckboxItem(visibleVelocityArrowProperty, strings.VELOCITY_ARROWS),
-      createCheckboxItem(visibleLineOfSightProperty, strings.LINE_OF_SIGHT),
-      createCheckboxItem(visibleTrailsProperty, strings.MOTION_TRAILS),
-      createCheckboxItem(microphoneEnabledProperty, strings.MICROPHONE_CLICKS),
+      createCheckboxItem(visibleValuesProperty, strings.valuesStringProperty),
+      createCheckboxItem(visibleVelocityArrowProperty, strings.velocityArrowsStringProperty),
+      createCheckboxItem(visibleLineOfSightProperty, strings.lineOfSightStringProperty),
+      createCheckboxItem(visibleTrailsProperty, strings.motionTrailsStringProperty),
+      createCheckboxItem(microphoneEnabledProperty, strings.microphoneClicksStringProperty),
     ];
 
     // Create vertical checkbox group
@@ -103,13 +106,13 @@ export class ControlPanelNode extends Node {
 
     // Create sound speed control
     const soundSpeedControl = new NumberControl(
-      strings.SOUND_SPEED,
+      strings.soundSpeedStringProperty,
       soundSpeedProperty,
       soundSpeedRange,
       {
         layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
         numberDisplayOptions: {
-          valuePattern: strings.METERS_PER_SECOND,
+          valuePattern: strings.metersPerSecondStringProperty,
         },
         titleNodeOptions: {
           font: new PhetFont(12),
@@ -121,13 +124,13 @@ export class ControlPanelNode extends Node {
 
     // Create frequency control
     const frequencyControl = new NumberControl(
-      strings.FREQUENCY,
+      strings.frequencyStringProperty,
       emittedFrequencyProperty,
       frequencyRange,
       {
         layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
         numberDisplayOptions: {
-          valuePattern: strings.HERTZ,
+          valuePattern: strings.hertzStringProperty,
         },
         titleNodeOptions: {
           font: new PhetFont(12),

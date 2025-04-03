@@ -8,6 +8,8 @@ import {
   Shape,
   Text,
   Vector2,
+  LocalizedString,
+  DerivedProperty,
 } from "scenerystack";
 import {
   ArrowNode,
@@ -20,7 +22,8 @@ import { Scenario, SimModel } from "../model/SimModel";
 import { PHYSICS, SCALE } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
-import strings from "../../strings_en.json";
+import strings_en from "../../strings_en.json";
+import strings_fr from "../../strings_fr.json";
 import { Sound } from "./utils/Sound";
 import { MicrophoneNode } from "./components/MicrophoneNode";
 
@@ -38,54 +41,11 @@ import { WaveManager } from "./managers/WaveManager";
 import { VectorDisplayManager } from "./managers/VectorDisplayManager";
 import { TrailManager } from "./managers/TrailManager";
 
-const STRINGS = {
-  TITLE: strings.title,
-  SOURCE: strings.source,
-  OBSERVER: strings.observer,
-  SELECTED_OBJECT: strings.selectedObject,
-  CONTROLS: {
-    VALUES: strings.controls.values,
-    VELOCITY_ARROWS: strings.controls.velocityArrows,
-    LINE_OF_SIGHT: strings.controls.lineOfSight,
-    SOUND_SPEED: strings.controls.soundSpeed,
-    FREQUENCY: strings.controls.frequency,
-    MOTION_TRAILS: strings.controls.motionTrails,
-    MICROPHONE_CLICKS: strings.controls.microphoneClicks,
-  },
-  UNITS: {
-    METERS_PER_SECOND: strings.units.metersPerSecond,
-    HERTZ: strings.units.hertz,
-    METERS: strings.units.meters,
-  },
-  GRAPHS: {
-    EMITTED_SOUND: strings.graphs.emittedSound,
-    OBSERVED_SOUND: strings.graphs.observedSound,
-    EMITTED_FREQUENCY: strings.graphs.emittedFrequency,
-    OBSERVED_FREQUENCY: strings.graphs.observedFrequency,
-  },
-  SHIFT: {
-    BLUEShift: strings.shift.blueshift,
-    REDshift: strings.shift.redshift,
-  },
-  HELP: {
-    DRAG_AND_DROP: strings.help.dragAndDrop,
-    KEYBOARD_CONTROLS: strings.help.keyboardControls,
-    OBJECT_SELECTION: strings.help.objectSelection,
-    CONTROLS: strings.help.controls,
-    ADJUST: strings.help.adjust,
-    SCENARIOS: strings.help.scenarios,
-    TOGGLE_MOTION_TRAILS: strings.help.toggleMotionTrails,
-    TOGGLE_MICROPHONE: strings.help.toggleMicrophone,
-    DRAG_MICROPHONE: strings.help.dragMicrophone,
-  },
-  SCENARIOS: {
-    FREE_PLAY: strings.scenarios.freePlay,
-    SOURCE_MOVING_TOWARD_OBSERVER: strings.scenarios.sourceMovingTowardObserver,
-    OBSERVER_MOVING_TOWARD_SOURCE: strings.scenarios.observerMovingTowardSource,
-    MOVING_AWAY: strings.scenarios.movingAway,
-    PERPENDICULAR: strings.scenarios.perpendicular,
-  },
-};
+// Create localized string properties
+const StringProperties = LocalizedString.getNestedStringProperties({
+  en: strings_en,
+  fr: strings_fr
+});
 
 /**
  * View for the Doppler Effect simulation
@@ -196,6 +156,12 @@ export class SimScreenView extends ScreenView {
     this.visibleVelocityArrowProperty = new Property<boolean>(false);
     this.visibleLineOfSightProperty = new Property<boolean>(false);
     this.visibleTrailsProperty = new Property<boolean>(false);
+
+    // Create a derived property for the selected object name
+    const selectedObjectNameProperty = new DerivedProperty(
+      [this.selectedObjectProperty, StringProperties.sourceStringProperty, StringProperties.observerStringProperty],
+      (selected, sourceName, observerName) => selected === "source" ? sourceName : observerName
+    );
 
     // Create display layers and add to the view in correct order (waves behind objects)
     this.waveLayer = new Node();
@@ -329,8 +295,8 @@ export class SimScreenView extends ScreenView {
     // Create graph display component
     this.graphDisplay = new GraphDisplayNode(
       {
-        EMITTED_SOUND: STRINGS.GRAPHS.EMITTED_SOUND,
-        OBSERVED_SOUND: STRINGS.GRAPHS.OBSERVED_SOUND,
+        emittedSoundStringProperty: StringProperties.graphs.emittedSoundStringProperty,
+        observedSoundStringProperty: StringProperties.graphs.observedSoundStringProperty,
       },
       {
         layoutBounds: {
@@ -352,14 +318,17 @@ export class SimScreenView extends ScreenView {
     // Create status text display
     this.statusDisplay = new StatusTextNode(
       {
-        EMITTED_FREQUENCY: STRINGS.GRAPHS.EMITTED_FREQUENCY,
-        OBSERVED_FREQUENCY: STRINGS.GRAPHS.OBSERVED_FREQUENCY,
-        SELECTED_OBJECT: STRINGS.SELECTED_OBJECT,
-        BLUESHIFT: STRINGS.SHIFT.BLUEShift,
-        REDSHIFT: STRINGS.SHIFT.REDshift,
-        SOURCE: STRINGS.SOURCE,
-        OBSERVER: STRINGS.OBSERVER,
+        emittedFrequencyPatternStringProperty: StringProperties.graphs.emittedFrequencyStringProperty,
+        observedFrequencyPatternStringProperty: StringProperties.graphs.observedFrequencyStringProperty,
+        selectedObjectPatternStringProperty: StringProperties.selectedObjectStringProperty,
+        blueshiftStringProperty: StringProperties.shift.blueshiftStringProperty,
+        redshiftStringProperty: StringProperties.shift.redshiftStringProperty,
+        sourceStringProperty: StringProperties.sourceStringProperty,
+        observerStringProperty: StringProperties.observerStringProperty,
       },
+      this.model.emittedFrequencyProperty,
+      this.model.observedFrequencyProperty,
+      selectedObjectNameProperty,
       this.visibleValuesProperty,
       {
         layoutBounds: {
@@ -381,16 +350,16 @@ export class SimScreenView extends ScreenView {
     // Create instructions display
     this.instructionsDisplay = new InstructionsNode(
       {
-        TITLE: STRINGS.TITLE,
-        DRAG_AND_DROP: STRINGS.HELP.DRAG_AND_DROP,
-        KEYBOARD_CONTROLS: STRINGS.HELP.KEYBOARD_CONTROLS,
-        OBJECT_SELECTION: STRINGS.HELP.OBJECT_SELECTION,
-        CONTROLS: STRINGS.HELP.CONTROLS,
-        ADJUST: STRINGS.HELP.ADJUST,
-        SCENARIOS: STRINGS.HELP.SCENARIOS,
-        TOGGLE_MOTION_TRAILS: STRINGS.HELP.TOGGLE_MOTION_TRAILS,
-        TOGGLE_MICROPHONE: STRINGS.HELP.TOGGLE_MICROPHONE,
-        DRAG_MICROPHONE: STRINGS.HELP.DRAG_MICROPHONE,
+        titleStringProperty: StringProperties.titleStringProperty,
+        dragAndDropStringProperty: StringProperties.help.dragAndDropStringProperty,
+        keyboardControlsStringProperty: StringProperties.help.keyboardControlsStringProperty,
+        objectSelectionStringProperty: StringProperties.help.objectSelectionStringProperty,
+        controlsStringProperty: StringProperties.help.controlsStringProperty,
+        adjustStringProperty: StringProperties.help.adjustStringProperty,
+        scenariosStringProperty: StringProperties.help.scenariosStringProperty,
+        toggleMotionTrailsStringProperty: StringProperties.help.toggleMotionTrailsStringProperty,
+        toggleMicrophoneStringProperty: StringProperties.help.toggleMicrophoneStringProperty,
+        dragMicrophoneStringProperty: StringProperties.help.dragMicrophoneStringProperty,
       },
       {
         layoutBounds: {
@@ -406,15 +375,15 @@ export class SimScreenView extends ScreenView {
     // Create control panel
     this.controlPanel = new ControlPanelNode(
       {
-        VALUES: STRINGS.CONTROLS.VALUES,
-        VELOCITY_ARROWS: STRINGS.CONTROLS.VELOCITY_ARROWS,
-        LINE_OF_SIGHT: STRINGS.CONTROLS.LINE_OF_SIGHT,
-        SOUND_SPEED: STRINGS.CONTROLS.SOUND_SPEED,
-        FREQUENCY: STRINGS.CONTROLS.FREQUENCY,
-        MOTION_TRAILS: STRINGS.CONTROLS.MOTION_TRAILS,
-        METERS_PER_SECOND: STRINGS.UNITS.METERS_PER_SECOND,
-        HERTZ: STRINGS.UNITS.HERTZ,
-        MICROPHONE_CLICKS: STRINGS.CONTROLS.MICROPHONE_CLICKS,
+        valuesStringProperty: StringProperties.controls.valuesStringProperty,
+        velocityArrowsStringProperty: StringProperties.controls.velocityArrowsStringProperty,
+        lineOfSightStringProperty: StringProperties.controls.lineOfSightStringProperty,
+        soundSpeedStringProperty: StringProperties.controls.soundSpeedStringProperty,
+        frequencyStringProperty: StringProperties.controls.frequencyStringProperty,
+        motionTrailsStringProperty: StringProperties.controls.motionTrailsStringProperty,
+        metersPerSecondStringProperty: StringProperties.units.metersPerSecondStringProperty,
+        hertzStringProperty: StringProperties.units.hertzStringProperty,
+        microphoneClicksStringProperty: StringProperties.controls.microphoneClicksStringProperty,
       },
       this.visibleValuesProperty,
       this.visibleVelocityArrowProperty,
@@ -703,16 +672,8 @@ export class SimScreenView extends ScreenView {
    * Update text displays with current values
    */
   private updateText(): void {
-    const selectedObjectName =
-      this.selectedObjectProperty.value === "source"
-        ? STRINGS.SOURCE
-        : STRINGS.OBSERVER;
-
-    this.statusDisplay.updateValues(
-      this.model.emittedFrequencyProperty.value,
-      this.model.observedFrequencyProperty.value,
-      selectedObjectName,
-    );
+    // No need to call updateValues as the properties are now linked in StatusTextNode
+    // Any change to the source properties will automatically update the text
   }
 
   /**
@@ -739,12 +700,12 @@ export class SimScreenView extends ScreenView {
    * @param textColor - The color for the scenario text
    * @returns Array of scenario items for the combo box
    */
-  private createScenarioItems(textColor: Color) {
+  private createScenarioItems(textColor: Color): { value: Scenario; createNode: () => Text }[] {
     return [
       {
         value: Scenario.FREE_PLAY,
         createNode: () =>
-          new Text(STRINGS.SCENARIOS.FREE_PLAY, {
+          new Text(StringProperties.scenarios.freePlayStringProperty, {
             font: new PhetFont(14),
             fill: textColor,
           }),
@@ -752,7 +713,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_1,
         createNode: () =>
-          new Text(STRINGS.SCENARIOS.SOURCE_MOVING_TOWARD_OBSERVER, {
+          new Text(StringProperties.scenarios.sourceMovingTowardObserverStringProperty, {
             font: new PhetFont(14),
             fill: textColor,
           }),
@@ -760,7 +721,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_2,
         createNode: () =>
-          new Text(STRINGS.SCENARIOS.OBSERVER_MOVING_TOWARD_SOURCE, {
+          new Text(StringProperties.scenarios.observerMovingTowardSourceStringProperty, {
             font: new PhetFont(14),
             fill: textColor,
           }),
@@ -768,7 +729,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_3,
         createNode: () =>
-          new Text(STRINGS.SCENARIOS.MOVING_AWAY, {
+          new Text(StringProperties.scenarios.movingAwayStringProperty, {
             font: new PhetFont(14),
             fill: textColor,
           }),
@@ -776,7 +737,7 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_4,
         createNode: () =>
-          new Text(STRINGS.SCENARIOS.PERPENDICULAR, {
+          new Text(StringProperties.scenarios.perpendicularStringProperty, {
             font: new PhetFont(14),
             fill: textColor,
           }),

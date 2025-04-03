@@ -16,6 +16,7 @@ import {
   Text,
 } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
+import { ReadOnlyProperty } from "scenerystack/axon";
 
 // Waveform data from the model
 export type WaveformPoint = {
@@ -25,8 +26,8 @@ export type WaveformPoint = {
 
 // Type for graph-related strings
 type GraphStrings = {
-  EMITTED_SOUND: string;
-  OBSERVED_SOUND: string;
+  emittedSoundStringProperty: ReadOnlyProperty<string>;
+  observedSoundStringProperty: ReadOnlyProperty<string>;
 };
 
 // Configuration options for the graph display
@@ -125,14 +126,14 @@ export class GraphDisplayNode extends Node {
     });
 
     // Add graph titles
-    const emittedTitle = new Text(strings.EMITTED_SOUND, {
+    const emittedTitle = new Text(strings.emittedSoundStringProperty, {
       font: new PhetFont(12),
       fill: options.textColor,
       left: graphX + 5,
       top: graphY1 + 15,
     });
 
-    const observedTitle = new Text(strings.OBSERVED_SOUND, {
+    const observedTitle = new Text(strings.observedSoundStringProperty, {
       font: new PhetFont(12),
       fill: options.textColor,
       left: graphX + 5,

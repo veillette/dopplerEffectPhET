@@ -4,21 +4,22 @@
  * Contains the help instructions functionality for the Doppler Effect simulation.
  */
 
-import { Node, Rectangle, Text, Color } from "scenerystack";
+import { Node, Rectangle, Text, Color, StringProperty } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
+import { ReadOnlyProperty } from "scenerystack/axon";
 
 // Type for instruction-related strings
 type InstructionStrings = {
-  TITLE: string;
-  DRAG_AND_DROP: string;
-  KEYBOARD_CONTROLS: string;
-  OBJECT_SELECTION: string;
-  CONTROLS: string;
-  ADJUST: string;
-  SCENARIOS: string;
-  TOGGLE_MOTION_TRAILS: string;
-  TOGGLE_MICROPHONE: string;
-  DRAG_MICROPHONE: string;
+  titleStringProperty: ReadOnlyProperty<string>;
+  dragAndDropStringProperty: ReadOnlyProperty<string>;
+  keyboardControlsStringProperty: ReadOnlyProperty<string>;
+  objectSelectionStringProperty: ReadOnlyProperty<string>;
+  controlsStringProperty: ReadOnlyProperty<string>;
+  adjustStringProperty: ReadOnlyProperty<string>;
+  scenariosStringProperty: ReadOnlyProperty<string>;
+  toggleMotionTrailsStringProperty: ReadOnlyProperty<string>;
+  toggleMicrophoneStringProperty: ReadOnlyProperty<string>;
+  dragMicrophoneStringProperty: ReadOnlyProperty<string>;
 };
 
 // Configuration options for the instructions display
@@ -57,7 +58,7 @@ export class InstructionsNode extends Node {
     this.addChild(this.background);
 
     // Add title
-    const title = new Text(strings.TITLE, {
+    const title = new Text(strings.titleStringProperty, {
       font: new PhetFont({ size: 16, weight: "bold" }),
       fill: options.textColor,
       centerX: this.background.centerX,
@@ -67,15 +68,15 @@ export class InstructionsNode extends Node {
 
     // Instructions text array
     const instructions = [
-      strings.DRAG_AND_DROP,
-      strings.KEYBOARD_CONTROLS,
-      strings.OBJECT_SELECTION,
-      strings.CONTROLS,
-      strings.ADJUST,
-      strings.SCENARIOS,
-      strings.TOGGLE_MOTION_TRAILS,
-      strings.TOGGLE_MICROPHONE,
-      strings.DRAG_MICROPHONE,
+      strings.dragAndDropStringProperty,
+      strings.keyboardControlsStringProperty,
+      strings.objectSelectionStringProperty,
+      strings.controlsStringProperty,
+      strings.adjustStringProperty,
+      strings.scenariosStringProperty,
+      strings.toggleMotionTrailsStringProperty,
+      strings.toggleMicrophoneStringProperty,
+      strings.dragMicrophoneStringProperty,
     ];
 
     // Add instruction lines

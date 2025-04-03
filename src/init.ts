@@ -17,7 +17,7 @@ import type { TBrand } from "scenerystack/brand";
     locale: "en",
 
     // List of locales that are supported (and can be switched between in the simulation while running)
-    availableLocales: ["en"],
+    availableLocales: ["en", "fr"],
 
     // Image to show while loading the simulation. Can be any image URL.
     splashDataURI:

@@ -5,18 +5,19 @@
  * Doppler shift indicators, and selected object information.
  */
 
-import { Node, Text, Color, Property } from "scenerystack";
+import { Node, Text, Color } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
+import { ReadOnlyProperty, PatternStringProperty, DerivedProperty } from "scenerystack/axon";
 
-// Type for status text-related strings
-type StatusStrings = {
-  EMITTED_FREQUENCY: string;
-  OBSERVED_FREQUENCY: string;
-  SELECTED_OBJECT: string;
-  BLUESHIFT: string;
-  REDSHIFT: string;
-  SOURCE: string;
-  OBSERVER: string;
+// Type for status text-related strings, renamed according to convention
+type StatusStringProperties = {
+  emittedFrequencyPatternStringProperty: ReadOnlyProperty<string>;
+  observedFrequencyPatternStringProperty: ReadOnlyProperty<string>;
+  selectedObjectPatternStringProperty: ReadOnlyProperty<string>;
+  blueshiftStringProperty: ReadOnlyProperty<string>;
+  redshiftStringProperty: ReadOnlyProperty<string>;
+  sourceStringProperty: ReadOnlyProperty<string>; // Assuming SOURCE maps to sourceStringProperty
+  observerStringProperty: ReadOnlyProperty<string>; // Assuming OBSERVER maps to observerStringProperty
 };
 
 // Configuration options for the status text display
@@ -43,48 +44,75 @@ export class StatusTextNode extends Node {
   private readonly observedFreqText: Text;
   private readonly selectedObjectText: Text;
   private readonly shiftStatusText: Text;
-  private readonly strings: StatusStrings;
 
   /**
    * Constructor for the StatusTextNode
    *
-   * @param strings - Text strings to display
+   * @param statusStringProperties - Text pattern string Properties
+   * @param emittedFrequencyProperty - Property for the emitted frequency value
+   * @param observedFrequencyProperty - Property for the observed frequency value
+   * @param selectedObjectNameProperty - Property for the selected object name
    * @param visibleValuesProperty - Property that controls visibility of values
    * @param options - Configuration options
    */
   constructor(
-    strings: StatusStrings,
-    private readonly visibleValuesProperty: Property<boolean>,
+    statusStringProperties: StatusStringProperties,
+    emittedFrequencyProperty: ReadOnlyProperty<number>,
+    observedFrequencyProperty: ReadOnlyProperty<number>,
+    selectedObjectNameProperty: ReadOnlyProperty<string>,
+    visibleValuesProperty: ReadOnlyProperty<boolean>,
     options: StatusTextOptions,
   ) {
     super();
 
-    this.strings = strings;
-
     // Create text nodes
-    this.emittedFreqText = new Text("", {
+    this.emittedFreqText = new Text(emittedFrequencyProperty.value, {
       font: new PhetFont(14),
       fill: options.textColor,
       visibleProperty: visibleValuesProperty,
+      stringProperty: new PatternStringProperty(statusStringProperties.emittedFrequencyPatternStringProperty, {
+        value: emittedFrequencyProperty,
+      }),
     });
 
-    this.observedFreqText = new Text("", {
+    this.observedFreqText = new Text(observedFrequencyProperty.value, {
       font: new PhetFont(14),
       fill: options.textColor,
       visibleProperty: visibleValuesProperty,
+      stringProperty: new PatternStringProperty(statusStringProperties.observedFrequencyPatternStringProperty, {
+        value: observedFrequencyProperty,
+      }),
     });
 
     this.selectedObjectText = new Text("", {
       font: new PhetFont(14),
       fill: options.selectionColor,
       visibleProperty: visibleValuesProperty,
+      stringProperty: new PatternStringProperty(statusStringProperties.selectedObjectPatternStringProperty, {
+        object: selectedObjectNameProperty,
+      }),
     });
+
+    // Derived property for shift status text content
+    const shiftStatusStringProperty = new DerivedProperty(
+      [emittedFrequencyProperty, observedFrequencyProperty],
+      (emitted, observed) => {
+        if (observed > emitted) {
+          return statusStringProperties.blueshiftStringProperty.value;
+        } else if (observed < emitted) {
+          return statusStringProperties.redshiftStringProperty.value;
+        } else {
+          return "";
+        }
+      },
+    );
 
     this.shiftStatusText = new Text("", {
       font: new PhetFont(16),
       fill: options.textColor,
       fontWeight: "bold",
       visibleProperty: visibleValuesProperty,
+      stringProperty: shiftStatusStringProperty,
     });
 
     // Position text elements
@@ -110,50 +138,5 @@ export class StatusTextNode extends Node {
     this.addChild(this.observedFreqText);
     this.addChild(this.selectedObjectText);
     this.addChild(this.shiftStatusText);
-  }
-
-  /**
-   * Update the displayed values
-   *
-   * @param emittedFrequency - The emitted frequency value
-   * @param observedFrequency - The observed frequency value
-   * @param selectedObjectName - The name of the selected object
-   */
-  public updateValues(
-    emittedFrequency: number,
-    observedFrequency: number,
-    selectedObjectName: string,
-  ): void {
-    // Update frequency text displays
-    this.emittedFreqText.string = this.strings.EMITTED_FREQUENCY.replace(
-      "{{value}}",
-      emittedFrequency.toFixed(2),
-    );
-
-    this.observedFreqText.string = this.strings.OBSERVED_FREQUENCY.replace(
-      "{{value}}",
-      observedFrequency.toFixed(2),
-    );
-
-    // Update selected object text
-    this.selectedObjectText.string = this.strings.SELECTED_OBJECT.replace(
-      "{{object}}",
-      selectedObjectName,
-    );
-
-    // Update Doppler shift status text
-    if (observedFrequency > emittedFrequency) {
-      this.shiftStatusText.string = this.strings.BLUESHIFT;
-      this.shiftStatusText.fill = this.visibleValuesProperty.value
-        ? new Color(40, 40, 255)
-        : new Color(0, 0, 0, 0);
-    } else if (observedFrequency < emittedFrequency) {
-      this.shiftStatusText.string = this.strings.REDSHIFT;
-      this.shiftStatusText.fill = this.visibleValuesProperty.value
-        ? new Color(255, 40, 40)
-        : new Color(0, 0, 0, 0);
-    } else {
-      this.shiftStatusText.string = "";
-    }
   }
 }
