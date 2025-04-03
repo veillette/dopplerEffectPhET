@@ -16,6 +16,7 @@ import {
   InfoButton,
   PhetFont,
   ResetAllButton,
+  TimeControlNode,
 } from "scenerystack/scenery-phet";
 import { ComboBox } from "scenerystack/sun";
 import { Scenario, SimModel } from "../model/SimModel";
@@ -457,6 +458,21 @@ export class SimScreenView extends ScreenView {
       bottom: this.layoutBounds.maxY - 10,
     });
     this.controlLayer.addChild(infoButton);
+
+    // Add time control node
+    const timeControlNode = new TimeControlNode(this.model.playProperty, {
+      timeSpeedProperty: this.model.timeSpeedProperty,
+      playPauseStepButtonOptions: {
+        stepForwardButtonOptions: {
+          listener: () => {
+            this.model.step(1 / 60, true);
+          },
+        },
+      },
+    });
+    timeControlNode.centerX = this.layoutBounds.centerX;
+    timeControlNode.bottom = this.layoutBounds.maxY - 10;
+    this.controlLayer.addChild(timeControlNode);
 
     // Setup keyboard handlers
     this.keyboardManager.attachKeyboardHandlers(
