@@ -14,7 +14,7 @@ The simulation follows a modular architecture:
 Data flows primarily from Model → View, with user interactions in the View triggering updates to the Model. We use the AXON property system (from PhET/SceneryStack libraries) to create observable properties that automatically notify components of changes.
 
 ### Model-View Transform
-A coordinate transformation system maps between model space (physical units) and view space (screen units). This abstraction allows the physics model to work in physically meaningful units (meters, seconds) while the view handles screen-specific units (view coordinates). We have chosen to place the physical origin at the center of the layout bounds and selected an inverted Y-axis in screen coordinates. We use an isometric scaling along the x and the y that is speccified in SCALE.MODEL_VIEW. 
+A coordinate transformation system maps between model space (physical units) and view space (screen units). This abstraction allows the physics model to work in physically meaningful units (meters, seconds) while the view handles screen-specific units (view coordinates). We have chosen to place the physical origin at the center of the layout bounds and selected an inverted Y-axis in screen coordinates. We use an isometric scaling along the x and the y that is specified in SCALE.MODEL_VIEW. 
 
 ## Model Components
 
@@ -48,7 +48,7 @@ this.sourcePositionProperty = this.source.positionProperty;
 this.emittedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
 ```
 
-The majority of the Physics constants have been hoisted in `SimConstants.ts'
+The majority of the Physics constants have been hoisted in `SimConstants.ts`
 
 We use a step function with scaled time:
 
@@ -71,7 +71,7 @@ public step(dt: number, force: boolean = false): void {
 
 ### Model-View Communication with AXON Properties
 
-The simulation uses PhET's AXON property system extensively. Observable properties are defined in model classes and xomponents subscribe to property changes via `link()` and 
+The simulation uses PhET's AXON property system extensively. Observable properties are defined in model classes and components subscribe to property changes via `link()` and 
 `lazyLink()`. For instance, we use AXON properties to update the values:
 
 ```typescript
@@ -85,7 +85,7 @@ this.scenarioProperty.lazyLink((scenario) => {
 });
 ```
 
-For the Waves components, we have created an ObservaleARray. IN some cases, we resorted to `DerivedProperty` for values that depend on multiple properties
+For the Waves components, we have created an ObservableArray. In some cases, we resorted to `DerivedProperty` for values that depend on multiple properties.
 
 
 ## View Components
@@ -111,10 +111,10 @@ Specialized manager classes handle specific visualization aspects:
 
 ### Performance Optimizations
 
-We have attempted to optimize this simulation, but trying to reduced its footprint.
+We have attempted to optimize this simulation, but trying to reduce its footprint.
 
 - Waves are removed after exceeding maximum age
-- For the motion trails,it is both age and size constraints
+- For the motion trails, it is both age and size constraints
 - For the graphs, there is a fixed-size buffer for waveform data
 
-Note that no dispose functions have been used, which should be adressed.
+Note that no dispose functions have been used, which should be addressed.
