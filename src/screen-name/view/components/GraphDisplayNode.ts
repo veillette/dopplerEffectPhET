@@ -209,14 +209,22 @@ export class GraphDisplayNode extends Node {
   ): Shape {
     const shape = new Shape();
 
+    // Find the maximum t value to ensure right alignment
+    let maxT = 0;
+    for (let i = 0; i < waveformData.length; i++) {
+      maxT = Math.max(maxT, waveformData[i].t);
+    }
+
     // Start at left edge
     shape.moveToPoint(new Vector2(graphX, graphY));
 
     let firstValidPointFound = false;
 
     for (let i = 0; i < waveformData.length; i++) {
-      // Calculate x position using t instead of x
-      const tRatio = Math.max(0, Math.min(1, waveformData[i].t));
+      // Right-align the waveform by scaling the t values relative to maxT
+      // This ensures the current time (latest point) is always at the right edge
+      const normalizedT = maxT > 0 ? waveformData[i].t / maxT : 0;
+      const tRatio = Math.max(0, Math.min(1, normalizedT));
       const x = graphX + tRatio * graphWidth;
       const y = graphY - waveformData[i].y;
 
