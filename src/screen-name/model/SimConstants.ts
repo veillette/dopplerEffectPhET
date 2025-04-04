@@ -11,10 +11,10 @@
 
 import { Vector2 } from "scenerystack";
 
-// Add this type definition near the top of the file
+// Definition for waveform data used in visualization
 export type WaveformPoint = {
-  t: number; // Time value in seconds (s)
-  y: number; // Amplitude value (dimensionless)
+  t: number; // Time value in seconds (s), used for right-aligned visualization
+  y: number; // Raw amplitude value (dimensionless), will be scaled for display
 };
 
 // Physical constants in SI units

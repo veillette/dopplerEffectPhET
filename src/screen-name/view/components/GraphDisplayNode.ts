@@ -3,6 +3,11 @@
  *
  * Contains the graph display functionality for the Doppler Effect simulation,
  * including emitted and observed waveforms.
+ * 
+ * Features:
+ * - Right-aligned waveforms that ensure current time is at the right edge
+ * - Y-axis scaling for better waveform visualization
+ * - Encapsulated graph element creation for emitted and observed sound
  */
 
 import {
@@ -28,8 +33,8 @@ const WAVEFORM_Y_SCALING = 20; // Scaling factor for Y-axis amplitude
 
 // Waveform data from the model
 export type WaveformPoint = {
-  t: number;
-  y: number;
+  t: number; // Time in seconds (s)
+  y: number; // Amplitude (dimensionless)
 };
 
 // Type for graph-related strings
@@ -64,6 +69,8 @@ interface GraphConfig {
 
 /**
  * Component that renders the waveform graphs for the simulation
+ * Displays both emitted and observed sound waveforms with right-alignment
+ * and amplitude scaling.
  */
 export class GraphDisplayNode extends Node {
   // Graph components
@@ -125,6 +132,8 @@ export class GraphDisplayNode extends Node {
 
   /**
    * Create all elements for a graph
+   * Encapsulates the creation of a complete graph with container, center line,
+   * waveform, and title.
    * 
    * @param graphX - X position of the graph
    * @param graphY - Y position of the graph
@@ -243,6 +252,7 @@ export class GraphDisplayNode extends Node {
 
   /**
    * Find the maximum t value in waveform data
+   * Used to ensure right-alignment of waveforms
    * 
    * @param waveformData - Array of waveform data points
    * @returns Maximum t value
@@ -257,6 +267,8 @@ export class GraphDisplayNode extends Node {
 
   /**
    * Create a waveform shape from waveform data
+   * Applies right-alignment so current time is at the right edge of the graph.
+   * Also applies Y-scaling factor to amplify the waveform for better visualization.
    *
    * @param graphX - The x-coordinate of the left edge of the graph
    * @param graphY - The y-coordinate of the center of the graph

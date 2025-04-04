@@ -3,13 +3,18 @@ import { WaveformPoint } from "./SimConstants";
 /**
  * WaveformManager handles the generation and updating of waveform data
  * for both emitted and observed sound.
+ * 
+ * The class has been refactored to encapsulate repeated logic and improve efficiency.
+ * It manages sound data arrays and converts them to visual waveform data with
+ * appropriate time scaling factors.
  */
 export class WaveformManager {
   // Sound data for graphs (unitless amplitude values)
-  public readonly emittedSoundData: number[] = []; // dimensionless amplitude values
-  public readonly observedSoundData: number[] = []; // dimensionless amplitude values
+  public readonly emittedSoundData: number[] = []; // raw amplitude values (dimensionless)
+  public readonly observedSoundData: number[] = []; // raw amplitude values (dimensionless)
 
   // Waveforms data for view visualization
+  // These are the processed arrays used by the GraphDisplayNode
   public readonly emittedWaveformData: WaveformPoint[] = []; // t in seconds (s), y is dimensionless
   public readonly observedWaveformData: WaveformPoint[] = []; // t in seconds (s), y is dimensionless
 
@@ -27,6 +32,7 @@ export class WaveformManager {
 
   /**
    * Initialize data arrays with default values
+   * Clears existing arrays and populates them with initial values
    * @param size Size of the arrays to initialize
    */
   private initializeArrays(size: number): void {
@@ -41,7 +47,7 @@ export class WaveformManager {
       this.emittedSoundData.push(0);
       this.observedSoundData.push(0);
 
-      // Initialize waveform data arrays
+      // Initialize waveform data arrays with normalized time values
       this.emittedWaveformData.push({ t: i / size, y: 0 });
       this.observedWaveformData.push({ t: i / size, y: 0 });
     }
@@ -58,10 +64,10 @@ export class WaveformManager {
     dt: number,
     timeSpeedFactor: number,
   ): void {
-    // Calculate emitted waveform (in model time)
+    // Calculate emitted waveform phase (in model time)
     this.emittedPhase += emittedFrequency * dt * Math.PI * 2; // in radians (rad)
 
-    // Update sound data and apply time speed factor
+    // Update sound data and apply time speed factor using encapsulated methods
     this.updateSoundData(
       this.emittedSoundData,
       this.emittedWaveformData,
@@ -87,7 +93,7 @@ export class WaveformManager {
     const additionalPhase = timeSinceArrival * observedFrequency * Math.PI * 2; // in radians (rad)
     this.observedPhase = phaseAtArrival + additionalPhase; // in radians (rad)
 
-    // Update sound data and apply time speed factor
+    // Update sound data and apply time speed factor using encapsulated methods
     this.updateSoundData(
       this.observedSoundData,
       this.observedWaveformData,
@@ -98,6 +104,7 @@ export class WaveformManager {
 
   /**
    * Update sound data arrays and waveform data
+   * Encapsulates the common pattern of updating sound data and applying time speed factor
    * @param soundData Sound data array to update
    * @param waveformData Waveform data array to update
    * @param newValue New value to add to the sound data
@@ -119,6 +126,7 @@ export class WaveformManager {
 
   /**
    * Update waveform data based on sound data and time speed factor
+   * Transforms raw sound data into properly scaled waveform visualization data
    * @param soundData Source sound data array
    * @param waveformData Target waveform data array to update
    * @param timeSpeedFactor Time speed factor to apply
@@ -139,17 +147,19 @@ export class WaveformManager {
 
   /**
    * Clear waveform with no signal (for when no waves have reached observer)
+   * Sets observed waveform data to zeroes
    */
   public clearObservedWaveform(): void {
     this.observedSoundData.push(0);
     this.observedSoundData.shift();
     
-    // Update the waveform visualization data
+    // Update the waveform visualization data with default time speed factor
     this.updateWaveformData(this.observedSoundData, this.observedWaveformData, 1);
   }
 
   /**
    * Get current emitted phase
+   * @returns Current phase of the emitted wave in radians
    */
   public getEmittedPhase(): number {
     return this.emittedPhase;
@@ -157,6 +167,7 @@ export class WaveformManager {
 
   /**
    * Reset the waveform manager state
+   * Resets phase accumulators and reinitializes all data arrays
    * @param soundDataSize Size of the waveform data arrays
    */
   public reset(soundDataSize: number): void {
