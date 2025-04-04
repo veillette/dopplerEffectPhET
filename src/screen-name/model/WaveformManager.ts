@@ -22,14 +22,28 @@ export class WaveformManager {
    * @param soundDataSize Number of points to store in waveform arrays
    */
   constructor(private readonly soundDataSize: number) {
-    // Initialize sound data arrays
-    for (let i = 0; i < soundDataSize; i++) {
+    this.initializeArrays(soundDataSize);
+  }
+
+  /**
+   * Initialize data arrays with default values
+   * @param size Size of the arrays to initialize
+   */
+  private initializeArrays(size: number): void {
+    // Reset existing arrays if they contain data
+    this.emittedSoundData.length = 0;
+    this.observedSoundData.length = 0;
+    this.emittedWaveformData.length = 0;
+    this.observedWaveformData.length = 0;
+
+    // Initialize arrays with default values
+    for (let i = 0; i < size; i++) {
       this.emittedSoundData.push(0);
       this.observedSoundData.push(0);
 
       // Initialize waveform data arrays
-      this.emittedWaveformData.push({ t: i / soundDataSize, y: 0 });
-      this.observedWaveformData.push({ t: i / soundDataSize, y: 0 });
+      this.emittedWaveformData.push({ t: i / size, y: 0 });
+      this.observedWaveformData.push({ t: i / size, y: 0 });
     }
   }
 
@@ -47,17 +61,13 @@ export class WaveformManager {
     // Calculate emitted waveform (in model time)
     this.emittedPhase += emittedFrequency * dt * Math.PI * 2; // in radians (rad)
 
-    // Update emitted sound data
-    this.emittedSoundData.push(Math.sin(this.emittedPhase) * 30); // dimensionless scaling
-    this.emittedSoundData.shift();
-
-    // Apply time speed factor to the waveform display
-    for (let i = 0; i < this.emittedSoundData.length; i++) {
-      this.emittedWaveformData[i] = {
-        t: (i / this.emittedSoundData.length) * timeSpeedFactor, // in seconds (s)
-        y: this.emittedSoundData[i], // dimensionless amplitude
-      };
-    }
+    // Update sound data and apply time speed factor
+    this.updateSoundData(
+      this.emittedSoundData,
+      this.emittedWaveformData,
+      Math.sin(this.emittedPhase),
+      timeSpeedFactor
+    );
   }
 
   /**
@@ -77,16 +87,52 @@ export class WaveformManager {
     const additionalPhase = timeSinceArrival * observedFrequency * Math.PI * 2; // in radians (rad)
     this.observedPhase = phaseAtArrival + additionalPhase; // in radians (rad)
 
-    // Update observed sound data
-    this.observedSoundData.push(Math.sin(this.observedPhase) * 30); // dimensionless scaling
-    this.observedSoundData.shift();
+    // Update sound data and apply time speed factor
+    this.updateSoundData(
+      this.observedSoundData,
+      this.observedWaveformData,
+      Math.sin(this.observedPhase),
+      timeSpeedFactor
+    );
+  }
 
-    // TODO: this seems an expensive operation, we should try to optimize it
+  /**
+   * Update sound data arrays and waveform data
+   * @param soundData Sound data array to update
+   * @param waveformData Waveform data array to update
+   * @param newValue New value to add to the sound data
+   * @param timeSpeedFactor Time speed factor to apply to waveform data
+   */
+  private updateSoundData(
+    soundData: number[],
+    waveformData: WaveformPoint[],
+    newValue: number,
+    timeSpeedFactor: number
+  ): void {
+    // Update sound data with new value (shift off oldest value)
+    soundData.push(newValue);
+    soundData.shift();
+
     // Apply time speed factor to the waveform display
-    for (let i = 0; i < this.observedSoundData.length; i++) {
-      this.observedWaveformData[i] = {
-        t: (i / this.observedSoundData.length) * timeSpeedFactor,
-        y: this.observedSoundData[i],
+    this.updateWaveformData(soundData, waveformData, timeSpeedFactor);
+  }
+
+  /**
+   * Update waveform data based on sound data and time speed factor
+   * @param soundData Source sound data array
+   * @param waveformData Target waveform data array to update
+   * @param timeSpeedFactor Time speed factor to apply
+   */
+  private updateWaveformData(
+    soundData: number[],
+    waveformData: WaveformPoint[],
+    timeSpeedFactor: number
+  ): void {
+    // Apply time speed factor to the waveform display
+    for (let i = 0; i < soundData.length; i++) {
+      waveformData[i] = {
+        t: (i / soundData.length) * timeSpeedFactor, // in seconds (s)
+        y: soundData[i], // dimensionless amplitude
       };
     }
   }
@@ -97,6 +143,9 @@ export class WaveformManager {
   public clearObservedWaveform(): void {
     this.observedSoundData.push(0);
     this.observedSoundData.shift();
+    
+    // Update the waveform visualization data
+    this.updateWaveformData(this.observedSoundData, this.observedWaveformData, 1);
   }
 
   /**
@@ -113,15 +162,6 @@ export class WaveformManager {
   public reset(soundDataSize: number): void {
     this.emittedPhase = 0;
     this.observedPhase = 0;
-
-    // Reset sound data
-    for (let i = 0; i < this.emittedSoundData.length; i++) {
-      this.emittedSoundData[i] = 0;
-      this.observedSoundData[i] = 0;
-
-      // Reset waveform data
-      this.emittedWaveformData[i] = { t: i / soundDataSize, y: 0 };
-      this.observedWaveformData[i] = { t: i / soundDataSize, y: 0 };
-    }
+    this.initializeArrays(soundDataSize);
   }
 }

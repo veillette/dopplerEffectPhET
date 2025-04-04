@@ -18,6 +18,14 @@ import {
 import { PhetFont } from "scenerystack/scenery-phet";
 import { ReadOnlyProperty } from "scenerystack/axon";
 
+// Constants for layout positioning and styling
+const GRAPH_TITLE_OFFSET_X = 5;
+const GRAPH_TITLE_OFFSET_Y = 15;
+const GRAPH_INITIAL_Y = 30;
+const WAVEFORM_LINE_WIDTH = 2;
+const TITLE_FONT_SIZE = 12;
+const WAVEFORM_Y_SCALING = 20; // Scaling factor for Y-axis amplitude
+
 // Waveform data from the model
 export type WaveformPoint = {
   t: number;
@@ -46,6 +54,14 @@ type GraphDisplayOptions = {
   graphSpacing: number;
 };
 
+// Type for defining a graph's positioning and properties
+interface GraphConfig {
+  rect: Rectangle;
+  centerLine: Line;
+  waveform: Path;
+  title: Text;
+}
+
 /**
  * Component that renders the waveform graphs for the simulation
  */
@@ -65,90 +81,123 @@ export class GraphDisplayNode extends Node {
   constructor(strings: GraphStrings, options: GraphDisplayOptions) {
     super();
 
-    const graphY1 = 30;
+    const graphY1 = GRAPH_INITIAL_Y;
     const graphY2 = graphY1 + options.graphHeight + options.graphSpacing;
     const graphX =
       options.layoutBounds.maxX - options.graphWidth - options.graphMargin;
 
-    // Create graph containers
-    this.emittedGraph = new Rectangle(
+    // Create emitted sound graph elements
+    const emittedGraphConfig = this.createGraphElements(
       graphX,
       graphY1,
       options.graphWidth,
       options.graphHeight,
-      {
-        fill: options.graphBackground,
-        stroke: options.graphGridColor,
-      },
+      options.graphBackground,
+      options.graphGridColor,
+      options.sourceColor,
+      strings.emittedSoundStringProperty,
+      options.textColor
     );
 
-    this.observedGraph = new Rectangle(
+    // Create observed sound graph elements
+    const observedGraphConfig = this.createGraphElements(
       graphX,
       graphY2,
       options.graphWidth,
       options.graphHeight,
-      {
-        fill: options.graphBackground,
-        stroke: options.graphGridColor,
-      },
+      options.graphBackground,
+      options.graphGridColor,
+      options.observerColor,
+      strings.observedSoundStringProperty,
+      options.textColor
     );
 
-    // Create center lines for graphs
-    const emittedCenterLine = new Line(
-      graphX,
-      graphY1 + options.graphHeight / 2,
-      graphX + options.graphWidth,
-      graphY1 + options.graphHeight / 2,
-      {
-        stroke: options.graphGridColor,
-      },
-    );
-
-    const observedCenterLine = new Line(
-      graphX,
-      graphY2 + options.graphHeight / 2,
-      graphX + options.graphWidth,
-      graphY2 + options.graphHeight / 2,
-      {
-        stroke: options.graphGridColor,
-      },
-    );
-
-    // Create waveform paths
-    this.emittedWaveform = new Path(new Shape(), {
-      stroke: options.sourceColor,
-      lineWidth: 2,
-    });
-
-    this.observedWaveform = new Path(new Shape(), {
-      stroke: options.observerColor,
-      lineWidth: 2,
-    });
-
-    // Add graph titles
-    const emittedTitle = new Text(strings.emittedSoundStringProperty, {
-      font: new PhetFont(12),
-      fill: options.textColor,
-      left: graphX + 5,
-      top: graphY1 + 15,
-    });
-
-    const observedTitle = new Text(strings.observedSoundStringProperty, {
-      font: new PhetFont(12),
-      fill: options.textColor,
-      left: graphX + 5,
-      top: graphY2 + 15,
-    });
+    // Store references to main components
+    this.emittedGraph = emittedGraphConfig.rect;
+    this.observedGraph = observedGraphConfig.rect;
+    this.emittedWaveform = emittedGraphConfig.waveform;
+    this.observedWaveform = observedGraphConfig.waveform;
 
     // Add all components to this node
-    this.addChild(this.emittedGraph);
-    this.addChild(this.observedGraph);
-    this.addChild(emittedCenterLine);
-    this.addChild(observedCenterLine);
-    this.addChild(this.emittedWaveform);
-    this.addChild(this.observedWaveform);
-    this.addChild(emittedTitle);
-    this.addChild(observedTitle);
+    this.addGraphElements(emittedGraphConfig);
+    this.addGraphElements(observedGraphConfig);
+  }
+
+  /**
+   * Create all elements for a graph
+   * 
+   * @param graphX - X position of the graph
+   * @param graphY - Y position of the graph
+   * @param width - Width of the graph
+   * @param height - Height of the graph
+   * @param backgroundColor - Background color of the graph
+   * @param gridColor - Color of grid lines
+   * @param waveformColor - Color of the waveform
+   * @param titleProperty - Title text property
+   * @param textColor - Color of the title text
+   * @returns Graph configuration object
+   */
+  private createGraphElements(
+    graphX: number,
+    graphY: number,
+    width: number,
+    height: number,
+    backgroundColor: Color,
+    gridColor: Color,
+    waveformColor: Color,
+    titleProperty: ReadOnlyProperty<string>,
+    textColor: Color
+  ): GraphConfig {
+    // Create graph container
+    const rect = new Rectangle(
+      graphX,
+      graphY,
+      width,
+      height,
+      {
+        fill: backgroundColor,
+        stroke: gridColor,
+      }
+    );
+
+    // Create center line
+    const centerLine = new Line(
+      graphX,
+      graphY + height / 2,
+      graphX + width,
+      graphY + height / 2,
+      {
+        stroke: gridColor,
+      }
+    );
+
+    // Create waveform path
+    const waveform = new Path(new Shape(), {
+      stroke: waveformColor,
+      lineWidth: WAVEFORM_LINE_WIDTH,
+    });
+
+    // Create title
+    const title = new Text(titleProperty, {
+      font: new PhetFont(TITLE_FONT_SIZE),
+      fill: textColor,
+      left: graphX + GRAPH_TITLE_OFFSET_X,
+      top: graphY + GRAPH_TITLE_OFFSET_Y,
+    });
+
+    return { rect, centerLine, waveform, title };
+  }
+
+  /**
+   * Add graph elements to this node
+   * 
+   * @param config - Graph configuration
+   */
+  private addGraphElements(config: GraphConfig): void {
+    this.addChild(config.rect);
+    this.addChild(config.centerLine);
+    this.addChild(config.waveform);
+    this.addChild(config.title);
   }
 
   /**
@@ -193,6 +242,20 @@ export class GraphDisplayNode extends Node {
   }
 
   /**
+   * Find the maximum t value in waveform data
+   * 
+   * @param waveformData - Array of waveform data points
+   * @returns Maximum t value
+   */
+  private findMaxT(waveformData: WaveformPoint[]): number {
+    let maxT = 0;
+    for (let i = 0; i < waveformData.length; i++) {
+      maxT = Math.max(maxT, waveformData[i].t);
+    }
+    return maxT;
+  }
+
+  /**
    * Create a waveform shape from waveform data
    *
    * @param graphX - The x-coordinate of the left edge of the graph
@@ -208,12 +271,9 @@ export class GraphDisplayNode extends Node {
     waveformData: WaveformPoint[],
   ): Shape {
     const shape = new Shape();
-
+    
     // Find the maximum t value to ensure right alignment
-    let maxT = 0;
-    for (let i = 0; i < waveformData.length; i++) {
-      maxT = Math.max(maxT, waveformData[i].t);
-    }
+    const maxT = this.findMaxT(waveformData);
 
     // Start at left edge
     shape.moveToPoint(new Vector2(graphX, graphY));
@@ -226,7 +286,9 @@ export class GraphDisplayNode extends Node {
       const normalizedT = maxT > 0 ? waveformData[i].t / maxT : 0;
       const tRatio = Math.max(0, Math.min(1, normalizedT));
       const x = graphX + tRatio * graphWidth;
-      const y = graphY - waveformData[i].y;
+      
+      // Apply Y-scaling factor to amplify the waveform amplitude
+      const y = graphY - (waveformData[i].y * WAVEFORM_Y_SCALING);
 
       if (!firstValidPointFound) {
         shape.moveToPoint(new Vector2(x, y));
