@@ -142,13 +142,11 @@ export class SimScreenView extends ScreenView {
 
     this.model = model;
 
-    // Create model-view transform
-    // Model space: Physical coordinates in meters (±100m in both dimensions)
-    // View space: Screen coordinates in pixels
+    // Create model-view transform - y-axis is inverted and centered on the screen
     this.modelViewTransform =
       ModelViewTransform2.createSinglePointScaleInvertedYMapping(
         new Vector2(0, 0),
-        new Vector2(this.layoutBounds.centerX, this.layoutBounds.centerY),
+        this.layoutBounds.center,
         SCALE.MODEL_VIEW,
       );
 

@@ -1,8 +1,17 @@
 {
-  "name": "dopplerEffect",
-  "private": true,
+  "name": "doppler-effect",
   "version": "0.0.0",
-  "type": "module",
+  "description": "An interactive simulation of the Doppler Effect using SceneryStack.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veillette/dopplerEffectPhET.git"
+  },
+  "keywords": [
+    "Doppler Effect",
+    "simulation",
+    "SceneryStack",
+    "interactive"
+  ],
   "scripts": {
     "start": "npx vite",
     "build": "npx tsc && npx vite build",
@@ -22,4 +31,4 @@
     "typescript": "~5.7.2",
     "globals": "^15.14.0"
   }
-}
+} 
