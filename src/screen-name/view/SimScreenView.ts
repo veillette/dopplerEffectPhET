@@ -23,8 +23,8 @@ import { Scenario, SimModel } from "../model/SimModel";
 import { PHYSICS, SCALE } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
-import strings_en from "../../strings_en.json";
-import strings_fr from "../../strings_fr.json";
+import strings_en from "../../i18n/strings_en.json";
+import strings_fr from "../../i18n/strings_fr.json";
 import { Sound } from "./utils/Sound";
 import { MicrophoneNode } from "./components/MicrophoneNode";
 
