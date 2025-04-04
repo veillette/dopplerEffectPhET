@@ -125,7 +125,7 @@ export class SimScreenView extends ScreenView {
     REDSHIFT_COLOR: new Color(255, 40, 40),
     BLUESHIFT_COLOR: new Color(40, 40, 255),
     GRAPH_HEIGHT: 60,
-    GRAPH_WIDTH: 300,
+    GRAPH_WIDTH: 210,
     GRAPH_MARGIN: 20,
     GRAPH_SPACING: 10,
     TRAIL_WIDTH: 2,
@@ -460,7 +460,7 @@ export class SimScreenView extends ScreenView {
       {
         textColor: this.UI.TEXT_COLOR,
         lineColor: this.UI.CONNECTING_LINE_COLOR,
-        scaleModelLength: 20, // 20 meters scale for better visibility
+        scaleModelLength: 1000, // 1000 meters scale for better visibility
       },
     );
 

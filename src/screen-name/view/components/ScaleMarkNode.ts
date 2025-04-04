@@ -53,8 +53,8 @@ export class ScaleMarkNode extends Node {
       visibleProperty: visibleValuesProperty,
     });
 
-    // Default scale model length is 10 meters
-    this.scaleModelLength = options.scaleModelLength || 10;
+    // Default scale model length is 100 meters
+    this.scaleModelLength = options.scaleModelLength || 100;
 
     // Calculate the view length that corresponds to the model length
     const scaleViewLength = Math.abs(
@@ -79,9 +79,9 @@ export class ScaleMarkNode extends Node {
       lineWidth: 2,
     });
 
-    // Add intermediate tick marks (every 5 meters if scale length is >10m, otherwise every 2m)
-    const tickInterval = this.scaleModelLength > 10 ? 5 : 2;
-    const numberOfTicks = Math.floor(this.scaleModelLength / tickInterval) - 1;
+    // Work out the number of minor tick marks to add
+    const numberOfTicks = 4;
+    const tickInterval = this.scaleModelLength / (numberOfTicks + 1);
 
     for (let i = 1; i <= numberOfTicks; i++) {
       const tickPosition = i * tickInterval;

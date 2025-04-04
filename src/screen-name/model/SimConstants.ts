@@ -20,8 +20,8 @@ export type WaveformPoint = {
 // Physical constants in SI units
 export const PHYSICS = {
   SOUND_SPEED: 343.0, // Speed of sound in air (m/s) at room temperature
-  EMITTED_FREQ: 40, // Base frequency of emitted sound (Hz)
-  FREQ_MIN: 1, // Minimum allowable frequency (Hz)
+  EMITTED_FREQ: 4, // Base frequency of emitted sound (Hz)
+  FREQ_MIN: 0.5, // Minimum allowable frequency (Hz)
   FREQ_MAX_FACTOR: 5, // Maximum frequency as factor of emitted (dimensionless)
   VELOCITY_DECAY: 0.5, // Decay factor for velocity when not dragging (dimensionless)
   MAX_SPEED: 100.0, // Maximum speed for source and observer (m/s)
@@ -30,18 +30,18 @@ export const PHYSICS = {
 
 // Wave properties
 export const WAVE = {
-  MAX_AGE: 1, // Maximum age of a wave in seconds (s)
+  MAX_AGE: 10, // Maximum age of a wave in seconds (s)
 } as const;
 
 // Initial positions (in meters)
 export const INITIAL_POSITIONS = {
-  SOURCE: new Vector2(-80, 0), // Source starts 80m left of center (m)
-  OBSERVER: new Vector2(80, 0), // Observer starts 80m right of center (m)
+  SOURCE: new Vector2(-1000, 0), // Source starts 1000m left of center (m)
+  OBSERVER: new Vector2(1000, 0), // Observer starts 1000m right of center (m)
 } as const;
 
 // Sound data
 export const SOUND_DATA = {
-  ARRAY_SIZE: 200, // Number of points in sound waveform arrays (dimensionless)
+  ARRAY_SIZE: 100, // Number of points in sound waveform arrays (dimensionless)
 } as const;
 
 // Time speed constants for simulation
@@ -73,12 +73,12 @@ export const SCENARIOS = {
 // Scale factors for converting between model and view coordinates
 export const SCALE = {
   // Time scaling: 1 second in model time = 0.1 seconds in real time
-  TIME: 0.1, // Dimensionless scaling factor
+  TIME: 1, // Dimensionless scaling factor
 
   // Velocity visualization scaling
   // This scales the velocity vectors to make them more visible on screen
-  VELOCITY_VECTOR: 0.5, // Dimensionless scaling factor
+  VELOCITY_VECTOR: 10, // Dimensionless scaling factor
 
   // Scale factor for converting between model and view coordinates (2 "pixels" per meter)
-  MODEL_VIEW: 2, // Pixels per meter (pixels/m)
+  MODEL_VIEW: 0.1, // Pixels per meter (pixels/m)
 } as const;

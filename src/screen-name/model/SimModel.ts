@@ -157,7 +157,7 @@ export class SimModel {
       PHYSICS.SOUND_SPEED,
     );
     this.frequencyRange = new RangeWithValue(
-      PHYSICS.EMITTED_FREQ * 0.5,
+      PHYSICS.EMITTED_FREQ * 0.2,
       PHYSICS.EMITTED_FREQ * 2,
       PHYSICS.EMITTED_FREQ,
     );
