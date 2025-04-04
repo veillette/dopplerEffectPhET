@@ -37,7 +37,6 @@ export class WaveGenerator {
       this.waves.add({
         position: this.getSourcePosition().copy(), // in meters (m)
         radius: 0, // in meters (m)
-        speedOfSound: this.getSoundSpeed(), // in meters/second (m/s)
         birthTime: simulationTime, // in seconds (s)
         sourceVelocity: this.getSourceVelocity().copy(), // in meters/second (m/s)
         sourceFrequency: this.getEmittedFrequency(), // in Hertz (Hz)
@@ -52,17 +51,18 @@ export class WaveGenerator {
   /**
    * Update existing waves (expand radius, remove old ones)
    * @param simulationTime Current simulation time in seconds (s)
+   * @param modelDt Current model delta time in seconds (s)
    */
-  public updateWaves(simulationTime: number): void {
+  public updateWaves(simulationTime: number, modelDt: number): void {
     // Update existing waves
     for (let i = this.waves.length - 1; i >= 0; i--) {
       const wave = this.waves.get(i);
 
+      // Update radius based on modelDt and sound speed (in meters)
+      wave.radius = wave.radius + modelDt * this.getSoundSpeed(); // in meters (m)
+
       // Calculate age in seconds (s)
       const age = simulationTime - wave.birthTime; // in seconds (s)
-
-      // Update radius based on age and sound speed (in meters)
-      wave.radius = age * wave.speedOfSound; // in meters (m)
 
       // Remove waves that are too old
       if (age > WAVE.MAX_AGE) {

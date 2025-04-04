@@ -29,7 +29,6 @@ import { DopplerCalculator } from "./DopplerCalculator";
 export type Wave = {
   position: Vector2;
   radius: number;
-  speedOfSound: number;
   birthTime: number;
   sourceVelocity: Vector2;
   sourceFrequency: number;
@@ -288,7 +287,7 @@ export class SimModel {
 
     // Generate and update waves
     this.waveGenerator.generateWaves();
-    this.waveGenerator.updateWaves(this.simulationTimeProperty.value);
+    this.waveGenerator.updateWaves(this.simulationTimeProperty.value, modelDt);
 
     // Check for waves at microphone
     if (this.microphoneEnabledProperty.value) {
