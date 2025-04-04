@@ -1,12 +1,19 @@
 import { onReadyToLaunch, Sim } from "scenerystack/sim";
-import { StringProperty } from "scenerystack/axon";
 import { Tandem } from "scenerystack/tandem";
+import { LocalizedString } from "scenerystack";
 import { SimScreen } from "./screen-name/SimScreen.js";
+import strings_en from "./i18n/strings_en.json";
+import strings_fr from "./i18n/strings_fr.json";
 
 onReadyToLaunch(() => {
-  // The title, like most string-like things, is a StringProperty that can change to different values (e.g. for
-  // different languages, see localeProperty from scenerystack/joist)
-  const titleStringProperty = new StringProperty("Doppler Effect");
+  // Create localized string properties
+  const StringProperties = LocalizedString.getNestedStringProperties({
+    en: strings_en,
+    fr: strings_fr,
+  });
+
+  // The title is now a localized StringProperty that can change to different values
+  const titleStringProperty = StringProperties.titleStringProperty;
 
   const screens = [
     new SimScreen({ tandem: Tandem.ROOT.createTandem("simScreen") }),

@@ -1,6 +1,6 @@
 {
-  "title": "Contrôles de simulation de l'effet Doppler",
-  "source": "Source",
+  "title": "Effet Doppler-Fizeau",
+  "source": "Émetteur",
   "observer": "Observateur",
   "selectedObject": "Sélectionné : {{object}}",
   "controls": {
@@ -28,21 +28,21 @@
     "redshift": "Décalage vers le rouge (en éloignement)"
   },
   "help": {
-    "dragAndDrop": "Cliquez et faites glisser la source (rouge) ou l'observateur (vert) pour les déplacer",
+    "dragAndDrop": "Cliquez et faites glisser l'émetteur (rouge) ou l'observateur (vert) pour les déplacer",
     "keyboardControls": "Contrôles clavier :",
-    "objectSelection": "S : Sélectionner la source | O : Sélectionner l'observateur | Flèches : Déplacer l'objet sélectionné",
+    "objectSelection": "S : Sélectionner l'émetteur | O : Sélectionner l'observateur | Flèches : Déplacer l'objet sélectionné",
     "controls": "Espace : Pause/Reprendre | R : Réinitialiser | H : Afficher/Masquer l'aide",
     "adjust": "+/- : Ajuster la fréquence émise | ,/. : Ajuster la vitesse du son",
-    "scenarios": "1-4 : Charger des scénarios prédéfinis (source en approche, observateur, etc.)",
+    "scenarios": "1-4 : Charger des scénarios prédéfinis (émetteur en approche, observateur, etc.)",
     "toggleMotionTrails": "Appuyez sur 'T' pour activer/désactiver les trajectoires qui montrent les chemins des objets.",
     "toggleMicrophone": "Appuyez sur 'M' pour activer/désactiver le microphone qui clique lorsque les ondes le traversent.",
     "dragMicrophone": "Faites glisser le microphone pour le positionner n'importe où dans la simulation."
   },
   "scenarios": {
     "freePlay": "Mode libre",
-    "sourceMovingTowardObserver": "Source se déplaçant vers l'observateur",
-    "observerMovingTowardSource": "Observateur se déplaçant vers la source",
-    "movingAway": "Observateur et source s'éloignant",
-    "perpendicular": "Observateur et source se déplaçant perpendiculairement"
+    "sourceMovingTowardObserver": "Émetteur se déplaçant vers l'observateur",
+    "observerMovingTowardSource": "Observateur se déplaçant vers l'émetteur",
+    "movingAway": "Observateur et émetteur s'éloignant",
+    "perpendicular": "Observateur et émetteur se déplaçant perpendiculairement"
   }
 }
