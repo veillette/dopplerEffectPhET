@@ -3,7 +3,7 @@ import { WaveformPoint } from "./SimConstants";
 /**
  * WaveformManager handles the generation and updating of waveform data
  * for both emitted and observed sound.
- * 
+ *
  * The class has been refactored to encapsulate repeated logic and improve efficiency.
  * It manages sound data arrays and converts them to visual waveform data with
  * appropriate time scaling factors.
@@ -72,7 +72,7 @@ export class WaveformManager {
       this.emittedSoundData,
       this.emittedWaveformData,
       Math.sin(this.emittedPhase),
-      timeSpeedFactor
+      timeSpeedFactor,
     );
   }
 
@@ -98,7 +98,7 @@ export class WaveformManager {
       this.observedSoundData,
       this.observedWaveformData,
       Math.sin(this.observedPhase),
-      timeSpeedFactor
+      timeSpeedFactor,
     );
   }
 
@@ -114,7 +114,7 @@ export class WaveformManager {
     soundData: number[],
     waveformData: WaveformPoint[],
     newValue: number,
-    timeSpeedFactor: number
+    timeSpeedFactor: number,
   ): void {
     // Update sound data with new value (shift off oldest value)
     soundData.push(newValue);
@@ -134,7 +134,7 @@ export class WaveformManager {
   private updateWaveformData(
     soundData: number[],
     waveformData: WaveformPoint[],
-    timeSpeedFactor: number
+    timeSpeedFactor: number,
   ): void {
     // Apply time speed factor to the waveform display
     for (let i = 0; i < soundData.length; i++) {
@@ -152,9 +152,13 @@ export class WaveformManager {
   public clearObservedWaveform(): void {
     this.observedSoundData.push(0);
     this.observedSoundData.shift();
-    
+
     // Update the waveform visualization data with default time speed factor
-    this.updateWaveformData(this.observedSoundData, this.observedWaveformData, 1);
+    this.updateWaveformData(
+      this.observedSoundData,
+      this.observedWaveformData,
+      1,
+    );
   }
 
   /**

@@ -4,12 +4,7 @@
  * Contains the help instructions functionality for the Doppler Effect simulation.
  */
 
-import {
-  Node,
-  PhetFont,
-  Rectangle,
-  Text
-} from "scenerystack";
+import { Node, PhetFont, Rectangle, Text } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
 
@@ -28,7 +23,7 @@ type InstructionsOptions = {
 export class InstructionsNode extends Node {
   // Background for the instructions
   private readonly background: Rectangle;
-  
+
   // String manager instance
   private readonly stringManager: StringManager = StringManager.getInstance();
 
@@ -41,7 +36,7 @@ export class InstructionsNode extends Node {
     super({
       visible: false, // Initially hidden
     });
-    
+
     // Get strings from string manager
     const strings = this.stringManager.getInstructionsStrings();
 

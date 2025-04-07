@@ -11,7 +11,7 @@ import {
   LinearGradient,
   ModelViewTransform2,
   Property,
-  ProfileColorProperty
+  ProfileColorProperty,
 } from "scenerystack";
 
 // Import position history point interface from model
@@ -23,7 +23,7 @@ import { PositionHistoryPoint } from "../../model/SimModel";
 export class TrailManager {
   // Store the current color value
   private trailColorValue: Color;
-  
+
   /**
    * Constructor for the TrailManager
    *
@@ -105,15 +105,30 @@ export class TrailManager {
     // Add color stops - transparent at oldest point, full color at newest
     gradient.addColorStop(
       0,
-      new Color(this.trailColorValue.r, this.trailColorValue.g, this.trailColorValue.b, 0.1),
+      new Color(
+        this.trailColorValue.r,
+        this.trailColorValue.g,
+        this.trailColorValue.b,
+        0.1,
+      ),
     );
     gradient.addColorStop(
       0.5,
-      new Color(this.trailColorValue.r, this.trailColorValue.g, this.trailColorValue.b, 0.4),
+      new Color(
+        this.trailColorValue.r,
+        this.trailColorValue.g,
+        this.trailColorValue.b,
+        0.4,
+      ),
     );
     gradient.addColorStop(
       1,
-      new Color(this.trailColorValue.r, this.trailColorValue.g, this.trailColorValue.b, 0.8),
+      new Color(
+        this.trailColorValue.r,
+        this.trailColorValue.g,
+        this.trailColorValue.b,
+        0.8,
+      ),
     );
 
     // Apply the gradient

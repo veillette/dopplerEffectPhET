@@ -1,8 +1,4 @@
-import {
-  BooleanProperty,
-  Property,
-  Vector2,
-} from "scenerystack";
+import { BooleanProperty, Property, Vector2 } from "scenerystack";
 import { PHYSICS } from "./SimConstants";
 
 /**

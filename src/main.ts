@@ -2,7 +2,8 @@ import { onReadyToLaunch, Sim } from "scenerystack/sim";
 import { Tandem } from "scenerystack";
 import { SimScreen } from "./screen-name/SimScreen.js";
 import { StringManager } from "./i18n/StringManager";
-import { PreferencesModel } from 'scenerystack/sim';
+import { PreferencesModel } from "scenerystack/sim";
+import DopplerEffectColors from "./DopplerEffectColors";
 
 onReadyToLaunch(() => {
   // Get string manager instance
@@ -16,9 +17,11 @@ onReadyToLaunch(() => {
     webgl: true,
     preferencesModel: new PreferencesModel({
       visualOptions: {
-        supportsProjectorMode: true
-      }
-    })
+        supportsProjectorMode: true,
+      },
+    }),
+    backgroundColor: DopplerEffectColors.backgroundProperty,
+    colorProfileProperty: DopplerEffectColors,
   };
 
   const screens = [

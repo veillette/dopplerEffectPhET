@@ -107,7 +107,8 @@ export class SimScreenView extends ScreenView {
     OBSERVER_RADIUS: 10,
     SOURCE_COLOR: DopplerEffectColors.sourceColorProperty.value,
     OBSERVER_COLOR: DopplerEffectColors.observerColorProperty.value,
-    CONNECTING_LINE_COLOR: DopplerEffectColors.connectingLineColorProperty.value,
+    CONNECTING_LINE_COLOR:
+      DopplerEffectColors.connectingLineColorProperty.value,
     WAVE_COLOR: DopplerEffectColors.waveColorProperty.value,
     SELECTION_COLOR: DopplerEffectColors.selectionColorProperty.value,
     GRAPH_BACKGROUND: DopplerEffectColors.graphBackgroundProperty.value,
@@ -141,7 +142,7 @@ export class SimScreenView extends ScreenView {
 
     // Initialize the color profile property (default is the first color profile)
     this.colorProfileProperty = new Property<string>("default");
-    
+
     // The ProjectorModeToggleSwitch will handle updating this property
     // which will be passed to the preferences dialog
 
@@ -216,28 +217,16 @@ export class SimScreenView extends ScreenView {
       visibleProperty: this.visibleVelocityArrowProperty,
     };
 
-    this.sourceVelocityVector = new ArrowNode(
-      0,
-      0,
-      0,
-      0,
-      {
-        ...velocityVectorOptions,
-        fill: DopplerEffectColors.sourceVelocityArrowProperty,
-        stroke: DopplerEffectColors.sourceVelocityArrowProperty
-      }
-    );
-    this.observerVelocityVector = new ArrowNode(
-      0,
-      0,
-      0,
-      0,
-      {
-        ...velocityVectorOptions,
-        fill: DopplerEffectColors.observerVelocityArrowProperty,
-        stroke: DopplerEffectColors.observerVelocityArrowProperty
-      }
-    );
+    this.sourceVelocityVector = new ArrowNode(0, 0, 0, 0, {
+      ...velocityVectorOptions,
+      fill: DopplerEffectColors.sourceVelocityArrowProperty,
+      stroke: DopplerEffectColors.sourceVelocityArrowProperty,
+    });
+    this.observerVelocityVector = new ArrowNode(0, 0, 0, 0, {
+      ...velocityVectorOptions,
+      fill: DopplerEffectColors.observerVelocityArrowProperty,
+      stroke: DopplerEffectColors.observerVelocityArrowProperty,
+    });
 
     // Create trail paths
     this.sourceTrail = new Path(new Shape(), {
@@ -274,26 +263,26 @@ export class SimScreenView extends ScreenView {
     this.waveManager = new WaveManager(
       this.waveLayer,
       this.modelViewTransform,
-      DopplerEffectColors.waveColorProperty
+      DopplerEffectColors.waveColorProperty,
     );
 
     this.vectorManager = new VectorDisplayManager(
       this.modelViewTransform,
-      SCALE.VELOCITY_VECTOR
+      SCALE.VELOCITY_VECTOR,
     );
 
     this.sourceTrailManager = new TrailManager(
       this.sourceTrail,
       this.modelViewTransform,
       DopplerEffectColors.sourceColorProperty,
-      this.visibleTrailsProperty
+      this.visibleTrailsProperty,
     );
 
     this.observerTrailManager = new TrailManager(
       this.observerTrail,
       this.modelViewTransform,
       DopplerEffectColors.observerColorProperty,
-      this.visibleTrailsProperty
+      this.visibleTrailsProperty,
     );
 
     this.sourceDragManager = new DragHandlerManager(
@@ -308,17 +297,15 @@ export class SimScreenView extends ScreenView {
     this.keyboardManager = new KeyboardHandlerManager();
 
     // Create graph display component
-    this.graphDisplay = new GraphDisplayNode(
-      {
-        layoutBounds: {
-          maxX: this.layoutBounds.maxX,
-        },
-        graphHeight: this.UI.GRAPH_HEIGHT,
-        graphWidth: this.UI.GRAPH_WIDTH,
-        graphMargin: this.UI.GRAPH_MARGIN,
-        graphSpacing: this.UI.GRAPH_SPACING,
+    this.graphDisplay = new GraphDisplayNode({
+      layoutBounds: {
+        maxX: this.layoutBounds.maxX,
       },
-    );
+      graphHeight: this.UI.GRAPH_HEIGHT,
+      graphWidth: this.UI.GRAPH_WIDTH,
+      graphMargin: this.UI.GRAPH_MARGIN,
+      graphSpacing: this.UI.GRAPH_SPACING,
+    });
     this.graphLayer.addChild(this.graphDisplay);
 
     // Create status text display
@@ -345,15 +332,13 @@ export class SimScreenView extends ScreenView {
     this.controlLayer.addChild(this.statusDisplay);
 
     // Create instructions display
-    this.instructionsDisplay = new InstructionsNode(
-      {
-        layoutBounds: {
-          centerX: this.layoutBounds.centerX,
-          centerY: this.layoutBounds.centerY,
-          width: this.layoutBounds.width,
-        }
+    this.instructionsDisplay = new InstructionsNode({
+      layoutBounds: {
+        centerX: this.layoutBounds.centerX,
+        centerY: this.layoutBounds.centerY,
+        width: this.layoutBounds.width,
       },
-    );
+    });
     this.controlLayer.addChild(this.instructionsDisplay);
 
     // Create control panel
@@ -375,13 +360,23 @@ export class SimScreenView extends ScreenView {
     this.controlLayer.addChild(this.controlPanel);
 
     // Create scenario items for the combo box
-    const scenarioItems = this.createScenarioItems(DopplerEffectColors.textColorProperty);
+    const scenarioItems = this.createScenarioItems(
+      DopplerEffectColors.textColorProperty,
+    );
+
+    const listParent = new Node();
 
     // Create combo box using SceneryStack API
     const scenarioComboBox = new ComboBox(
       model.scenarioProperty,
       scenarioItems,
-      this,
+      listParent,
+      {
+        buttonFill: DopplerEffectColors.backgroundProperty,
+        listFill: DopplerEffectColors.backgroundProperty,
+        buttonStroke: DopplerEffectColors.textColorProperty,
+        listStroke: DopplerEffectColors.textColorProperty,
+      },
     );
 
     // Position the combo box
@@ -390,7 +385,7 @@ export class SimScreenView extends ScreenView {
 
     // Add to control layer
     this.controlLayer.addChild(scenarioComboBox);
-
+    this.controlLayer.addChild(listParent);
     // Setup reset all button
     const resetAllButton = new ResetAllButton({
       listener: () => {
@@ -402,7 +397,7 @@ export class SimScreenView extends ScreenView {
       bottom: this.layoutBounds.maxY - 10,
     });
     this.controlLayer.addChild(resetAllButton);
-    
+
     // Create scale mark node to show model-to-view scale
     const scaleMarkNode = new ScaleMarkNode(
       this.modelViewTransform,
@@ -689,7 +684,7 @@ export class SimScreenView extends ScreenView {
     textColorProperty: ProfileColorProperty,
   ): { value: Scenario; createNode: () => Text }[] {
     const scenarioStrings = this.stringManager.getScenarioStrings();
-    
+
     return [
       {
         value: Scenario.FREE_PLAY,
@@ -702,24 +697,18 @@ export class SimScreenView extends ScreenView {
       {
         value: Scenario.SCENARIO_1,
         createNode: () =>
-          new Text(
-            scenarioStrings.sourceMovingTowardObserverStringProperty,
-            {
-              font: new PhetFont(14),
-              fill: textColorProperty,
-            },
-          ),
+          new Text(scenarioStrings.sourceMovingTowardObserverStringProperty, {
+            font: new PhetFont(14),
+            fill: textColorProperty,
+          }),
       },
       {
         value: Scenario.SCENARIO_2,
         createNode: () =>
-          new Text(
-            scenarioStrings.observerMovingTowardSourceStringProperty,
-            {
-              font: new PhetFont(14),
-              fill: textColorProperty,
-            },
-          ),
+          new Text(scenarioStrings.observerMovingTowardSourceStringProperty, {
+            font: new PhetFont(14),
+            fill: textColorProperty,
+          }),
       },
       {
         value: Scenario.SCENARIO_3,

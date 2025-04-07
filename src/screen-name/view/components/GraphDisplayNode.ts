@@ -3,7 +3,7 @@
  *
  * Contains the graph display functionality for the Doppler Effect simulation,
  * including emitted and observed waveforms.
- * 
+ *
  * Features:
  * - Right-aligned waveforms that ensure current time is at the right edge
  * - Y-axis scaling for better waveform visualization
@@ -20,7 +20,7 @@ import {
   Shape,
   Text,
   Vector2,
-  ProfileColorProperty
+  ProfileColorProperty,
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
@@ -69,7 +69,7 @@ export class GraphDisplayNode extends Node {
   private readonly observedGraph: Rectangle;
   private readonly emittedWaveform: Path;
   private readonly observedWaveform: Path;
-  
+
   // String manager instance
   private readonly stringManager: StringManager = StringManager.getInstance();
 
@@ -80,7 +80,7 @@ export class GraphDisplayNode extends Node {
    */
   constructor(options: GraphDisplayOptions) {
     super();
-    
+
     // Get strings from string manager
     const strings = this.stringManager.getGraphDisplayStrings();
 
@@ -99,7 +99,7 @@ export class GraphDisplayNode extends Node {
       DopplerEffectColors.graphGridColorProperty,
       DopplerEffectColors.sourceColorProperty,
       strings.emittedSoundStringProperty,
-      DopplerEffectColors.textColorProperty
+      DopplerEffectColors.textColorProperty,
     );
 
     // Create observed sound graph elements
@@ -112,7 +112,7 @@ export class GraphDisplayNode extends Node {
       DopplerEffectColors.graphGridColorProperty,
       DopplerEffectColors.observerColorProperty,
       strings.observedSoundStringProperty,
-      DopplerEffectColors.textColorProperty
+      DopplerEffectColors.textColorProperty,
     );
 
     // Store references to main components
@@ -130,7 +130,7 @@ export class GraphDisplayNode extends Node {
    * Create all elements for a graph
    * Encapsulates the creation of a complete graph with container, center line,
    * waveform, and title.
-   * 
+   *
    * @param graphX - X position of the graph
    * @param graphY - Y position of the graph
    * @param width - Width of the graph
@@ -151,19 +151,13 @@ export class GraphDisplayNode extends Node {
     gridColorProperty: ProfileColorProperty,
     waveformColorProperty: ProfileColorProperty,
     titleProperty: ReadOnlyProperty<string>,
-    textColorProperty: ProfileColorProperty
+    textColorProperty: ProfileColorProperty,
   ): GraphConfig {
     // Create graph container
-    const rect = new Rectangle(
-      graphX,
-      graphY,
-      width,
-      height,
-      {
-        fill: backgroundColorProperty,
-        stroke: gridColorProperty,
-      }
-    );
+    const rect = new Rectangle(graphX, graphY, width, height, {
+      fill: backgroundColorProperty,
+      stroke: gridColorProperty,
+    });
 
     // Create center line
     const centerLine = new Line(
@@ -173,7 +167,7 @@ export class GraphDisplayNode extends Node {
       graphY + height / 2,
       {
         stroke: gridColorProperty,
-      }
+      },
     );
 
     // Create waveform path
@@ -195,7 +189,7 @@ export class GraphDisplayNode extends Node {
 
   /**
    * Add graph elements to this node
-   * 
+   *
    * @param config - Graph configuration
    */
   private addGraphElements(config: GraphConfig): void {
@@ -249,7 +243,7 @@ export class GraphDisplayNode extends Node {
   /**
    * Find the maximum t value in waveform data
    * Used to ensure right-alignment of waveforms
-   * 
+   *
    * @param waveformData - Array of waveform data points
    * @returns Maximum t value
    */
@@ -279,7 +273,7 @@ export class GraphDisplayNode extends Node {
     waveformData: WaveformPoint[],
   ): Shape {
     const shape = new Shape();
-    
+
     // Find the maximum t value to ensure right alignment
     const maxT = this.findMaxT(waveformData);
 
@@ -294,9 +288,9 @@ export class GraphDisplayNode extends Node {
       const normalizedT = maxT > 0 ? waveformData[i].t / maxT : 0;
       const tRatio = Math.max(0, Math.min(1, normalizedT));
       const x = graphX + tRatio * graphWidth;
-      
+
       // Apply Y-scaling factor to amplify the waveform amplitude
-      const y = graphY - (waveformData[i].y * WAVEFORM_Y_SCALING);
+      const y = graphY - waveformData[i].y * WAVEFORM_Y_SCALING;
 
       if (!firstValidPointFound) {
         shape.moveToPoint(new Vector2(x, y));

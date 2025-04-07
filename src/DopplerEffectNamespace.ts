@@ -5,6 +5,6 @@
 import { Namespace } from "scenerystack";
 
 // Create and export the namespace object
-const dopplerEffect = new Namespace('dopplerEffect');
+const dopplerEffect = new Namespace("dopplerEffect");
 
-export default dopplerEffect; 
+export default dopplerEffect;

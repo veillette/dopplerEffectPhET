@@ -1,7 +1,4 @@
-import {
-  ObservableArray,
-  Vector2,
-} from "scenerystack";
+import { ObservableArray, Vector2 } from "scenerystack";
 import { Wave } from "./SimModel";
 import { WAVE } from "./SimConstants";
 /**

@@ -1,6 +1,4 @@
-import {
-  Vector2,
-} from "scenerystack";
+import { Vector2 } from "scenerystack";
 import { Wave } from "./SimModel";
 import { PHYSICS } from "./SimConstants";
 

@@ -12,7 +12,7 @@ import {
   PhetFont,
   ReadOnlyProperty,
   Text,
-  ProfileColorProperty
+  ProfileColorProperty,
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 
@@ -40,7 +40,7 @@ export class StatusTextNode extends Node {
   private readonly observedFreqText: Text;
   private readonly selectedObjectText: Text;
   private readonly shiftStatusText: Text;
-  
+
   // Store color references
   private readonly textColorProperty: ProfileColorProperty;
   private readonly blueshiftColorProperty: ProfileColorProperty;
@@ -66,7 +66,7 @@ export class StatusTextNode extends Node {
     options: StatusTextOptions,
   ) {
     super();
-    
+
     // Store color references for later use
     this.textColorProperty = options.textColorProperty;
     this.blueshiftColorProperty = options.blueshiftColorProperty;
@@ -74,7 +74,7 @@ export class StatusTextNode extends Node {
 
     // Get strings from string manager
     const statusStringProperties = this.stringManager.getStatusTextStrings();
-    
+
     // Create text nodes
     this.emittedFreqText = new Text(emittedFrequencyProperty.value, {
       font: new PhetFont(14),
@@ -160,11 +160,17 @@ export class StatusTextNode extends Node {
 
     // Update the color when frequencies change
     emittedFrequencyProperty.link(() => {
-      this.updateShiftStatusColor(emittedFrequencyProperty.value, observedFrequencyProperty.value);
+      this.updateShiftStatusColor(
+        emittedFrequencyProperty.value,
+        observedFrequencyProperty.value,
+      );
     });
-    
+
     observedFrequencyProperty.link(() => {
-      this.updateShiftStatusColor(emittedFrequencyProperty.value, observedFrequencyProperty.value);
+      this.updateShiftStatusColor(
+        emittedFrequencyProperty.value,
+        observedFrequencyProperty.value,
+      );
     });
   }
 

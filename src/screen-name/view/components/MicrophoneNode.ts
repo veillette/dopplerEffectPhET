@@ -43,7 +43,8 @@ const MICROPHONE = {
   STEM_COLOR_PROPERTY: DopplerEffectColors.microphoneStemColorProperty,
   BASE_COLOR_PROPERTY: DopplerEffectColors.microphoneBaseColorProperty,
   GRID_COLOR_PROPERTY: DopplerEffectColors.microphoneGridColorProperty,
-  DETECTION_RING_COLOR_PROPERTY: DopplerEffectColors.microphoneDetectionRingColorProperty,
+  DETECTION_RING_COLOR_PROPERTY:
+    DopplerEffectColors.microphoneDetectionRingColorProperty,
   BASE_CORNER_RADIUS: 3,
   GRID_LINE_WIDTH: 1,
   DETECTION_RING_LINE_WIDTH: 2,

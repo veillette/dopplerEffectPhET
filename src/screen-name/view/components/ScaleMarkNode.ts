@@ -36,7 +36,7 @@ export class ScaleMarkNode extends Node {
   private readonly bottomEndMark: Line;
   private readonly scaleLabel: Text;
   private readonly scaleModelLength: number;
-  
+
   // String manager instance
   private readonly stringManager: StringManager = StringManager.getInstance();
 
@@ -101,8 +101,9 @@ export class ScaleMarkNode extends Node {
     }
 
     // Get the units.meters string from the string manager
-    const unitsStringProperty = this.stringManager.getAllStringProperties().units.metersStringProperty;
-    
+    const unitsStringProperty =
+      this.stringManager.getAllStringProperties().units.metersStringProperty;
+
     // Create scale label with pattern string property for localization
     this.scaleLabel = new Text("", {
       font: new PhetFont(14),
@@ -110,8 +111,8 @@ export class ScaleMarkNode extends Node {
       left: 10, // Position label to the right of the scale mark
       centerY: scaleViewLength / 2, // Center label vertically
       stringProperty: new PatternStringProperty(unitsStringProperty, {
-        value: this.scaleModelLength
-      })
+        value: this.scaleModelLength,
+      }),
     });
 
     // Add components to this node

@@ -9,7 +9,7 @@ import {
   Circle,
   Color,
   ModelViewTransform2,
-  ProfileColorProperty
+  ProfileColorProperty,
 } from "scenerystack";
 import { Wave } from "../../model/SimModel";
 import { WAVE } from "../../model/SimConstants";
@@ -17,7 +17,7 @@ import DopplerEffectColors from "../../../DopplerEffectColors";
 
 /**
  * Manages the visualization of sound waves
- * 
+ *
  * Creates and updates the circles representing propagating sound waves
  */
 export class WaveManager {
