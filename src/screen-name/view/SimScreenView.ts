@@ -16,6 +16,8 @@ import {
   TimeControlNode,
   Vector2,
   ProfileColorProperty,
+  Bounds2,
+  TReadOnlyProperty,
 } from "scenerystack";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 import { Scenario, SimModel } from "../model/SimModel";
@@ -132,6 +134,9 @@ export class SimScreenView extends ScreenView {
   // Color profile property for projector mode
   private readonly colorProfileProperty: Property<string>;
 
+  // Derived property for interface bounds
+  private readonly interfaceBoundsProperty: TReadOnlyProperty<Bounds2>;
+
   /**
    * Constructor for the Doppler Effect SimScreenView
    */
@@ -159,6 +164,11 @@ export class SimScreenView extends ScreenView {
     this.visibleVelocityArrowProperty = new Property<boolean>(false);
     this.visibleLineOfSightProperty = new Property<boolean>(false);
     this.visibleTrailsProperty = new Property<boolean>(false);
+
+    // Matches visibleBounds horizontally, layoutBounds vertically
+    this.interfaceBoundsProperty = new DerivedProperty( [ this.visibleBoundsProperty ],
+        visibleBounds => visibleBounds.withMinY( this.layoutBounds.minY ).withMaxY( this.layoutBounds.maxY )
+       );
 
     // Create a derived property for the selected object name
     const selectedObjectNameProperty = new DerivedProperty(
@@ -510,6 +520,26 @@ export class SimScreenView extends ScreenView {
     this.model.microphoneEnabledProperty.lazyLink(() => {
       this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
     });
+
+    // Update the interface bounds
+    this.interfaceBoundsProperty.link( interfaceBounds => {
+      resetAllButtonNode.right = interfaceBounds.right - 10;
+      resetAllButtonNode.bottom = interfaceBounds.bottom - 10;
+      this.graphLayer.right = interfaceBounds.right-10;
+      this.graphLayer.top = interfaceBounds.top+10;
+      this.controlPanel.right = interfaceBounds.right-10;
+      this.controlPanel.top = this.graphLayer.bottom+10;
+      timeControlNode.centerX = interfaceBounds.centerX; 
+      timeControlNode.bottom = interfaceBounds.bottom-10;
+      infoButtonNode.left = interfaceBounds.minX + 10;
+      infoButtonNode.bottom = interfaceBounds.bottom-10;
+      scenarioComboBoxNode.left = interfaceBounds.minX + 10;
+      scenarioComboBoxNode.top = interfaceBounds.top+10;
+      scaleMarkNode.right = resetAllButtonNode.left - 30;
+      scaleMarkNode.bottom = resetAllButtonNode.bottom;
+    } );
+
+
   }
 
   /**
