@@ -1,8 +1,7 @@
 import { Vector2 } from "scenerystack";
-import { ObservableArray } from "scenerystack/axon";
 import { Wave } from "./SimModel";
 import { WAVE } from "./SimConstants";
-
+import { ObservableArray } from "scenerystack";
 /**
  * WaveGenerator handles the creation, propagation, and lifecycle management of waves.
  * It encapsulates all wave-related functionality for the Doppler effect simulation.

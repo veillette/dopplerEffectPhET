@@ -10,15 +10,13 @@ import {
   Vector2,
   LocalizedString,
   DerivedProperty,
-} from "scenerystack";
-import {
   ArrowNode,
   InfoButton,
   PhetFont,
   ResetAllButton,
   TimeControlNode,
-} from "scenerystack/scenery-phet";
-import { ComboBox } from "scenerystack/sun";
+  ComboBox,
+} from "scenerystack";
 import { Scenario, SimModel } from "../model/SimModel";
 import { PHYSICS, SCALE } from "../model/SimConstants";
 import { Property } from "scenerystack/axon";

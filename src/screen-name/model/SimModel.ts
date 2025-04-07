@@ -8,9 +8,8 @@ import {
   EnumerationValue,
   Enumeration,
   Property,
-} from "scenerystack";
-import { ObservableArray } from "scenerystack/axon";
-import { createObservableArray } from "scenerystack/axon";
+  ObservableArray,
+  createObservableArray} from "scenerystack";
 import {
   PHYSICS,
   INITIAL_POSITIONS,

@@ -6,6 +6,7 @@
     "type": "git",
     "url": "https://github.com/veillette/dopplerEffectPhET.git"
   },
+  "type": "module",
   "keywords": [
     "Doppler Effect",
     "simulation",

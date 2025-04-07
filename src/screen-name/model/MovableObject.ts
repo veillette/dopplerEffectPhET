@@ -1,6 +1,7 @@
-import { Vector2, Property, BooleanProperty } from "scenerystack";
+import { Vector2,BooleanProperty } from "scenerystack";
 import { PHYSICS } from "./SimConstants";
 
+import { Property } from "scenerystack";
 /**
  * MovableObject represents an object that can move in the simulation,
  * such as the sound source or the observer.
