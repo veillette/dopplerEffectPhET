@@ -106,9 +106,12 @@ export class ScaleMarkNode extends Node {
 
     // Create scale label with pattern string property for localization
 
-    const scaleLabelStringProperty = new PatternStringProperty(unitsStringProperty, {
-      value: this.scaleModelLength,
-    });
+    const scaleLabelStringProperty = new PatternStringProperty(
+      unitsStringProperty,
+      {
+        value: this.scaleModelLength,
+      },
+    );
 
     this.scaleLabel = new Text(scaleLabelStringProperty, {
       font: new PhetFont(14),

@@ -20,16 +20,24 @@ const YELLOW = new Color(255, 255, 0);
  */
 const DopplerEffectColors = {
   // Background colors
-  backgroundColorProperty: new ProfileColorProperty(dopplerEffect, "backgroundColor", {
-    default: BLACK,
-    projector: WHITE,
-  }),
+  backgroundColorProperty: new ProfileColorProperty(
+    dopplerEffect,
+    "backgroundColor",
+    {
+      default: BLACK,
+      projector: WHITE,
+    },
+  ),
 
   // Highlight colors
-  highlightColorProperty: new ProfileColorProperty(dopplerEffect, "highlightColor", {
-    default: new Color(100, 100, 100),
-    projector: new Color(150, 150, 150),
-  }),
+  highlightColorProperty: new ProfileColorProperty(
+    dopplerEffect,
+    "highlightColor",
+    {
+      default: new Color(100, 100, 100),
+      projector: new Color(150, 150, 150),
+    },
+  ),
 
   // Source and observer colors
   sourceColorProperty: new ProfileColorProperty(dopplerEffect, "sourceColor", {

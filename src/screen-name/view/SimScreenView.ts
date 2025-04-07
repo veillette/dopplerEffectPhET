@@ -298,9 +298,7 @@ export class SimScreenView extends ScreenView {
 
     // Create graph display component
     this.graphDisplay = new GraphDisplayNode({
-      layoutBounds: {
-        maxX: this.layoutBounds.maxX,
-      },
+      layoutBounds: this.layoutBounds,
       graphHeight: this.UI.GRAPH_HEIGHT,
       graphWidth: this.UI.GRAPH_WIDTH,
       graphMargin: this.UI.GRAPH_MARGIN,
@@ -315,10 +313,7 @@ export class SimScreenView extends ScreenView {
       selectedObjectNameProperty,
       this.visibleValuesProperty,
       {
-        layoutBounds: {
-          maxX: this.layoutBounds.maxX,
-          maxY: this.layoutBounds.maxY,
-        },
+        layoutBounds: this.layoutBounds,
         textColorProperty: DopplerEffectColors.textColorProperty,
         blueshiftColorProperty: DopplerEffectColors.blueshiftColorProperty,
         redshiftColorProperty: DopplerEffectColors.redshiftColorProperty,
@@ -333,11 +328,7 @@ export class SimScreenView extends ScreenView {
 
     // Create instructions display
     this.instructionsDisplay = new InstructionsNode({
-      layoutBounds: {
-        centerX: this.layoutBounds.centerX,
-        centerY: this.layoutBounds.centerY,
-        width: this.layoutBounds.width,
-      },
+      layoutBounds: this.layoutBounds,
     });
     this.controlLayer.addChild(this.instructionsDisplay);
 
@@ -377,7 +368,7 @@ export class SimScreenView extends ScreenView {
         buttonStroke: DopplerEffectColors.textColorProperty,
         listStroke: DopplerEffectColors.textColorProperty,
         highlightFill: DopplerEffectColors.highlightColorProperty,
-      } ,
+      },
     );
 
     // Position the combo box
@@ -431,14 +422,14 @@ export class SimScreenView extends ScreenView {
         stepForwardButtonOptions: {
           listener: () => {
             this.model.step(1 / 60, true);
-          }
-        }
+          },
+        },
       },
-      
+
       speedRadioButtonGroupOptions: {
         labelOptions: {
           fill: DopplerEffectColors.textColorProperty,
-        }
+        },
       },
     });
     timeControlNode.centerX = this.layoutBounds.centerX;

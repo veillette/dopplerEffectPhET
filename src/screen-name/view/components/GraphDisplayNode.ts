@@ -21,6 +21,7 @@ import {
   Text,
   Vector2,
   ProfileColorProperty,
+  Bounds2,
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
@@ -41,9 +42,7 @@ export type WaveformPoint = {
 
 // Configuration options for the graph display
 type GraphDisplayOptions = {
-  layoutBounds: {
-    maxX: number;
-  };
+  layoutBounds: Bounds2;
   graphHeight: number;
   graphWidth: number;
   graphMargin: number;

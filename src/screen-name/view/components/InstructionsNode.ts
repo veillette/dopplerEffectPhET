@@ -4,17 +4,13 @@
  * Contains the help instructions functionality for the Doppler Effect simulation.
  */
 
-import { Node, PhetFont, Rectangle, Text } from "scenerystack";
+import { Bounds2, Node, PhetFont, Rectangle, Text } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
 
 // Configuration options for the instructions display
 type InstructionsOptions = {
-  layoutBounds: {
-    centerX: number;
-    centerY: number;
-    width: number;
-  };
+  layoutBounds: Bounds2;
 };
 
 /**

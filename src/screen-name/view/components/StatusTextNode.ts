@@ -13,15 +13,13 @@ import {
   ReadOnlyProperty,
   Text,
   ProfileColorProperty,
+  Bounds2,
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the status text display
 type StatusTextOptions = {
-  layoutBounds: {
-    maxX: number;
-    maxY: number;
-  };
+  layoutBounds: Bounds2;
   textColorProperty: ProfileColorProperty;
   blueshiftColorProperty: ProfileColorProperty;
   redshiftColorProperty: ProfileColorProperty;
