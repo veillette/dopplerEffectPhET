@@ -376,7 +376,8 @@ export class SimScreenView extends ScreenView {
         listFill: DopplerEffectColors.backgroundProperty,
         buttonStroke: DopplerEffectColors.textColorProperty,
         listStroke: DopplerEffectColors.textColorProperty,
-      },
+        highlightFill: DopplerEffectColors.highlightColorProperty,
+      } ,
     );
 
     // Position the combo box

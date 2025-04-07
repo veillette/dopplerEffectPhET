@@ -25,6 +25,13 @@ const DopplerEffectColors = {
     projector: WHITE,
   }),
 
+    // Highlight colors
+  highlightColorProperty: new ProfileColorProperty(dopplerEffect, "highlight", {
+    default: new Color(155, 155, 155),
+    projector: new Color(100, 100, 100),
+  }),
+
+
   // Source and observer colors
   sourceColorProperty: new ProfileColorProperty(dopplerEffect, "sourceColor", {
     default: new Color(255, 100, 100), // Lighter red for projector
