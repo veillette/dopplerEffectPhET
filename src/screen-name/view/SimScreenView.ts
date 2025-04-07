@@ -77,10 +77,10 @@ export class SimScreenView extends ScreenView {
   private readonly observerTrailPath: Path;
 
   // Components
-  private readonly graphDisplay: GraphDisplayNode;
-  private readonly statusDisplay: StatusTextNode;
+  private readonly graphDisplayNode: GraphDisplayNode;
+  private readonly statusDisplayNode: StatusTextNode;
   private readonly controlPanel: ControlPanelNode;
-  private readonly instructionsDisplay: InstructionsNode;
+  private readonly instructionsNode: InstructionsNode;
 
   // Managers
   private readonly waveManager: WaveManager;
@@ -297,17 +297,17 @@ export class SimScreenView extends ScreenView {
     this.keyboardManager = new KeyboardHandlerManager();
 
     // Create graph display component
-    this.graphDisplay = new GraphDisplayNode({
+    this.graphDisplayNode = new GraphDisplayNode({
       layoutBounds: this.layoutBounds,
       graphHeight: this.UI.GRAPH_HEIGHT,
       graphWidth: this.UI.GRAPH_WIDTH,
       graphMargin: this.UI.GRAPH_MARGIN,
       graphSpacing: this.UI.GRAPH_SPACING,
     });
-    this.graphLayer.addChild(this.graphDisplay);
+    this.graphLayer.addChild(this.graphDisplayNode);
 
     // Create status text display
-    this.statusDisplay = new StatusTextNode(
+    this.statusDisplayNode = new StatusTextNode(
       this.model.emittedFrequencyProperty,
       this.model.observedFrequencyProperty,
       selectedObjectNameProperty,
@@ -324,13 +324,13 @@ export class SimScreenView extends ScreenView {
         graphSpacing: this.UI.GRAPH_SPACING,
       },
     );
-    this.controlLayer.addChild(this.statusDisplay);
+    this.controlLayer.addChild(this.statusDisplayNode);
 
     // Create instructions display
-    this.instructionsDisplay = new InstructionsNode({
+    this.instructionsNode = new InstructionsNode({
       layoutBounds: this.layoutBounds,
     });
-    this.controlLayer.addChild(this.instructionsDisplay);
+    this.controlLayer.addChild(this.instructionsNode);
 
     // Create control panel
     this.controlPanel = new ControlPanelNode(
@@ -344,8 +344,8 @@ export class SimScreenView extends ScreenView {
       this.model.soundSpeedRange,
       this.model.frequencyRange,
       {
-        graphRight: this.graphDisplay.right,
-        graphBottom: this.graphDisplay.observedGraphBottom,
+        graphRight: this.graphDisplayNode.right,
+        graphBottom: this.graphDisplayNode.observedGraphBottom,
       },
     );
     this.controlLayer.addChild(this.controlPanel);
@@ -407,7 +407,7 @@ export class SimScreenView extends ScreenView {
     // Create an info button to toggle instructions
     const infoButtonNode = new InfoButton({
       listener: () => {
-        this.instructionsDisplay.toggleVisibility();
+        this.instructionsNode.toggleVisibility();
       },
       // Position the button in the lower left corner with padding
       left: this.layoutBounds.minX + 10,
@@ -446,7 +446,7 @@ export class SimScreenView extends ScreenView {
           this.visibleTrailsProperty.value = !this.visibleTrailsProperty.value;
         },
         onToggleHelp: () => {
-          this.instructionsDisplay.toggleVisibility();
+          this.instructionsNode.toggleVisibility();
         },
         onReset: () => {
           this.model.reset();
@@ -514,7 +514,7 @@ export class SimScreenView extends ScreenView {
     this.selectedObjectProperty.reset();
 
     // Update visibility directly
-    this.instructionsDisplay.setVisible(false);
+    this.instructionsNode.setVisible(false);
 
     // Reset property values
     this.visibleValuesProperty.reset();
@@ -524,7 +524,7 @@ export class SimScreenView extends ScreenView {
 
     // Reset components
     this.waveManager.clearWaveNodes();
-    this.graphDisplay.reset();
+    this.graphDisplayNode.reset();
     this.sourceTrailManager.reset();
     this.observerTrailManager.reset();
 
@@ -572,7 +572,7 @@ export class SimScreenView extends ScreenView {
 
     // Update waveforms when model changes
     this.model.simulationTimeProperty.link(() => {
-      this.graphDisplay.updateWaveforms(
+      this.graphDisplayNode.updateWaveforms(
         this.model.emittedWaveformData,
         this.model.observedWaveformData,
       );
