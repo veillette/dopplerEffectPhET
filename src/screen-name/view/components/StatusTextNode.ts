@@ -5,13 +5,15 @@
  * Doppler shift indicators, and selected object information.
  */
 
-import { Node, Text, Color } from "scenerystack";
-import { PhetFont } from "scenerystack/scenery-phet";
 import {
-  ReadOnlyProperty,
-  PatternStringProperty,
+  Color,
   DerivedProperty,
-} from "scenerystack/axon";
+  Node,
+  PatternStringProperty,
+  PhetFont,
+  ReadOnlyProperty,
+  Text,
+} from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the status text display

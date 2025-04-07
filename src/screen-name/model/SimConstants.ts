@@ -9,7 +9,9 @@
  * - All angles are in radians (rad)
  */
 
-import { Vector2 } from "scenerystack";
+import {
+  Vector2,
+} from "scenerystack";
 
 // Definition for waveform data used in visualization
 export type WaveformPoint = {

@@ -11,17 +11,17 @@
  */
 
 import {
-  Node,
-  Rectangle,
-  Line,
-  Path,
-  Shape,
-  Vector2,
   Color,
+  Line,
+  Node,
+  Path,
+  PhetFont,
+  ReadOnlyProperty,
+  Rectangle,
+  Shape,
   Text,
+  Vector2,
 } from "scenerystack";
-import { PhetFont } from "scenerystack/scenery-phet";
-import { ReadOnlyProperty } from "scenerystack/axon";
 import { StringManager } from "../../../i18n/StringManager";
 
 // Constants for layout positioning and styling

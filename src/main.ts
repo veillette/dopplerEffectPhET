@@ -1,5 +1,5 @@
 import { onReadyToLaunch, Sim } from "scenerystack/sim";
-import { Tandem } from "scenerystack/tandem";
+import { Tandem } from "scenerystack";
 import { SimScreen } from "./screen-name/SimScreen.js";
 import { StringManager } from "./i18n/StringManager";
 

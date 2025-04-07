@@ -1,27 +1,27 @@
 import {
+  ArrowNode,
   Circle,
   Color,
+  ComboBox,
+  DerivedProperty,
+  InfoButton,
   Line,
   ModelViewTransform2,
   Node,
   Path,
+  PhetFont,
+  Property,
+  ResetAllButton,
   Shape,
   Text,
-  Vector2,
-  DerivedProperty,
-  ArrowNode,
-  InfoButton,
-  PhetFont,
-  ResetAllButton,
   TimeControlNode,
-  ComboBox,
+  Vector2,
 } from "scenerystack";
+import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 import { Scenario, SimModel } from "../model/SimModel";
 import { PHYSICS, SCALE } from "../model/SimConstants";
-import { Property } from "scenerystack/axon";
-import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
-import { Sound } from "./utils/Sound";
 import { StringManager } from "../../i18n/StringManager";
+import { Sound } from "./utils/Sound";
 import { MicrophoneNode } from "./components/MicrophoneNode";
 
 // Import components directly

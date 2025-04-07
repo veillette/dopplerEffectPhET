@@ -5,17 +5,19 @@
  * including checkboxes for visibility options and controls for sound speed and frequency.
  */
 
-import { Node, Color } from "scenerystack";
-import { NumberControl, PhetFont } from "scenerystack/scenery-phet";
 import {
+  Color,
+  Node,
+  NumberControl,
   Panel,
+  PhetFont,
+  Property,
+  Range,
+  ReadOnlyProperty,
+  Text,
   VerticalCheckboxGroup,
   VerticalCheckboxGroupItem,
-} from "scenerystack/sun";
-import { Property } from "scenerystack/axon";
-import { Text } from "scenerystack";
-import { Range } from "scenerystack/dot";
-import { ReadOnlyProperty } from "scenerystack/axon";
+} from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the control panel

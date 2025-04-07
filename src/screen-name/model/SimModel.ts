@@ -1,23 +1,24 @@
 import {
-  Vector2,
-  NumberProperty,
   BooleanProperty,
-  EnumerationProperty,
-  TimeSpeed,
-  RangeWithValue,
-  EnumerationValue,
+  createObservableArray,
   Enumeration,
-  Property,
+  EnumerationProperty,
+  EnumerationValue,
+  NumberProperty,
   ObservableArray,
-  createObservableArray} from "scenerystack";
+  Property,
+  RangeWithValue,
+  TimeSpeed,
+  Vector2,
+} from "scenerystack";
 import {
-  PHYSICS,
   INITIAL_POSITIONS,
-  SOUND_DATA,
-  SCENARIOS,
+  PHYSICS,
   SCALE,
-  WaveformPoint,
+  SCENARIOS,
+  SOUND_DATA,
   TIME_SPEED,
+  WaveformPoint,
 } from "./SimConstants";
 import { WaveGenerator } from "./WaveGenerator";
 import { WaveformManager } from "./WaveformManager";

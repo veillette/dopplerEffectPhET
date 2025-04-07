@@ -4,8 +4,13 @@
  * Contains the help instructions functionality for the Doppler Effect simulation.
  */
 
-import { Node, Rectangle, Text, Color } from "scenerystack";
-import { PhetFont } from "scenerystack/scenery-phet";
+import {
+  Color,
+  Node,
+  PhetFont,
+  Rectangle,
+  Text,
+} from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the instructions display

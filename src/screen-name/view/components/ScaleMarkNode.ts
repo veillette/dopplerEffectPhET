@@ -7,16 +7,16 @@
  */
 
 import {
-  Node,
-  Line,
-  Text,
   Color,
-  Property,
+  Line,
   ModelViewTransform2,
+  Node,
+  PatternStringProperty,
+  PhetFont,
+  Property,
+  Text,
 } from "scenerystack";
-import { PhetFont } from "scenerystack/scenery-phet";
 import { StringManager } from "../../../i18n/StringManager";
-import { PatternStringProperty } from "scenerystack/axon";
 
 // Configuration options for the scale mark display
 type ScaleMarkOptions = {

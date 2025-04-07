@@ -5,7 +5,10 @@
  * Provides access to localized strings for all components.
  */
 
-import { LocalizedString, ReadOnlyProperty } from "scenerystack";
+import {
+  LocalizedString,
+  ReadOnlyProperty,
+} from "scenerystack";
 import strings_en from "./strings_en.json";
 import strings_fr from "./strings_fr.json";
 
