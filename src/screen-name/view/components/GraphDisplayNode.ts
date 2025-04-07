@@ -23,6 +23,7 @@ import {
   Vector2,
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
+import DopplerEffectColors from "../../../DopplerEffectColors";
 
 // Constants for layout positioning and styling
 const GRAPH_TITLE_OFFSET_X = 5;
@@ -43,11 +44,11 @@ type GraphDisplayOptions = {
   layoutBounds: {
     maxX: number;
   };
-  textColor: Color;
-  graphBackground: Color;
-  graphGridColor: Color;
-  sourceColor: Color;
-  observerColor: Color;
+  textColor?: Color; // Optional, will use DopplerEffectColors if not provided
+  graphBackground?: Color; // Optional, will use DopplerEffectColors if not provided
+  graphGridColor?: Color; // Optional, will use DopplerEffectColors if not provided
+  sourceColor?: Color; // Optional, will use DopplerEffectColors if not provided
+  observerColor?: Color; // Optional, will use DopplerEffectColors if not provided
   graphHeight: number;
   graphWidth: number;
   graphMargin: number;
@@ -88,6 +89,13 @@ export class GraphDisplayNode extends Node {
     // Get strings from string manager
     const strings = this.stringManager.getGraphDisplayStrings();
 
+    // Get colors from options or use defaults from DopplerEffectColors
+    const textColor = options.textColor || DopplerEffectColors.textColorProperty.value;
+    const graphBackground = options.graphBackground || DopplerEffectColors.graphBackgroundProperty.value;
+    const graphGridColor = options.graphGridColor || DopplerEffectColors.graphGridColorProperty.value;
+    const sourceColor = options.sourceColor || DopplerEffectColors.sourceColorProperty.value;
+    const observerColor = options.observerColor || DopplerEffectColors.observerColorProperty.value;
+
     const graphY1 = GRAPH_INITIAL_Y;
     const graphY2 = graphY1 + options.graphHeight + options.graphSpacing;
     const graphX =
@@ -99,11 +107,11 @@ export class GraphDisplayNode extends Node {
       graphY1,
       options.graphWidth,
       options.graphHeight,
-      options.graphBackground,
-      options.graphGridColor,
-      options.sourceColor,
+      graphBackground,
+      graphGridColor,
+      sourceColor,
       strings.emittedSoundStringProperty,
-      options.textColor
+      textColor
     );
 
     // Create observed sound graph elements
@@ -112,11 +120,11 @@ export class GraphDisplayNode extends Node {
       graphY2,
       options.graphWidth,
       options.graphHeight,
-      options.graphBackground,
-      options.graphGridColor,
-      options.observerColor,
+      graphBackground,
+      graphGridColor,
+      observerColor,
       strings.observedSoundStringProperty,
-      options.textColor
+      textColor
     );
 
     // Store references to main components

@@ -15,13 +15,14 @@ import {
   PhetFont,
   Property,
   Text,
+  ProfileColorProperty
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the scale mark display
 type ScaleMarkOptions = {
-  textColor: Color;
-  lineColor: Color;
+  textColor: Color | ProfileColorProperty;
+  lineColor: Color | ProfileColorProperty;
   layoutBounds?: {
     maxX?: number;
     maxY?: number;
@@ -61,6 +62,12 @@ export class ScaleMarkNode extends Node {
     // Default scale model length is 100 meters
     this.scaleModelLength = options.scaleModelLength || 100;
 
+    // Get color values (handle both Color and ProfileColorProperty)
+    const textColor = options.textColor instanceof ProfileColorProperty ? 
+      options.textColor : options.textColor;
+    const lineColor = options.lineColor instanceof ProfileColorProperty ? 
+      options.lineColor : options.lineColor;
+
     // Calculate the view length that corresponds to the model length
     const scaleViewLength = Math.abs(
       this.modelViewTransform.modelToViewDeltaY(this.scaleModelLength),
@@ -68,19 +75,19 @@ export class ScaleMarkNode extends Node {
 
     // Create the main scale mark (vertical line)
     this.scaleMark = new Line(0, 0, 0, scaleViewLength, {
-      stroke: options.lineColor,
+      stroke: lineColor,
       lineWidth: 2,
     });
 
     // Create end marks for the ruler effect
     this.topEndMark = new Line(-5, 0, 5, 0, {
-      stroke: options.lineColor,
+      stroke: lineColor,
       lineWidth: 2,
     });
 
     // Create bottom end mark
     this.bottomEndMark = new Line(-5, scaleViewLength, 5, scaleViewLength, {
-      stroke: options.lineColor,
+      stroke: lineColor,
       lineWidth: 2,
     });
 
@@ -96,7 +103,7 @@ export class ScaleMarkNode extends Node {
 
       // Create smaller intermediate tick marks
       const tickMark = new Line(-3, tickY, 3, tickY, {
-        stroke: options.lineColor,
+        stroke: lineColor,
       });
 
       this.addChild(tickMark);
@@ -108,7 +115,7 @@ export class ScaleMarkNode extends Node {
     // Create scale label with pattern string property for localization
     this.scaleLabel = new Text("", {
       font: new PhetFont(14),
-      fill: options.textColor,
+      fill: textColor,
       left: 10, // Position label to the right of the scale mark
       centerY: scaleViewLength / 2, // Center label vertically
       stringProperty: new PatternStringProperty(unitsStringProperty, {

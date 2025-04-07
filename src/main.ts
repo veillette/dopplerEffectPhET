@@ -10,10 +10,18 @@ onReadyToLaunch(() => {
   // Get the title string property from the string manager
   const titleStringProperty = stringManager.getTitleStringProperty();
 
+  // Create simulation options with ProjectorMode support
+  const simOptions = {
+    webgl: true,
+    optionsForModals: {
+      supportsProjectorMode: true
+    }
+  };
+
   const screens = [
     new SimScreen({ tandem: Tandem.ROOT.createTandem("simScreen") }),
   ];
 
-  const sim = new Sim(titleStringProperty, screens);
+  const sim = new Sim(titleStringProperty, screens, simOptions);
   sim.start();
 });

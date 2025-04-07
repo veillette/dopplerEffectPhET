@@ -4,9 +4,10 @@
  * Manages the visualization of propagating waves in the Doppler Effect simulation.
  */
 
-import { Node, Circle, Color, ModelViewTransform2 } from "scenerystack";
+import { Node, Circle, Color, ModelViewTransform2, ProfileColorProperty } from "scenerystack";
 import { Wave } from "../../model/SimModel";
 import { WAVE } from "../../model/SimConstants";
+import DopplerEffectColors from "../../../DopplerEffectColors";
 
 /**
  * Manager for handling wave visualization
@@ -14,19 +15,33 @@ import { WAVE } from "../../model/SimConstants";
 export class WaveManager {
   // Map to track wave nodes
   private readonly waveNodesMap: Map<Wave, Circle> = new Map();
+  private readonly waveColorValue: Color;
 
   /**
    * Constructor for the WaveManager
    *
    * @param waveLayer - Node that will contain the wave visualizations
    * @param modelViewTransform - Transform to convert model coordinates to view coordinates
-   * @param waveColor - Color for the wave circles
+   * @param waveColor - Color for the wave circles (ProfileColorProperty or Color)
    */
   constructor(
     private readonly waveLayer: Node,
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly waveColor: Color,
-  ) {}
+    private readonly waveColor: ProfileColorProperty | Color = DopplerEffectColors.waveColorProperty,
+  ) {
+    // Store initial color value and listen for changes if it's a property
+    if (waveColor instanceof ProfileColorProperty) {
+      this.waveColorValue = waveColor.value;
+      waveColor.link((newColor) => {
+        // Update all wave nodes with the new color
+        this.waveNodesMap.forEach((waveNode) => {
+          waveNode.stroke = newColor;
+        });
+      });
+    } else {
+      this.waveColorValue = waveColor;
+    }
+  }
 
   /**
    * Add a wave node for a new wave in the model
@@ -35,7 +50,7 @@ export class WaveManager {
    */
   public addWaveNode(wave: Wave): void {
     const waveNode = new Circle(0, {
-      stroke: this.waveColor,
+      stroke: this.waveColorValue,
       fill: null,
       lineWidth: 2,
       opacity: 0.7,

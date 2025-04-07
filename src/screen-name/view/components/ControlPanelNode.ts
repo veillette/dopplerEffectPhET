@@ -19,11 +19,12 @@ import {
   VerticalCheckboxGroupItem,
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
+import DopplerEffectColors from "../../../DopplerEffectColors";
 
 // Configuration options for the control panel
 type ControlPanelOptions = {
-  // UI colors
-  textColor: Color;
+  // UI colors - Optional, will use DopplerEffectColors if not provided
+  textColor?: Color;
 
   // References to graph display for positioning
   graphRight: number;
@@ -68,6 +69,9 @@ export class ControlPanelNode extends Node {
   ) {
     super();
 
+    // Get the text color (use provided color or default from DopplerEffectColors)
+    const textColor = options.textColor || DopplerEffectColors.controlPanelTextProperty.value;
+
     // Get strings from string manager
     const strings = this.stringManager.getControlPanelStrings();
 
@@ -81,7 +85,7 @@ export class ControlPanelNode extends Node {
       createNode: () => {
         return new Text(labelProp, {
           font: new PhetFont(14),
-          fill: options.textColor,
+          fill: textColor,
         });
       },
     });
@@ -123,6 +127,7 @@ export class ControlPanelNode extends Node {
         titleNodeOptions: {
           font: new PhetFont(12),
           maxWidth: 140,
+          fill: textColor
         },
       },
     );
@@ -141,6 +146,7 @@ export class ControlPanelNode extends Node {
         titleNodeOptions: {
           font: new PhetFont(12),
           maxWidth: 140,
+          fill: textColor
         },
       },
     );
@@ -155,6 +161,8 @@ export class ControlPanelNode extends Node {
     this.panel = new Panel(panelContent, {
       right: options.graphRight,
       top: options.graphBottom + 10,
+      fill: DopplerEffectColors.controlPanelBackgroundProperty.value,
+      stroke: DopplerEffectColors.controlPanelBorderProperty.value
     });
 
     // Add the panel to this node

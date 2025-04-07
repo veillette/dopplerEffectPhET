@@ -16,6 +16,7 @@ import {
   Text,
   TimeControlNode,
   Vector2,
+  ProfileColorProperty,
 } from "scenerystack";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 import { Scenario, SimModel } from "../model/SimModel";
@@ -23,6 +24,7 @@ import { PHYSICS, SCALE } from "../model/SimConstants";
 import { StringManager } from "../../i18n/StringManager";
 import { Sound } from "./utils/Sound";
 import { MicrophoneNode } from "./components/MicrophoneNode";
+import DopplerEffectColors from "../../DopplerEffectColors";
 
 // Import components directly
 import { ControlPanelNode } from "./components/ControlPanelNode";
@@ -104,16 +106,16 @@ export class SimScreenView extends ScreenView {
   private readonly UI = {
     SOURCE_RADIUS: 10,
     OBSERVER_RADIUS: 10,
-    SOURCE_COLOR: new Color(255, 0, 0),
-    OBSERVER_COLOR: new Color(0, 0, 255),
-    CONNECTING_LINE_COLOR: new Color(100, 100, 100),
-    WAVE_COLOR: new Color(100, 100, 100),
-    SELECTION_COLOR: new Color(255, 255, 0),
-    GRAPH_BACKGROUND: new Color(240, 240, 240),
-    GRAPH_GRID_COLOR: new Color(200, 200, 200),
-    TEXT_COLOR: new Color(0, 0, 0),
-    REDSHIFT_COLOR: new Color(255, 40, 40),
-    BLUESHIFT_COLOR: new Color(40, 40, 255),
+    SOURCE_COLOR: DopplerEffectColors.sourceColorProperty.value,
+    OBSERVER_COLOR: DopplerEffectColors.observerColorProperty.value,
+    CONNECTING_LINE_COLOR: DopplerEffectColors.connectingLineColorProperty.value,
+    WAVE_COLOR: DopplerEffectColors.waveColorProperty.value,
+    SELECTION_COLOR: DopplerEffectColors.selectionColorProperty.value,
+    GRAPH_BACKGROUND: DopplerEffectColors.graphBackgroundProperty.value,
+    GRAPH_GRID_COLOR: DopplerEffectColors.graphGridColorProperty.value,
+    TEXT_COLOR: DopplerEffectColors.textColorProperty.value,
+    REDSHIFT_COLOR: DopplerEffectColors.redshiftColorProperty.value,
+    BLUESHIFT_COLOR: DopplerEffectColors.blueshiftColorProperty.value,
     GRAPH_HEIGHT: 60,
     GRAPH_WIDTH: 210,
     GRAPH_MARGIN: 20,
@@ -175,25 +177,25 @@ export class SimScreenView extends ScreenView {
 
     // Create source and observer nodes
     this.sourceNode = new Circle(this.UI.SOURCE_RADIUS, {
-      fill: this.UI.SOURCE_COLOR,
+      fill: DopplerEffectColors.sourceColorProperty,
       cursor: "pointer",
     });
 
     this.observerNode = new Circle(this.UI.OBSERVER_RADIUS, {
-      fill: this.UI.OBSERVER_COLOR,
+      fill: DopplerEffectColors.observerColorProperty,
       cursor: "pointer",
     });
 
     // Create connecting line
     this.connectingLine = new Line(0, 0, 0, 0, {
       visibleProperty: this.visibleLineOfSightProperty,
-      stroke: this.UI.CONNECTING_LINE_COLOR,
+      stroke: DopplerEffectColors.connectingLineColorProperty,
       lineDash: [10, 5],
     });
 
     // Create selection highlight
     this.selectionHighlight = new Circle(this.UI.SOURCE_RADIUS + 5, {
-      stroke: this.UI.SELECTION_COLOR,
+      stroke: DopplerEffectColors.selectionColorProperty,
       lineWidth: 2,
     });
 
@@ -211,23 +213,31 @@ export class SimScreenView extends ScreenView {
       0,
       0,
       0,
-      velocityVectorOptions,
+      {
+        ...velocityVectorOptions,
+        fill: DopplerEffectColors.sourceVelocityArrowProperty,
+        stroke: DopplerEffectColors.sourceVelocityArrowProperty
+      }
     );
     this.observerVelocityVector = new ArrowNode(
       0,
       0,
       0,
       0,
-      velocityVectorOptions,
+      {
+        ...velocityVectorOptions,
+        fill: DopplerEffectColors.observerVelocityArrowProperty,
+        stroke: DopplerEffectColors.observerVelocityArrowProperty
+      }
     );
 
     // Create trail paths
     this.sourceTrail = new Path(new Shape(), {
-      stroke: this.UI.SOURCE_COLOR,
+      stroke: DopplerEffectColors.sourceColorProperty,
       lineWidth: this.UI.TRAIL_WIDTH,
     });
     this.observerTrail = new Path(new Shape(), {
-      stroke: this.UI.OBSERVER_COLOR,
+      stroke: DopplerEffectColors.observerColorProperty,
       lineWidth: this.UI.TRAIL_WIDTH,
     });
 
@@ -256,26 +266,26 @@ export class SimScreenView extends ScreenView {
     this.waveManager = new WaveManager(
       this.waveLayer,
       this.modelViewTransform,
-      this.UI.WAVE_COLOR,
+      DopplerEffectColors.waveColorProperty
     );
 
     this.vectorManager = new VectorDisplayManager(
       this.modelViewTransform,
-      SCALE.VELOCITY_VECTOR,
+      SCALE.VELOCITY_VECTOR
     );
 
     this.sourceTrailManager = new TrailManager(
       this.sourceTrail,
       this.modelViewTransform,
-      this.UI.SOURCE_COLOR,
-      this.visibleTrailsProperty,
+      DopplerEffectColors.sourceColorProperty,
+      this.visibleTrailsProperty
     );
 
     this.observerTrailManager = new TrailManager(
       this.observerTrail,
       this.modelViewTransform,
-      this.UI.OBSERVER_COLOR,
-      this.visibleTrailsProperty,
+      DopplerEffectColors.observerColorProperty,
+      this.visibleTrailsProperty
     );
 
     this.sourceDragManager = new DragHandlerManager(
@@ -295,11 +305,6 @@ export class SimScreenView extends ScreenView {
         layoutBounds: {
           maxX: this.layoutBounds.maxX,
         },
-        textColor: this.UI.TEXT_COLOR,
-        graphBackground: this.UI.GRAPH_BACKGROUND,
-        graphGridColor: this.UI.GRAPH_GRID_COLOR,
-        sourceColor: this.UI.SOURCE_COLOR,
-        observerColor: this.UI.OBSERVER_COLOR,
         graphHeight: this.UI.GRAPH_HEIGHT,
         graphWidth: this.UI.GRAPH_WIDTH,
         graphMargin: this.UI.GRAPH_MARGIN,
@@ -319,10 +324,10 @@ export class SimScreenView extends ScreenView {
           maxX: this.layoutBounds.maxX,
           maxY: this.layoutBounds.maxY,
         },
-        textColor: this.UI.TEXT_COLOR,
-        blueshiftColor: this.UI.BLUESHIFT_COLOR,
-        redshiftColor: this.UI.REDSHIFT_COLOR,
-        selectionColor: this.UI.SELECTION_COLOR,
+        textColor: DopplerEffectColors.textColorProperty,
+        blueshiftColor: DopplerEffectColors.blueshiftColorProperty,
+        redshiftColor: DopplerEffectColors.redshiftColorProperty,
+        selectionColor: DopplerEffectColors.selectionColorProperty,
         graphWidth: this.UI.GRAPH_WIDTH,
         graphHeight: this.UI.GRAPH_HEIGHT,
         graphMargin: this.UI.GRAPH_MARGIN,
@@ -339,7 +344,7 @@ export class SimScreenView extends ScreenView {
           centerY: this.layoutBounds.centerY,
           width: this.layoutBounds.width,
         },
-        textColor: this.UI.TEXT_COLOR,
+        textColor: DopplerEffectColors.textColorProperty,
       },
     );
     this.controlLayer.addChild(this.instructionsDisplay);
@@ -356,7 +361,6 @@ export class SimScreenView extends ScreenView {
       this.model.soundSpeedRange,
       this.model.frequencyRange,
       {
-        textColor: this.UI.TEXT_COLOR,
         graphRight: this.graphDisplay.right,
         graphBottom: this.graphDisplay.observedGraphBottom,
       },
@@ -364,7 +368,7 @@ export class SimScreenView extends ScreenView {
     this.controlLayer.addChild(this.controlPanel);
 
     // Create scenario items for the combo box
-    const scenarioItems = this.createScenarioItems(this.UI.TEXT_COLOR);
+    const scenarioItems = this.createScenarioItems(DopplerEffectColors.textColorProperty);
 
     // Create combo box using SceneryStack API
     const scenarioComboBox = new ComboBox(
@@ -397,8 +401,8 @@ export class SimScreenView extends ScreenView {
       this.modelViewTransform,
       this.visibleValuesProperty,
       {
-        textColor: this.UI.TEXT_COLOR,
-        lineColor: this.UI.CONNECTING_LINE_COLOR,
+        textColor: DopplerEffectColors.textColorProperty,
+        lineColor: DopplerEffectColors.connectingLineColorProperty,
         scaleModelLength: 1000, // 1000 meters scale for better visibility
       },
     );
@@ -673,13 +677,16 @@ export class SimScreenView extends ScreenView {
 
   /**
    * Create scenario items for the combo box
-   * @param textColor - The color for the scenario text
+   * @param textColor - The color for the scenario text (ProfileColorProperty or Color)
    * @returns Array of scenario items for the combo box
    */
   private createScenarioItems(
-    textColor: Color,
+    textColor: ProfileColorProperty | Color,
   ): { value: Scenario; createNode: () => Text }[] {
     const scenarioStrings = this.stringManager.getScenarioStrings();
+    
+    // Handle both ProfileColorProperty and Color
+    const actualColor = textColor instanceof ProfileColorProperty ? textColor : textColor;
     
     return [
       {
@@ -687,7 +694,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(scenarioStrings.freePlayStringProperty, {
             font: new PhetFont(14),
-            fill: textColor,
+            fill: actualColor,
           }),
       },
       {
@@ -697,7 +704,7 @@ export class SimScreenView extends ScreenView {
             scenarioStrings.sourceMovingTowardObserverStringProperty,
             {
               font: new PhetFont(14),
-              fill: textColor,
+              fill: actualColor,
             },
           ),
       },
@@ -708,7 +715,7 @@ export class SimScreenView extends ScreenView {
             scenarioStrings.observerMovingTowardSourceStringProperty,
             {
               font: new PhetFont(14),
-              fill: textColor,
+              fill: actualColor,
             },
           ),
       },
@@ -717,7 +724,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(scenarioStrings.movingAwayStringProperty, {
             font: new PhetFont(14),
-            fill: textColor,
+            fill: actualColor,
           }),
       },
       {
@@ -725,7 +732,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(scenarioStrings.perpendicularStringProperty, {
             font: new PhetFont(14),
-            fill: textColor,
+            fill: actualColor,
           }),
       },
     ];

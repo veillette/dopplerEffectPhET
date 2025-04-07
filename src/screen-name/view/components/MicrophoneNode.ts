@@ -8,7 +8,6 @@
 import {
   Bounds2,
   Circle,
-  Color,
   DragListener,
   ModelViewTransform2,
   Node,
@@ -19,6 +18,7 @@ import {
   Vector2,
 } from "scenerystack";
 import { Sound } from "../utils/Sound";
+import DopplerEffectColors from "../../../DopplerEffectColors";
 
 // Constants for microphone visualization and behavior
 const MICROPHONE = {
@@ -39,11 +39,11 @@ const MICROPHONE = {
   BASE_Y_OFFSET: 35,
 
   // Styling constants
-  BODY_COLOR: new Color(100, 100, 100),
-  STEM_COLOR: new Color(80, 80, 80),
-  BASE_COLOR: new Color(50, 50, 50),
-  GRID_COLOR: new Color(40, 40, 40),
-  DETECTION_RING_COLOR: new Color(255, 255, 0),
+  BODY_COLOR: DopplerEffectColors.microphoneBodyColorProperty.value,
+  STEM_COLOR: DopplerEffectColors.microphoneStemColorProperty.value,
+  BASE_COLOR: DopplerEffectColors.microphoneBaseColorProperty.value,
+  GRID_COLOR: DopplerEffectColors.microphoneGridColorProperty.value,
+  DETECTION_RING_COLOR: DopplerEffectColors.microphoneDetectionRingColorProperty.value,
   BASE_CORNER_RADIUS: 3,
   GRID_LINE_WIDTH: 1,
   DETECTION_RING_LINE_WIDTH: 2,

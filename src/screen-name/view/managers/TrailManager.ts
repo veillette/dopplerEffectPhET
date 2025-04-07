@@ -11,6 +11,7 @@ import {
   LinearGradient,
   ModelViewTransform2,
   Property,
+  ProfileColorProperty
 } from "scenerystack";
 
 // Import position history point interface from model
@@ -20,20 +21,39 @@ import { PositionHistoryPoint } from "../../model/SimModel";
  * Manager for handling a single object motion trail
  */
 export class TrailManager {
+  // Store the current color value
+  private trailColorValue: Color;
+  
   /**
    * Constructor for the TrailManager
    *
    * @param trailPath - Path node for the trail
    * @param modelViewTransform - Transform to convert model coordinates to view coordinates
-   * @param trailColor - Color for the trail
+   * @param trailColor - Color for the trail (ProfileColorProperty or Color)
    * @param visibleProperty - Property controlling trail visibility
    */
   constructor(
     private readonly trailPath: Path,
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly trailColor: Color,
+    private readonly trailColor: ProfileColorProperty | Color,
     private readonly visibleProperty: Property<boolean>,
-  ) {}
+  ) {
+    // Store initial color value and listen for changes if it's a property
+    if (trailColor instanceof ProfileColorProperty) {
+      this.trailColorValue = trailColor.value;
+      trailColor.link((newColor) => {
+        // Update the trail with the new color (it will be used next time updateTrail is called)
+        this.trailColorValue = newColor;
+        // If the trail is currently visible, update it immediately
+        if (this.trailPath.visible) {
+          // Force an update of the trail's gradient the next time updateTrail is called
+          this.trailPath.stroke = newColor;
+        }
+      });
+    } else {
+      this.trailColorValue = trailColor;
+    }
+  }
 
   /**
    * Update motion trail
@@ -89,15 +109,15 @@ export class TrailManager {
     // Add color stops - transparent at oldest point, full color at newest
     gradient.addColorStop(
       0,
-      new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.1),
+      new Color(this.trailColorValue.r, this.trailColorValue.g, this.trailColorValue.b, 0.1),
     );
     gradient.addColorStop(
       0.5,
-      new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.4),
+      new Color(this.trailColorValue.r, this.trailColorValue.g, this.trailColorValue.b, 0.4),
     );
     gradient.addColorStop(
       1,
-      new Color(this.trailColor.r, this.trailColor.g, this.trailColor.b, 0.8),
+      new Color(this.trailColorValue.r, this.trailColorValue.g, this.trailColorValue.b, 0.8),
     );
 
     // Apply the gradient
