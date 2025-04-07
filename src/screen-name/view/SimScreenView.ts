@@ -128,6 +128,9 @@ export class SimScreenView extends ScreenView {
   // String manager instance
   private readonly stringManager: StringManager = StringManager.getInstance();
 
+  // Color profile property for projector mode
+  private readonly colorProfileProperty: Property<string>;
+
   /**
    * Constructor for the Doppler Effect SimScreenView
    */
@@ -135,6 +138,12 @@ export class SimScreenView extends ScreenView {
     super(options);
 
     this.model = model;
+
+    // Initialize the color profile property (default is the first color profile)
+    this.colorProfileProperty = new Property<string>("default");
+    
+    // The ProjectorModeToggleSwitch will handle updating this property
+    // which will be passed to the preferences dialog
 
     // Create model-view transform - y-axis is inverted and centered on the screen
     this.modelViewTransform =
@@ -393,7 +402,7 @@ export class SimScreenView extends ScreenView {
       bottom: this.layoutBounds.maxY - 10,
     });
     this.controlLayer.addChild(resetAllButton);
-
+    
     // Create scale mark node to show model-to-view scale
     const scaleMarkNode = new ScaleMarkNode(
       this.modelViewTransform,
@@ -403,7 +412,7 @@ export class SimScreenView extends ScreenView {
       },
     );
 
-    // Position the scale mark to the left of the reset all button
+    // Position the scale mark
     scaleMarkNode.right = resetAllButton.left - 30;
     scaleMarkNode.bottom = resetAllButton.bottom;
     this.controlLayer.addChild(scaleMarkNode);

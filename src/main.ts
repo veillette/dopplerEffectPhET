@@ -2,6 +2,7 @@ import { onReadyToLaunch, Sim } from "scenerystack/sim";
 import { Tandem } from "scenerystack";
 import { SimScreen } from "./screen-name/SimScreen.js";
 import { StringManager } from "./i18n/StringManager";
+import { PreferencesModel } from 'scenerystack/sim';
 
 onReadyToLaunch(() => {
   // Get string manager instance
@@ -13,9 +14,11 @@ onReadyToLaunch(() => {
   // Create simulation options with ProjectorMode support
   const simOptions = {
     webgl: true,
-    optionsForModals: {
-      supportsProjectorMode: true
-    }
+    preferencesModel: new PreferencesModel({
+      visualOptions: {
+        supportsProjectorMode: true
+      }
+    })
   };
 
   const screens = [
