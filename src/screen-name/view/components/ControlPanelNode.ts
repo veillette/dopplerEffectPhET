@@ -16,19 +16,7 @@ import { Property } from "scenerystack/axon";
 import { Text } from "scenerystack";
 import { Range } from "scenerystack/dot";
 import { ReadOnlyProperty } from "scenerystack/axon";
-
-// Type for the text configuration
-type ControlPanelStrings = {
-  valuesStringProperty: ReadOnlyProperty<string>;
-  velocityArrowsStringProperty: ReadOnlyProperty<string>;
-  lineOfSightStringProperty: ReadOnlyProperty<string>;
-  soundSpeedStringProperty: ReadOnlyProperty<string>;
-  frequencyStringProperty: ReadOnlyProperty<string>;
-  motionTrailsStringProperty: ReadOnlyProperty<string>;
-  metersPerSecondStringProperty: ReadOnlyProperty<string>;
-  hertzStringProperty: ReadOnlyProperty<string>;
-  microphoneClicksStringProperty: ReadOnlyProperty<string>;
-};
+import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the control panel
 type ControlPanelOptions = {
@@ -47,10 +35,12 @@ export class ControlPanelNode extends Node {
   // The panel component
   private readonly panel: Panel;
 
+  // String manager instance
+  private readonly stringManager: StringManager = StringManager.getInstance();
+
   /**
    * Constructor for the ControlPanelNode
    *
-   * @param strings - Text strings for the controls
    * @param visibleValuesProperty - Property for toggling value displays
    * @param visibleVelocityArrowProperty - Property for toggling velocity arrows
    * @param visibleLineOfSightProperty - Property for toggling line of sight
@@ -63,7 +53,6 @@ export class ControlPanelNode extends Node {
    * @param options - Configuration options
    */
   constructor(
-    strings: ControlPanelStrings,
     visibleValuesProperty: Property<boolean>,
     visibleVelocityArrowProperty: Property<boolean>,
     visibleLineOfSightProperty: Property<boolean>,
@@ -76,6 +65,9 @@ export class ControlPanelNode extends Node {
     options: ControlPanelOptions,
   ) {
     super();
+
+    // Get strings from string manager
+    const strings = this.stringManager.getControlPanelStrings();
 
     // Helper function to create checkbox item with consistent styling
     // and handle StringProperty

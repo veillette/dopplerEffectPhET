@@ -22,6 +22,7 @@ import {
 } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
 import { ReadOnlyProperty } from "scenerystack/axon";
+import { StringManager } from "../../../i18n/StringManager";
 
 // Constants for layout positioning and styling
 const GRAPH_TITLE_OFFSET_X = 5;
@@ -35,12 +36,6 @@ const WAVEFORM_Y_SCALING = 20; // Scaling factor for Y-axis amplitude
 export type WaveformPoint = {
   t: number; // Time in seconds (s)
   y: number; // Amplitude (dimensionless)
-};
-
-// Type for graph-related strings
-type GraphStrings = {
-  emittedSoundStringProperty: ReadOnlyProperty<string>;
-  observedSoundStringProperty: ReadOnlyProperty<string>;
 };
 
 // Configuration options for the graph display
@@ -78,15 +73,20 @@ export class GraphDisplayNode extends Node {
   private readonly observedGraph: Rectangle;
   private readonly emittedWaveform: Path;
   private readonly observedWaveform: Path;
+  
+  // String manager instance
+  private readonly stringManager: StringManager = StringManager.getInstance();
 
   /**
    * Constructor for the GraphDisplayNode
    *
-   * @param strings - Text strings for the graphs
    * @param options - Configuration options
    */
-  constructor(strings: GraphStrings, options: GraphDisplayOptions) {
+  constructor(options: GraphDisplayOptions) {
     super();
+    
+    // Get strings from string manager
+    const strings = this.stringManager.getGraphDisplayStrings();
 
     const graphY1 = GRAPH_INITIAL_Y;
     const graphY2 = graphY1 + options.graphHeight + options.graphSpacing;
@@ -314,11 +314,9 @@ export class GraphDisplayNode extends Node {
   }
 
   /**
-   * Reset the graph display
-   * Clears waveform shapes
+   * Reset the waveforms
    */
   public reset(): void {
-    // Clear waveform displays
     this.emittedWaveform.shape = new Shape();
     this.observedWaveform.shape = new Shape();
   }

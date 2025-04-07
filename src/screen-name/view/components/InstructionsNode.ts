@@ -6,21 +6,7 @@
 
 import { Node, Rectangle, Text, Color } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
-import { ReadOnlyProperty } from "scenerystack/axon";
-
-// Type for instruction-related strings
-type InstructionStrings = {
-  titleStringProperty: ReadOnlyProperty<string>;
-  dragAndDropStringProperty: ReadOnlyProperty<string>;
-  keyboardControlsStringProperty: ReadOnlyProperty<string>;
-  objectSelectionStringProperty: ReadOnlyProperty<string>;
-  controlsStringProperty: ReadOnlyProperty<string>;
-  adjustStringProperty: ReadOnlyProperty<string>;
-  scenariosStringProperty: ReadOnlyProperty<string>;
-  toggleMotionTrailsStringProperty: ReadOnlyProperty<string>;
-  toggleMicrophoneStringProperty: ReadOnlyProperty<string>;
-  dragMicrophoneStringProperty: ReadOnlyProperty<string>;
-};
+import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the instructions display
 type InstructionsOptions = {
@@ -38,17 +24,22 @@ type InstructionsOptions = {
 export class InstructionsNode extends Node {
   // Background for the instructions
   private readonly background: Rectangle;
+  
+  // String manager instance
+  private readonly stringManager: StringManager = StringManager.getInstance();
 
   /**
    * Constructor for the InstructionsNode
    *
-   * @param strings - Text strings for the instructions
    * @param options - Configuration options
    */
-  constructor(strings: InstructionStrings, options: InstructionsOptions) {
+  constructor(options: InstructionsOptions) {
     super({
       visible: false, // Initially hidden
     });
+    
+    // Get strings from string manager
+    const strings = this.stringManager.getInstructionsStrings();
 
     // Create background rectangle
     this.background = new Rectangle(0, 0, options.layoutBounds.width / 2, 200, {

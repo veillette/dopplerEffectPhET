@@ -12,17 +12,7 @@ import {
   PatternStringProperty,
   DerivedProperty,
 } from "scenerystack/axon";
-
-// Type for status text-related strings, renamed according to convention
-type StatusStringProperties = {
-  emittedFrequencyPatternStringProperty: ReadOnlyProperty<string>;
-  observedFrequencyPatternStringProperty: ReadOnlyProperty<string>;
-  selectedObjectPatternStringProperty: ReadOnlyProperty<string>;
-  blueshiftStringProperty: ReadOnlyProperty<string>;
-  redshiftStringProperty: ReadOnlyProperty<string>;
-  sourceStringProperty: ReadOnlyProperty<string>; // Assuming SOURCE maps to sourceStringProperty
-  observerStringProperty: ReadOnlyProperty<string>; // Assuming OBSERVER maps to observerStringProperty
-};
+import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the status text display
 type StatusTextOptions = {
@@ -49,10 +39,12 @@ export class StatusTextNode extends Node {
   private readonly selectedObjectText: Text;
   private readonly shiftStatusText: Text;
 
+  // String manager instance
+  private readonly stringManager: StringManager = StringManager.getInstance();
+
   /**
    * Constructor for the StatusTextNode
    *
-   * @param statusStringProperties - Text pattern string Properties
    * @param emittedFrequencyProperty - Property for the emitted frequency value
    * @param observedFrequencyProperty - Property for the observed frequency value
    * @param selectedObjectNameProperty - Property for the selected object name
@@ -60,7 +52,6 @@ export class StatusTextNode extends Node {
    * @param options - Configuration options
    */
   constructor(
-    statusStringProperties: StatusStringProperties,
     emittedFrequencyProperty: ReadOnlyProperty<number>,
     observedFrequencyProperty: ReadOnlyProperty<number>,
     selectedObjectNameProperty: ReadOnlyProperty<string>,
@@ -68,6 +59,9 @@ export class StatusTextNode extends Node {
     options: StatusTextOptions,
   ) {
     super();
+
+    // Get strings from string manager
+    const statusStringProperties = this.stringManager.getStatusTextStrings();
 
     // Create text nodes
     this.emittedFreqText = new Text(emittedFrequencyProperty.value, {

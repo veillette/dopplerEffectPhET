@@ -1,19 +1,14 @@
 import { onReadyToLaunch, Sim } from "scenerystack/sim";
 import { Tandem } from "scenerystack/tandem";
-import { LocalizedString } from "scenerystack";
 import { SimScreen } from "./screen-name/SimScreen.js";
-import strings_en from "./i18n/strings_en.json";
-import strings_fr from "./i18n/strings_fr.json";
+import { StringManager } from "./i18n/StringManager";
 
 onReadyToLaunch(() => {
-  // Create localized string properties
-  const StringProperties = LocalizedString.getNestedStringProperties({
-    en: strings_en,
-    fr: strings_fr,
-  });
+  // Get string manager instance
+  const stringManager = StringManager.getInstance();
 
-  // The title is now a localized StringProperty that can change to different values
-  const titleStringProperty = StringProperties.titleStringProperty;
+  // Get the title string property from the string manager
+  const titleStringProperty = stringManager.getTitleStringProperty();
 
   const screens = [
     new SimScreen({ tandem: Tandem.ROOT.createTandem("simScreen") }),

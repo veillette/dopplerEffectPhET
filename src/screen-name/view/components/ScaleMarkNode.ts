@@ -15,6 +15,8 @@ import {
   ModelViewTransform2,
 } from "scenerystack";
 import { PhetFont } from "scenerystack/scenery-phet";
+import { StringManager } from "../../../i18n/StringManager";
+import { PatternStringProperty } from "scenerystack/axon";
 
 // Configuration options for the scale mark display
 type ScaleMarkOptions = {
@@ -36,6 +38,9 @@ export class ScaleMarkNode extends Node {
   private readonly bottomEndMark: Line;
   private readonly scaleLabel: Text;
   private readonly scaleModelLength: number;
+  
+  // String manager instance
+  private readonly stringManager: StringManager = StringManager.getInstance();
 
   /**
    * Constructor for the ScaleMarkNode
@@ -97,12 +102,18 @@ export class ScaleMarkNode extends Node {
       this.addChild(tickMark);
     }
 
-    // Create scale label
-    this.scaleLabel = new Text(`${this.scaleModelLength}m`, {
+    // Get the units.meters string from the string manager
+    const unitsStringProperty = this.stringManager.getAllStringProperties().units.metersStringProperty;
+    
+    // Create scale label with pattern string property for localization
+    this.scaleLabel = new Text("", {
       font: new PhetFont(14),
       fill: options.textColor,
       left: 10, // Position label to the right of the scale mark
       centerY: scaleViewLength / 2, // Center label vertically
+      stringProperty: new PatternStringProperty(unitsStringProperty, {
+        value: this.scaleModelLength
+      })
     });
 
     // Add components to this node
