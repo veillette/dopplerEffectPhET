@@ -11,7 +11,6 @@
  */
 
 import {
-  Color,
   Line,
   Node,
   Path,
@@ -21,6 +20,7 @@ import {
   Shape,
   Text,
   Vector2,
+  ProfileColorProperty
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
@@ -44,11 +44,6 @@ type GraphDisplayOptions = {
   layoutBounds: {
     maxX: number;
   };
-  textColor?: Color; // Optional, will use DopplerEffectColors if not provided
-  graphBackground?: Color; // Optional, will use DopplerEffectColors if not provided
-  graphGridColor?: Color; // Optional, will use DopplerEffectColors if not provided
-  sourceColor?: Color; // Optional, will use DopplerEffectColors if not provided
-  observerColor?: Color; // Optional, will use DopplerEffectColors if not provided
   graphHeight: number;
   graphWidth: number;
   graphMargin: number;
@@ -89,13 +84,6 @@ export class GraphDisplayNode extends Node {
     // Get strings from string manager
     const strings = this.stringManager.getGraphDisplayStrings();
 
-    // Get colors from options or use defaults from DopplerEffectColors
-    const textColor = options.textColor || DopplerEffectColors.textColorProperty.value;
-    const graphBackground = options.graphBackground || DopplerEffectColors.graphBackgroundProperty.value;
-    const graphGridColor = options.graphGridColor || DopplerEffectColors.graphGridColorProperty.value;
-    const sourceColor = options.sourceColor || DopplerEffectColors.sourceColorProperty.value;
-    const observerColor = options.observerColor || DopplerEffectColors.observerColorProperty.value;
-
     const graphY1 = GRAPH_INITIAL_Y;
     const graphY2 = graphY1 + options.graphHeight + options.graphSpacing;
     const graphX =
@@ -107,11 +95,11 @@ export class GraphDisplayNode extends Node {
       graphY1,
       options.graphWidth,
       options.graphHeight,
-      graphBackground,
-      graphGridColor,
-      sourceColor,
+      DopplerEffectColors.graphBackgroundProperty,
+      DopplerEffectColors.graphGridColorProperty,
+      DopplerEffectColors.sourceColorProperty,
       strings.emittedSoundStringProperty,
-      textColor
+      DopplerEffectColors.textColorProperty
     );
 
     // Create observed sound graph elements
@@ -120,11 +108,11 @@ export class GraphDisplayNode extends Node {
       graphY2,
       options.graphWidth,
       options.graphHeight,
-      graphBackground,
-      graphGridColor,
-      observerColor,
+      DopplerEffectColors.graphBackgroundProperty,
+      DopplerEffectColors.graphGridColorProperty,
+      DopplerEffectColors.observerColorProperty,
       strings.observedSoundStringProperty,
-      textColor
+      DopplerEffectColors.textColorProperty
     );
 
     // Store references to main components
@@ -147,11 +135,11 @@ export class GraphDisplayNode extends Node {
    * @param graphY - Y position of the graph
    * @param width - Width of the graph
    * @param height - Height of the graph
-   * @param backgroundColor - Background color of the graph
-   * @param gridColor - Color of grid lines
-   * @param waveformColor - Color of the waveform
+   * @param backgroundColorProperty - Background color property of the graph
+   * @param gridColorProperty - Color property of grid lines
+   * @param waveformColorProperty - Color property of the waveform
    * @param titleProperty - Title text property
-   * @param textColor - Color of the title text
+   * @param textColorProperty - Color property of the title text
    * @returns Graph configuration object
    */
   private createGraphElements(
@@ -159,11 +147,11 @@ export class GraphDisplayNode extends Node {
     graphY: number,
     width: number,
     height: number,
-    backgroundColor: Color,
-    gridColor: Color,
-    waveformColor: Color,
+    backgroundColorProperty: ProfileColorProperty,
+    gridColorProperty: ProfileColorProperty,
+    waveformColorProperty: ProfileColorProperty,
     titleProperty: ReadOnlyProperty<string>,
-    textColor: Color
+    textColorProperty: ProfileColorProperty
   ): GraphConfig {
     // Create graph container
     const rect = new Rectangle(
@@ -172,8 +160,8 @@ export class GraphDisplayNode extends Node {
       width,
       height,
       {
-        fill: backgroundColor,
-        stroke: gridColor,
+        fill: backgroundColorProperty,
+        stroke: gridColorProperty,
       }
     );
 
@@ -184,20 +172,20 @@ export class GraphDisplayNode extends Node {
       graphX + width,
       graphY + height / 2,
       {
-        stroke: gridColor,
+        stroke: gridColorProperty,
       }
     );
 
     // Create waveform path
     const waveform = new Path(new Shape(), {
-      stroke: waveformColor,
+      stroke: waveformColorProperty,
       lineWidth: WAVEFORM_LINE_WIDTH,
     });
 
     // Create title
     const title = new Text(titleProperty, {
       font: new PhetFont(TITLE_FONT_SIZE),
-      fill: textColor,
+      fill: textColorProperty,
       left: graphX + GRAPH_TITLE_OFFSET_X,
       top: graphY + GRAPH_TITLE_OFFSET_Y,
     });

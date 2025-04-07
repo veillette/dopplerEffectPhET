@@ -39,11 +39,11 @@ const MICROPHONE = {
   BASE_Y_OFFSET: 35,
 
   // Styling constants
-  BODY_COLOR: DopplerEffectColors.microphoneBodyColorProperty.value,
-  STEM_COLOR: DopplerEffectColors.microphoneStemColorProperty.value,
-  BASE_COLOR: DopplerEffectColors.microphoneBaseColorProperty.value,
-  GRID_COLOR: DopplerEffectColors.microphoneGridColorProperty.value,
-  DETECTION_RING_COLOR: DopplerEffectColors.microphoneDetectionRingColorProperty.value,
+  BODY_COLOR_PROPERTY: DopplerEffectColors.microphoneBodyColorProperty,
+  STEM_COLOR_PROPERTY: DopplerEffectColors.microphoneStemColorProperty,
+  BASE_COLOR_PROPERTY: DopplerEffectColors.microphoneBaseColorProperty,
+  GRID_COLOR_PROPERTY: DopplerEffectColors.microphoneGridColorProperty,
+  DETECTION_RING_COLOR_PROPERTY: DopplerEffectColors.microphoneDetectionRingColorProperty,
   BASE_CORNER_RADIUS: 3,
   GRID_LINE_WIDTH: 1,
   DETECTION_RING_LINE_WIDTH: 2,
@@ -81,7 +81,7 @@ export class MicrophoneNode extends Node {
 
     // Create microphone body - a circle with stem
     const micBody = new Circle(MICROPHONE.BODY_RADIUS, {
-      fill: MICROPHONE.BODY_COLOR,
+      fill: MICROPHONE.BODY_COLOR_PROPERTY,
     });
 
     // Create microphone stem
@@ -91,7 +91,7 @@ export class MicrophoneNode extends Node {
       MICROPHONE.STEM_WIDTH,
       MICROPHONE.STEM_HEIGHT,
       {
-        fill: MICROPHONE.STEM_COLOR,
+        fill: MICROPHONE.STEM_COLOR_PROPERTY,
       },
     );
 
@@ -102,14 +102,14 @@ export class MicrophoneNode extends Node {
       MICROPHONE.BASE_WIDTH,
       MICROPHONE.BASE_HEIGHT,
       {
-        fill: MICROPHONE.BASE_COLOR,
+        fill: MICROPHONE.BASE_COLOR_PROPERTY,
         cornerRadius: MICROPHONE.BASE_CORNER_RADIUS,
       },
     );
 
     // Create microphone grid pattern
     const gridPattern = new Path(new Shape(), {
-      stroke: MICROPHONE.GRID_COLOR,
+      stroke: MICROPHONE.GRID_COLOR_PROPERTY,
       lineWidth: MICROPHONE.GRID_LINE_WIDTH,
     });
 
@@ -144,7 +144,7 @@ export class MicrophoneNode extends Node {
 
     // Add highlight ring that shows when detecting waves
     this.detectionRing = new Circle(MICROPHONE.DETECTION_RING_RADIUS, {
-      stroke: MICROPHONE.DETECTION_RING_COLOR,
+      stroke: MICROPHONE.DETECTION_RING_COLOR_PROPERTY,
       lineWidth: MICROPHONE.DETECTION_RING_LINE_WIDTH,
       visible: false,
     });

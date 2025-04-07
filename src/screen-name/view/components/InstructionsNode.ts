@@ -5,14 +5,13 @@
  */
 
 import {
-  Color,
   Node,
   PhetFont,
   Rectangle,
-  Text,
-  ProfileColorProperty
+  Text
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
+import DopplerEffectColors from "../../../DopplerEffectColors";
 
 // Configuration options for the instructions display
 type InstructionsOptions = {
@@ -21,7 +20,6 @@ type InstructionsOptions = {
     centerY: number;
     width: number;
   };
-  textColor: Color | ProfileColorProperty;
 };
 
 /**
@@ -46,14 +44,10 @@ export class InstructionsNode extends Node {
     
     // Get strings from string manager
     const strings = this.stringManager.getInstructionsStrings();
-    
-    // Get color value (handle both Color and ProfileColorProperty)
-    const textColor = options.textColor instanceof ProfileColorProperty ? 
-      options.textColor : options.textColor;
 
-    // Create background rectangle
+    // Create background rectangle with semi-transparent white
     this.background = new Rectangle(0, 0, options.layoutBounds.width / 2, 200, {
-      fill: new Color(255, 255, 255, 0.8),
+      fill: DopplerEffectColors.controlPanelBackgroundProperty,
       cornerRadius: 5,
     });
     this.addChild(this.background);
@@ -61,7 +55,7 @@ export class InstructionsNode extends Node {
     // Add title
     const title = new Text(strings.titleStringProperty, {
       font: new PhetFont({ size: 16, weight: "bold" }),
-      fill: textColor,
+      fill: DopplerEffectColors.textColorProperty,
       centerX: this.background.centerX,
       top: 10,
     });
@@ -85,7 +79,7 @@ export class InstructionsNode extends Node {
     instructions.forEach((instruction) => {
       const line = new Text(instruction, {
         font: new PhetFont(14),
-        fill: textColor,
+        fill: DopplerEffectColors.textColorProperty,
         left: 15,
         top: yPosition,
       });

@@ -1,7 +1,6 @@
 import {
   ArrowNode,
   Circle,
-  Color,
   ComboBox,
   DerivedProperty,
   InfoButton,
@@ -324,10 +323,10 @@ export class SimScreenView extends ScreenView {
           maxX: this.layoutBounds.maxX,
           maxY: this.layoutBounds.maxY,
         },
-        textColor: DopplerEffectColors.textColorProperty,
-        blueshiftColor: DopplerEffectColors.blueshiftColorProperty,
-        redshiftColor: DopplerEffectColors.redshiftColorProperty,
-        selectionColor: DopplerEffectColors.selectionColorProperty,
+        textColorProperty: DopplerEffectColors.textColorProperty,
+        blueshiftColorProperty: DopplerEffectColors.blueshiftColorProperty,
+        redshiftColorProperty: DopplerEffectColors.redshiftColorProperty,
+        selectionColorProperty: DopplerEffectColors.selectionColorProperty,
         graphWidth: this.UI.GRAPH_WIDTH,
         graphHeight: this.UI.GRAPH_HEIGHT,
         graphMargin: this.UI.GRAPH_MARGIN,
@@ -343,8 +342,7 @@ export class SimScreenView extends ScreenView {
           centerX: this.layoutBounds.centerX,
           centerY: this.layoutBounds.centerY,
           width: this.layoutBounds.width,
-        },
-        textColor: DopplerEffectColors.textColorProperty,
+        }
       },
     );
     this.controlLayer.addChild(this.instructionsDisplay);
@@ -401,8 +399,6 @@ export class SimScreenView extends ScreenView {
       this.modelViewTransform,
       this.visibleValuesProperty,
       {
-        textColor: DopplerEffectColors.textColorProperty,
-        lineColor: DopplerEffectColors.connectingLineColorProperty,
         scaleModelLength: 1000, // 1000 meters scale for better visibility
       },
     );
@@ -677,16 +673,13 @@ export class SimScreenView extends ScreenView {
 
   /**
    * Create scenario items for the combo box
-   * @param textColor - The color for the scenario text (ProfileColorProperty or Color)
+   * @param textColorProperty - The color property for the scenario text
    * @returns Array of scenario items for the combo box
    */
   private createScenarioItems(
-    textColor: ProfileColorProperty | Color,
+    textColorProperty: ProfileColorProperty,
   ): { value: Scenario; createNode: () => Text }[] {
     const scenarioStrings = this.stringManager.getScenarioStrings();
-    
-    // Handle both ProfileColorProperty and Color
-    const actualColor = textColor instanceof ProfileColorProperty ? textColor : textColor;
     
     return [
       {
@@ -694,7 +687,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(scenarioStrings.freePlayStringProperty, {
             font: new PhetFont(14),
-            fill: actualColor,
+            fill: textColorProperty,
           }),
       },
       {
@@ -704,7 +697,7 @@ export class SimScreenView extends ScreenView {
             scenarioStrings.sourceMovingTowardObserverStringProperty,
             {
               font: new PhetFont(14),
-              fill: actualColor,
+              fill: textColorProperty,
             },
           ),
       },
@@ -715,7 +708,7 @@ export class SimScreenView extends ScreenView {
             scenarioStrings.observerMovingTowardSourceStringProperty,
             {
               font: new PhetFont(14),
-              fill: actualColor,
+              fill: textColorProperty,
             },
           ),
       },
@@ -724,7 +717,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(scenarioStrings.movingAwayStringProperty, {
             font: new PhetFont(14),
-            fill: actualColor,
+            fill: textColorProperty,
           }),
       },
       {
@@ -732,7 +725,7 @@ export class SimScreenView extends ScreenView {
         createNode: () =>
           new Text(scenarioStrings.perpendicularStringProperty, {
             font: new PhetFont(14),
-            fill: actualColor,
+            fill: textColorProperty,
           }),
       },
     ];

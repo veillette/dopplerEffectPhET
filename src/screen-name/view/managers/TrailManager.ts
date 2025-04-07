@@ -29,30 +29,26 @@ export class TrailManager {
    *
    * @param trailPath - Path node for the trail
    * @param modelViewTransform - Transform to convert model coordinates to view coordinates
-   * @param trailColor - Color for the trail (ProfileColorProperty or Color)
+   * @param trailColorProperty - Color property for the trail
    * @param visibleProperty - Property controlling trail visibility
    */
   constructor(
     private readonly trailPath: Path,
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly trailColor: ProfileColorProperty | Color,
+    private readonly trailColorProperty: ProfileColorProperty,
     private readonly visibleProperty: Property<boolean>,
   ) {
-    // Store initial color value and listen for changes if it's a property
-    if (trailColor instanceof ProfileColorProperty) {
-      this.trailColorValue = trailColor.value;
-      trailColor.link((newColor) => {
-        // Update the trail with the new color (it will be used next time updateTrail is called)
-        this.trailColorValue = newColor;
-        // If the trail is currently visible, update it immediately
-        if (this.trailPath.visible) {
-          // Force an update of the trail's gradient the next time updateTrail is called
-          this.trailPath.stroke = newColor;
-        }
-      });
-    } else {
-      this.trailColorValue = trailColor;
-    }
+    // Store initial color value and listen for changes
+    this.trailColorValue = trailColorProperty.value;
+    trailColorProperty.link((newColor) => {
+      // Update the trail with the new color (it will be used next time updateTrail is called)
+      this.trailColorValue = newColor;
+      // If the trail is currently visible, update it immediately
+      if (this.trailPath.visible) {
+        // Force an update of the trail's gradient the next time updateTrail is called
+        this.trailPath.stroke = newColor;
+      }
+    });
   }
 
   /**

@@ -4,13 +4,21 @@
  * Manages the visualization of propagating waves in the Doppler Effect simulation.
  */
 
-import { Node, Circle, Color, ModelViewTransform2, ProfileColorProperty } from "scenerystack";
+import {
+  Node,
+  Circle,
+  Color,
+  ModelViewTransform2,
+  ProfileColorProperty
+} from "scenerystack";
 import { Wave } from "../../model/SimModel";
 import { WAVE } from "../../model/SimConstants";
 import DopplerEffectColors from "../../../DopplerEffectColors";
 
 /**
- * Manager for handling wave visualization
+ * Manages the visualization of sound waves
+ * 
+ * Creates and updates the circles representing propagating sound waves
  */
 export class WaveManager {
   // Map to track wave nodes
@@ -22,25 +30,21 @@ export class WaveManager {
    *
    * @param waveLayer - Node that will contain the wave visualizations
    * @param modelViewTransform - Transform to convert model coordinates to view coordinates
-   * @param waveColor - Color for the wave circles (ProfileColorProperty or Color)
+   * @param waveColorProperty - Color property for the wave circles
    */
   constructor(
     private readonly waveLayer: Node,
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly waveColor: ProfileColorProperty | Color = DopplerEffectColors.waveColorProperty,
+    private readonly waveColorProperty: ProfileColorProperty = DopplerEffectColors.waveColorProperty,
   ) {
-    // Store initial color value and listen for changes if it's a property
-    if (waveColor instanceof ProfileColorProperty) {
-      this.waveColorValue = waveColor.value;
-      waveColor.link((newColor) => {
-        // Update all wave nodes with the new color
-        this.waveNodesMap.forEach((waveNode) => {
-          waveNode.stroke = newColor;
-        });
+    // Store initial color value and listen for changes
+    this.waveColorValue = waveColorProperty.value;
+    waveColorProperty.link((newColor) => {
+      // Update all wave nodes with the new color
+      this.waveNodesMap.forEach((waveNode) => {
+        waveNode.stroke = newColor;
       });
-    } else {
-      this.waveColorValue = waveColor;
-    }
+    });
   }
 
   /**

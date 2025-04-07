@@ -6,7 +6,6 @@
  */
 
 import {
-  Color,
   Node,
   NumberControl,
   Panel,
@@ -23,9 +22,6 @@ import DopplerEffectColors from "../../../DopplerEffectColors";
 
 // Configuration options for the control panel
 type ControlPanelOptions = {
-  // UI colors - Optional, will use DopplerEffectColors if not provided
-  textColor?: Color;
-
   // References to graph display for positioning
   graphRight: number;
   graphBottom: number;
@@ -69,9 +65,6 @@ export class ControlPanelNode extends Node {
   ) {
     super();
 
-    // Get the text color (use provided color or default from DopplerEffectColors)
-    const textColor = options.textColor || DopplerEffectColors.controlPanelTextProperty.value;
-
     // Get strings from string manager
     const strings = this.stringManager.getControlPanelStrings();
 
@@ -85,7 +78,7 @@ export class ControlPanelNode extends Node {
       createNode: () => {
         return new Text(labelProp, {
           font: new PhetFont(14),
-          fill: textColor,
+          fill: DopplerEffectColors.controlPanelTextProperty,
         });
       },
     });
@@ -127,7 +120,7 @@ export class ControlPanelNode extends Node {
         titleNodeOptions: {
           font: new PhetFont(12),
           maxWidth: 140,
-          fill: textColor
+          fill: DopplerEffectColors.controlPanelTextProperty
         },
       },
     );
@@ -146,7 +139,7 @@ export class ControlPanelNode extends Node {
         titleNodeOptions: {
           font: new PhetFont(12),
           maxWidth: 140,
-          fill: textColor
+          fill: DopplerEffectColors.controlPanelTextProperty
         },
       },
     );
@@ -161,8 +154,8 @@ export class ControlPanelNode extends Node {
     this.panel = new Panel(panelContent, {
       right: options.graphRight,
       top: options.graphBottom + 10,
-      fill: DopplerEffectColors.controlPanelBackgroundProperty.value,
-      stroke: DopplerEffectColors.controlPanelBorderProperty.value
+      fill: DopplerEffectColors.controlPanelBackgroundProperty,
+      stroke: DopplerEffectColors.controlPanelBorderProperty
     });
 
     // Add the panel to this node

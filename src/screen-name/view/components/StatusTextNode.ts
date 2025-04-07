@@ -6,7 +6,6 @@
  */
 
 import {
-  Color,
   DerivedProperty,
   Node,
   PatternStringProperty,
@@ -23,10 +22,10 @@ type StatusTextOptions = {
     maxX: number;
     maxY: number;
   };
-  textColor: Color | ProfileColorProperty;
-  blueshiftColor: Color | ProfileColorProperty;
-  redshiftColor: Color | ProfileColorProperty;
-  selectionColor: Color | ProfileColorProperty;
+  textColorProperty: ProfileColorProperty;
+  blueshiftColorProperty: ProfileColorProperty;
+  redshiftColorProperty: ProfileColorProperty;
+  selectionColorProperty: ProfileColorProperty;
   graphWidth: number;
   graphHeight: number;
   graphMargin: number;
@@ -43,9 +42,9 @@ export class StatusTextNode extends Node {
   private readonly shiftStatusText: Text;
   
   // Store color references
-  private readonly textColorOption: Color | ProfileColorProperty;
-  private readonly blueshiftColorOption: Color | ProfileColorProperty;
-  private readonly redshiftColorOption: Color | ProfileColorProperty;
+  private readonly textColorProperty: ProfileColorProperty;
+  private readonly blueshiftColorProperty: ProfileColorProperty;
+  private readonly redshiftColorProperty: ProfileColorProperty;
 
   // String manager instance
   private readonly stringManager: StringManager = StringManager.getInstance();
@@ -69,25 +68,17 @@ export class StatusTextNode extends Node {
     super();
     
     // Store color references for later use
-    this.textColorOption = options.textColor;
-    this.blueshiftColorOption = options.blueshiftColor;
-    this.redshiftColorOption = options.redshiftColor;
+    this.textColorProperty = options.textColorProperty;
+    this.blueshiftColorProperty = options.blueshiftColorProperty;
+    this.redshiftColorProperty = options.redshiftColorProperty;
 
     // Get strings from string manager
     const statusStringProperties = this.stringManager.getStatusTextStrings();
-
-    // Extract color values (handle both regular Color and ProfileColorProperty)
-    const getColorValue = (colorOrProperty: Color | ProfileColorProperty): Color => {
-      return colorOrProperty instanceof ProfileColorProperty ? colorOrProperty.value : colorOrProperty;
-    };
     
-    const textColor = getColorValue(options.textColor);
-    const selectionColor = getColorValue(options.selectionColor);
-
     // Create text nodes
     this.emittedFreqText = new Text(emittedFrequencyProperty.value, {
       font: new PhetFont(14),
-      fill: textColor,
+      fill: options.textColorProperty,
       visibleProperty: visibleValuesProperty,
       stringProperty: new PatternStringProperty(
         statusStringProperties.emittedFrequencyPatternStringProperty,
@@ -99,7 +90,7 @@ export class StatusTextNode extends Node {
 
     this.observedFreqText = new Text(observedFrequencyProperty.value, {
       font: new PhetFont(14),
-      fill: textColor,
+      fill: options.textColorProperty,
       visibleProperty: visibleValuesProperty,
       stringProperty: new PatternStringProperty(
         statusStringProperties.observedFrequencyPatternStringProperty,
@@ -111,7 +102,7 @@ export class StatusTextNode extends Node {
 
     this.selectedObjectText = new Text("", {
       font: new PhetFont(14),
-      fill: selectionColor,
+      fill: options.selectionColorProperty,
       visibleProperty: visibleValuesProperty,
       stringProperty: new PatternStringProperty(
         statusStringProperties.selectedObjectPatternStringProperty,
@@ -137,7 +128,7 @@ export class StatusTextNode extends Node {
 
     this.shiftStatusText = new Text("", {
       font: new PhetFont(16),
-      fill: textColor,
+      fill: options.textColorProperty,
       fontWeight: "bold",
       visibleProperty: visibleValuesProperty,
       stringProperty: shiftStatusStringProperty,
@@ -182,17 +173,11 @@ export class StatusTextNode extends Node {
    */
   private updateShiftStatusColor(emitted: number, observed: number): void {
     if (observed > emitted) {
-      this.shiftStatusText.fill = this.blueshiftColorOption instanceof ProfileColorProperty
-        ? this.blueshiftColorOption.value
-        : this.blueshiftColorOption;
+      this.shiftStatusText.fill = this.blueshiftColorProperty;
     } else if (observed < emitted) {
-      this.shiftStatusText.fill = this.redshiftColorOption instanceof ProfileColorProperty
-        ? this.redshiftColorOption.value
-        : this.redshiftColorOption;
+      this.shiftStatusText.fill = this.redshiftColorProperty;
     } else {
-      this.shiftStatusText.fill = this.textColorOption instanceof ProfileColorProperty
-        ? this.textColorOption.value
-        : this.textColorOption;
+      this.shiftStatusText.fill = this.textColorProperty;
     }
   }
 }
