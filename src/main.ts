@@ -19,13 +19,13 @@ onReadyToLaunch(() => {
       visualOptions: {
         supportsProjectorMode: true,
       },
-    }),
-    backgroundColor: DopplerEffectColors.backgroundProperty,
-    colorProfileProperty: DopplerEffectColors,
+    })
   };
 
   const screens = [
-    new SimScreen({ tandem: Tandem.ROOT.createTandem("simScreen") }),
+    new SimScreen({ tandem: Tandem.ROOT.createTandem("simScreen") ,
+    backgroundColorProperty: DopplerEffectColors.backgroundProperty
+    }),
   ];
 
   const sim = new Sim(titleStringProperty, screens, simOptions);

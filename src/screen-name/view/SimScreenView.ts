@@ -430,8 +430,14 @@ export class SimScreenView extends ScreenView {
         stepForwardButtonOptions: {
           listener: () => {
             this.model.step(1 / 60, true);
-          },
-        },
+          }
+        }
+      },
+      
+      speedRadioButtonGroupOptions: {
+        labelOptions: {
+          fill: DopplerEffectColors.textColorProperty,
+        }
       },
     });
     timeControlNode.centerX = this.layoutBounds.centerX;
