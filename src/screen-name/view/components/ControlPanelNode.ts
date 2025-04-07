@@ -78,7 +78,7 @@ export class ControlPanelNode extends Node {
       createNode: () => {
         return new Text(labelProp, {
           font: new PhetFont(14),
-          fill: DopplerEffectColors.controlPanelTextProperty,
+          fill: DopplerEffectColors.controlPanelTextColorProperty,
         });
       },
     });
@@ -120,7 +120,7 @@ export class ControlPanelNode extends Node {
         titleNodeOptions: {
           font: new PhetFont(12),
           maxWidth: 140,
-          fill: DopplerEffectColors.controlPanelTextProperty,
+          fill: DopplerEffectColors.controlPanelTextColorProperty,
         },
       },
     );
@@ -139,7 +139,7 @@ export class ControlPanelNode extends Node {
         titleNodeOptions: {
           font: new PhetFont(12),
           maxWidth: 140,
-          fill: DopplerEffectColors.controlPanelTextProperty,
+          fill: DopplerEffectColors.controlPanelTextColorProperty,
         },
       },
     );
@@ -154,8 +154,8 @@ export class ControlPanelNode extends Node {
     this.panel = new Panel(panelContent, {
       right: options.graphRight,
       top: options.graphBottom + 10,
-      fill: DopplerEffectColors.controlPanelBackgroundProperty,
-      stroke: DopplerEffectColors.controlPanelBorderProperty,
+      fill: DopplerEffectColors.controlPanelBackgroundColorProperty,
+      stroke: DopplerEffectColors.controlPanelBorderColorProperty,
     });
 
     // Add the panel to this node

@@ -111,7 +111,7 @@ export class SimScreenView extends ScreenView {
       DopplerEffectColors.connectingLineColorProperty.value,
     WAVE_COLOR: DopplerEffectColors.waveColorProperty.value,
     SELECTION_COLOR: DopplerEffectColors.selectionColorProperty.value,
-    GRAPH_BACKGROUND: DopplerEffectColors.graphBackgroundProperty.value,
+    GRAPH_BACKGROUND: DopplerEffectColors.graphBackgroundColorProperty.value,
     GRAPH_GRID_COLOR: DopplerEffectColors.graphGridColorProperty.value,
     TEXT_COLOR: DopplerEffectColors.textColorProperty.value,
     REDSHIFT_COLOR: DopplerEffectColors.redshiftColorProperty.value,
@@ -219,13 +219,13 @@ export class SimScreenView extends ScreenView {
 
     this.sourceVelocityVector = new ArrowNode(0, 0, 0, 0, {
       ...velocityVectorOptions,
-      fill: DopplerEffectColors.sourceVelocityArrowProperty,
-      stroke: DopplerEffectColors.sourceVelocityArrowProperty,
+      fill: DopplerEffectColors.sourceVelocityArrowColorProperty,
+      stroke: DopplerEffectColors.sourceVelocityArrowColorProperty,
     });
     this.observerVelocityVector = new ArrowNode(0, 0, 0, 0, {
       ...velocityVectorOptions,
-      fill: DopplerEffectColors.observerVelocityArrowProperty,
-      stroke: DopplerEffectColors.observerVelocityArrowProperty,
+      fill: DopplerEffectColors.observerVelocityArrowColorProperty,
+      stroke: DopplerEffectColors.observerVelocityArrowColorProperty,
     });
 
     // Create trail paths
@@ -372,8 +372,8 @@ export class SimScreenView extends ScreenView {
       scenarioItems,
       listParent,
       {
-        buttonFill: DopplerEffectColors.backgroundProperty,
-        listFill: DopplerEffectColors.backgroundProperty,
+        buttonFill: DopplerEffectColors.backgroundColorProperty,
+        listFill: DopplerEffectColors.backgroundColorProperty,
         buttonStroke: DopplerEffectColors.textColorProperty,
         listStroke: DopplerEffectColors.textColorProperty,
         highlightFill: DopplerEffectColors.highlightColorProperty,

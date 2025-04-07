@@ -20,17 +20,16 @@ const YELLOW = new Color(255, 255, 0);
  */
 const DopplerEffectColors = {
   // Background colors
-  backgroundProperty: new ProfileColorProperty(dopplerEffect, "background", {
+  backgroundColorProperty: new ProfileColorProperty(dopplerEffect, "backgroundColor", {
     default: BLACK,
     projector: WHITE,
   }),
 
-    // Highlight colors
-  highlightColorProperty: new ProfileColorProperty(dopplerEffect, "highlight", {
-    default: new Color(155, 155, 155),
-    projector: new Color(100, 100, 100),
+  // Highlight colors
+  highlightColorProperty: new ProfileColorProperty(dopplerEffect, "highlightColor", {
+    default: new Color(100, 100, 100),
+    projector: new Color(150, 150, 150),
   }),
-
 
   // Source and observer colors
   sourceColorProperty: new ProfileColorProperty(dopplerEffect, "sourceColor", {
@@ -69,9 +68,9 @@ const DopplerEffectColors = {
   ),
 
   // Graph colors
-  graphBackgroundProperty: new ProfileColorProperty(
+  graphBackgroundColorProperty: new ProfileColorProperty(
     dopplerEffect,
-    "graphBackground",
+    "graphBackgroundColor",
     {
       default: new Color(50, 50, 50),
       projector: new Color(240, 240, 240),
@@ -149,25 +148,25 @@ const DopplerEffectColors = {
   ),
 
   // Control panel colors
-  controlPanelBackgroundProperty: new ProfileColorProperty(
+  controlPanelBackgroundColorProperty: new ProfileColorProperty(
     dopplerEffect,
-    "controlPanelBackground",
+    "controlPanelBackgroundColor",
     {
       default: new Color(50, 50, 50),
       projector: new Color(238, 238, 238),
     },
   ),
-  controlPanelBorderProperty: new ProfileColorProperty(
+  controlPanelBorderColorProperty: new ProfileColorProperty(
     dopplerEffect,
-    "controlPanelBorder",
+    "controlPanelBorderColor",
     {
       default: new Color(150, 150, 150),
       projector: new Color(210, 210, 210),
     },
   ),
-  controlPanelTextProperty: new ProfileColorProperty(
+  controlPanelTextColorProperty: new ProfileColorProperty(
     dopplerEffect,
-    "controlPanelText",
+    "controlPanelTextColor",
     {
       default: WHITE,
       projector: BLACK,
@@ -175,17 +174,17 @@ const DopplerEffectColors = {
   ),
 
   // Velocity arrow colors
-  sourceVelocityArrowProperty: new ProfileColorProperty(
+  sourceVelocityArrowColorProperty: new ProfileColorProperty(
     dopplerEffect,
-    "sourceVelocityArrow",
+    "sourceVelocityArrowColor",
     {
       default: new Color(255, 120, 120),
       projector: RED,
     },
   ),
-  observerVelocityArrowProperty: new ProfileColorProperty(
+  observerVelocityArrowColorProperty: new ProfileColorProperty(
     dopplerEffect,
-    "observerVelocityArrow",
+    "observerVelocityArrowColor",
     {
       default: new Color(120, 120, 255),
       projector: BLUE,

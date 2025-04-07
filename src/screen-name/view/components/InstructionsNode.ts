@@ -42,7 +42,7 @@ export class InstructionsNode extends Node {
 
     // Create background rectangle with semi-transparent white
     this.background = new Rectangle(0, 0, options.layoutBounds.width / 2, 200, {
-      fill: DopplerEffectColors.controlPanelBackgroundProperty,
+      fill: DopplerEffectColors.controlPanelBackgroundColorProperty,
       cornerRadius: 5,
     });
     this.addChild(this.background);

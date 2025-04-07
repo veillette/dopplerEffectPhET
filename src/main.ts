@@ -24,7 +24,7 @@ onReadyToLaunch(() => {
 
   const screens = [
     new SimScreen({ tandem: Tandem.ROOT.createTandem("simScreen") ,
-    backgroundColorProperty: DopplerEffectColors.backgroundProperty
+    backgroundColorProperty: DopplerEffectColors.backgroundColorProperty
     }),
   ];
 
