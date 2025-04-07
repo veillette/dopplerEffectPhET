@@ -69,12 +69,12 @@ export class SimScreenView extends ScreenView {
   private readonly sourceNode: Circle;
   private readonly observerNode: Circle;
   private readonly microphoneNode: MicrophoneNode;
-  private readonly sourceVelocityVector: ArrowNode;
-  private readonly observerVelocityVector: ArrowNode;
-  private readonly connectingLine: Line;
-  private readonly selectionHighlight: Circle;
-  private readonly sourceTrail: Path;
-  private readonly observerTrail: Path;
+  private readonly sourceVelocityVectorNode: ArrowNode;
+  private readonly observerVelocityVectorNode: ArrowNode;
+  private readonly connectingLineNode: Line;
+  private readonly selectionHighlightCircle: Circle;
+  private readonly sourceTrailPath: Path;
+  private readonly observerTrailPath: Path;
 
   // Components
   private readonly graphDisplay: GraphDisplayNode;
@@ -196,14 +196,14 @@ export class SimScreenView extends ScreenView {
     });
 
     // Create connecting line
-    this.connectingLine = new Line(0, 0, 0, 0, {
+    this.connectingLineNode = new Line(0, 0, 0, 0, {
       visibleProperty: this.visibleLineOfSightProperty,
       stroke: DopplerEffectColors.connectingLineColorProperty,
       lineDash: [10, 5],
     });
 
     // Create selection highlight
-    this.selectionHighlight = new Circle(this.UI.SOURCE_RADIUS + 5, {
+    this.selectionHighlightCircle = new Circle(this.UI.SOURCE_RADIUS + 5, {
       stroke: DopplerEffectColors.selectionColorProperty,
       lineWidth: 2,
     });
@@ -217,36 +217,36 @@ export class SimScreenView extends ScreenView {
       visibleProperty: this.visibleVelocityArrowProperty,
     };
 
-    this.sourceVelocityVector = new ArrowNode(0, 0, 0, 0, {
+    this.sourceVelocityVectorNode = new ArrowNode(0, 0, 0, 0, {
       ...velocityVectorOptions,
       fill: DopplerEffectColors.sourceVelocityArrowColorProperty,
       stroke: DopplerEffectColors.sourceVelocityArrowColorProperty,
     });
-    this.observerVelocityVector = new ArrowNode(0, 0, 0, 0, {
+    this.observerVelocityVectorNode = new ArrowNode(0, 0, 0, 0, {
       ...velocityVectorOptions,
       fill: DopplerEffectColors.observerVelocityArrowColorProperty,
       stroke: DopplerEffectColors.observerVelocityArrowColorProperty,
     });
 
     // Create trail paths
-    this.sourceTrail = new Path(new Shape(), {
+    this.sourceTrailPath = new Path(new Shape(), {
       stroke: DopplerEffectColors.sourceColorProperty,
       lineWidth: this.UI.TRAIL_WIDTH,
     });
-    this.observerTrail = new Path(new Shape(), {
+    this.observerTrailPath = new Path(new Shape(), {
       stroke: DopplerEffectColors.observerColorProperty,
       lineWidth: this.UI.TRAIL_WIDTH,
     });
 
     // Add objects to object layer
-    this.objectLayer.addChild(this.connectingLine);
-    this.objectLayer.addChild(this.selectionHighlight);
+    this.objectLayer.addChild(this.connectingLineNode);
+    this.objectLayer.addChild(this.selectionHighlightCircle);
     this.objectLayer.addChild(this.sourceNode);
     this.objectLayer.addChild(this.observerNode);
-    this.objectLayer.addChild(this.sourceVelocityVector);
-    this.objectLayer.addChild(this.observerVelocityVector);
-    this.objectLayer.addChild(this.sourceTrail);
-    this.objectLayer.addChild(this.observerTrail);
+    this.objectLayer.addChild(this.sourceVelocityVectorNode);
+    this.objectLayer.addChild(this.observerVelocityVectorNode);
+    this.objectLayer.addChild(this.sourceTrailPath);
+    this.objectLayer.addChild(this.observerTrailPath);
 
     // Create microphone node
     this.microphoneNode = new MicrophoneNode(
@@ -272,14 +272,14 @@ export class SimScreenView extends ScreenView {
     );
 
     this.sourceTrailManager = new TrailManager(
-      this.sourceTrail,
+      this.sourceTrailPath,
       this.modelViewTransform,
       DopplerEffectColors.sourceColorProperty,
       this.visibleTrailsProperty,
     );
 
     this.observerTrailManager = new TrailManager(
-      this.observerTrail,
+      this.observerTrailPath,
       this.modelViewTransform,
       DopplerEffectColors.observerColorProperty,
       this.visibleTrailsProperty,
@@ -355,13 +355,13 @@ export class SimScreenView extends ScreenView {
       DopplerEffectColors.textColorProperty,
     );
 
-    const listParent = new Node();
+    const listParentNode = new Node();
 
     // Create combo box using SceneryStack API
-    const scenarioComboBox = new ComboBox(
+    const scenarioComboBoxNode = new ComboBox(
       model.scenarioProperty,
       scenarioItems,
-      listParent,
+      listParentNode,
       {
         buttonFill: DopplerEffectColors.backgroundColorProperty,
         listFill: DopplerEffectColors.backgroundColorProperty,
@@ -372,14 +372,14 @@ export class SimScreenView extends ScreenView {
     );
 
     // Position the combo box
-    scenarioComboBox.left = 10;
-    scenarioComboBox.top = 10;
+    scenarioComboBoxNode.left = 10;
+    scenarioComboBoxNode.top = 10;
 
     // Add to control layer
-    this.controlLayer.addChild(scenarioComboBox);
-    this.controlLayer.addChild(listParent);
+    this.controlLayer.addChild(scenarioComboBoxNode);
+    this.controlLayer.addChild(listParentNode);
     // Setup reset all button
-    const resetAllButton = new ResetAllButton({
+    const resetAllButtonNode = new ResetAllButton({
       listener: () => {
         this.interruptSubtreeInput(); // Stop any ongoing interactions
         model.reset();
@@ -388,7 +388,7 @@ export class SimScreenView extends ScreenView {
       right: this.layoutBounds.maxX - 10,
       bottom: this.layoutBounds.maxY - 10,
     });
-    this.controlLayer.addChild(resetAllButton);
+    this.controlLayer.addChild(resetAllButtonNode);
 
     // Create scale mark node to show model-to-view scale
     const scaleMarkNode = new ScaleMarkNode(
@@ -400,12 +400,12 @@ export class SimScreenView extends ScreenView {
     );
 
     // Position the scale mark
-    scaleMarkNode.right = resetAllButton.left - 30;
-    scaleMarkNode.bottom = resetAllButton.bottom;
+    scaleMarkNode.right = resetAllButtonNode.left - 30;
+    scaleMarkNode.bottom = resetAllButtonNode.bottom;
     this.controlLayer.addChild(scaleMarkNode);
 
     // Create an info button to toggle instructions
-    const infoButton = new InfoButton({
+    const infoButtonNode = new InfoButton({
       listener: () => {
         this.instructionsDisplay.toggleVisibility();
       },
@@ -413,7 +413,7 @@ export class SimScreenView extends ScreenView {
       left: this.layoutBounds.minX + 10,
       bottom: this.layoutBounds.maxY - 10,
     });
-    this.controlLayer.addChild(infoButton);
+    this.controlLayer.addChild(infoButtonNode);
 
     // Add time control node
     const timeControlNode = new TimeControlNode(this.model.playProperty, {
@@ -615,7 +615,7 @@ export class SimScreenView extends ScreenView {
     const observerPos = this.modelViewTransform.modelToViewPosition(
       this.model.observerPositionProperty.value,
     );
-    this.connectingLine.setLine(
+    this.connectingLineNode.setLine(
       sourcePos.x,
       sourcePos.y,
       observerPos.x,
@@ -624,8 +624,8 @@ export class SimScreenView extends ScreenView {
 
     // Update velocity vectors
     this.vectorManager.updateVectors(
-      this.sourceVelocityVector,
-      this.observerVelocityVector,
+      this.sourceVelocityVectorNode,
+      this.observerVelocityVectorNode,
       this.model.sourcePositionProperty.value,
       this.model.observerPositionProperty.value,
       this.model.sourceVelocityProperty.value,
@@ -659,14 +659,14 @@ export class SimScreenView extends ScreenView {
    */
   private updateSelectionHighlight(): void {
     if (this.selectedObjectProperty.value === "source") {
-      this.selectionHighlight.radius = this.UI.SOURCE_RADIUS + 5;
-      this.selectionHighlight.center =
+      this.selectionHighlightCircle.radius = this.UI.SOURCE_RADIUS + 5;
+      this.selectionHighlightCircle.center =
         this.modelViewTransform.modelToViewPosition(
           this.model.sourcePositionProperty.value,
         );
     } else {
-      this.selectionHighlight.radius = this.UI.OBSERVER_RADIUS + 5;
-      this.selectionHighlight.center =
+      this.selectionHighlightCircle.radius = this.UI.OBSERVER_RADIUS + 5;
+      this.selectionHighlightCircle.center =
         this.modelViewTransform.modelToViewPosition(
           this.model.observerPositionProperty.value,
         );
