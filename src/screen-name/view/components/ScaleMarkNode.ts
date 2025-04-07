@@ -105,14 +105,16 @@ export class ScaleMarkNode extends Node {
       this.stringManager.getAllStringProperties().units.metersStringProperty;
 
     // Create scale label with pattern string property for localization
-    this.scaleLabel = new Text("", {
+
+    const scaleLabelStringProperty = new PatternStringProperty(unitsStringProperty, {
+      value: this.scaleModelLength,
+    });
+
+    this.scaleLabel = new Text(scaleLabelStringProperty, {
       font: new PhetFont(14),
       fill: DopplerEffectColors.textColorProperty,
       left: 10, // Position label to the right of the scale mark
       centerY: scaleViewLength / 2, // Center label vertically
-      stringProperty: new PatternStringProperty(unitsStringProperty, {
-        value: this.scaleModelLength,
-      }),
     });
 
     // Add components to this node
