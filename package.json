@@ -18,7 +18,10 @@
     "build": "npx tsc && npx vite build",
     "lint": "npx eslint .",
     "format": "npx prettier --write .",
-    "fix": "npx eslint --fix . && npx prettier --write ."
+    "fix": "npx eslint --fix . && npx prettier --write .",
+    "release": "npm run build && git add . && git commit -m 'Prepare for release' && npm version patch && git push origin main --tags",
+    "check": "npx tsc --noEmit",
+    "serve": "npm install -g serve && serve -s dist"
   },
   "dependencies": {
     "scenerystack": "~1.0.0"
@@ -29,10 +32,8 @@
     "eslint": "^9.17.0",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
-    "terser": "^5.39.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.18.2",
-    "vite": "^5.4.10",
-    "vite-plugin-singlefile": "^2.2.0"
+    "vite": "^5.4.10"
   }
 }
