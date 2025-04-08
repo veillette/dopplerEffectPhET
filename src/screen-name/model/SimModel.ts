@@ -60,8 +60,8 @@ export class Scenario extends EnumerationValue {
 
 // Trail constants
 export const TRAIL = {
-  MAX_POINTS: 20, // Maximum number of points to store in position history
-  MAX_AGE: 2.0, // Maximum age of trail points in seconds
+  MAX_POINTS: 200, // Maximum number of points to store in position history
+  MAX_AGE: 20.0, // Maximum age of trail points in seconds
   SAMPLE_INTERVAL: 0.1, // Time interval between trail points in seconds
 };
 
