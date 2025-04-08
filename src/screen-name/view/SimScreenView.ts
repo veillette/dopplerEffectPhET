@@ -107,17 +107,6 @@ export class SimScreenView extends ScreenView {
   private readonly UI = {
     SOURCE_RADIUS: 10,
     OBSERVER_RADIUS: 10,
-    SOURCE_COLOR: DopplerEffectColors.sourceColorProperty.value,
-    OBSERVER_COLOR: DopplerEffectColors.observerColorProperty.value,
-    CONNECTING_LINE_COLOR:
-      DopplerEffectColors.connectingLineColorProperty.value,
-    WAVE_COLOR: DopplerEffectColors.waveColorProperty.value,
-    SELECTION_COLOR: DopplerEffectColors.selectionColorProperty.value,
-    GRAPH_BACKGROUND: DopplerEffectColors.graphBackgroundColorProperty.value,
-    GRAPH_GRID_COLOR: DopplerEffectColors.graphGridColorProperty.value,
-    TEXT_COLOR: DopplerEffectColors.textColorProperty.value,
-    REDSHIFT_COLOR: DopplerEffectColors.redshiftColorProperty.value,
-    BLUESHIFT_COLOR: DopplerEffectColors.blueshiftColorProperty.value,
     GRAPH_HEIGHT: 60,
     GRAPH_WIDTH: 210,
     GRAPH_MARGIN: 20,
