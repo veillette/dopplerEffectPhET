@@ -144,6 +144,9 @@ export class SimModel {
     return this.observerPositionHistory;
   }
 
+  // Waveform update counter
+  private waveformUpdateCounter: number = 0;
+
   /**
    * Constructor for the Doppler Effect SimModel
    */
@@ -245,6 +248,7 @@ export class SimModel {
     this.sourcePositionHistory = [];
     this.observerPositionHistory = [];
     this.lastTrailSampleTime = 0;
+    this.waveformUpdateCounter = 0;
 
     // Reset components
     this.waveGenerator.reset();
@@ -358,54 +362,67 @@ export class SimModel {
    * @param dt Elapsed model time in seconds (s)
    */
   private updateWaveforms(dt: number): void {
-    // Update emitted waveform
-    this.waveformManager.updateEmittedWaveform(
-      this.emittedFrequencyProperty.value,
-      dt,
-      this.getTimeSpeedValue(),
-    );
+    // Get the current time speed factor
+    const timeSpeedValue = this.getTimeSpeedValue();
+    
+    // Control how often we accumulate new waveform data points based on time speed
+    this.waveformUpdateCounter = (this.waveformUpdateCounter || 0) + 1;
+    
+    // Calculate update interval as reciprocal of time speed factor
+    // When time speed is low (0.25), update every 4 frames
+    // When time speed is normal (1.0), update every frame
+    const updateInterval = Math.round(TIME_SPEED.NORMAL / timeSpeedValue);
+    
+    if (this.waveformUpdateCounter % updateInterval === 0) {
+      // Update emitted waveform
+      this.waveformManager.updateEmittedWaveform(
+        this.emittedFrequencyProperty.value,
+        dt * updateInterval, // Compensate for skipped updates
+        timeSpeedValue,
+      );
 
-    // Find waves affecting the observer
-    const wavesAtObserver = this.dopplerCalculator.findWavesAtObserver(
-      this.waves,
-      this.observerPositionProperty.value,
-      this.soundSpeedProperty.value,
-    );
+      // Find waves affecting the observer
+      const wavesAtObserver = this.dopplerCalculator.findWavesAtObserver(
+        this.waves,
+        this.observerPositionProperty.value,
+        this.soundSpeedProperty.value,
+      );
 
-    // If no waves have reached observer yet, clear observed waveform
-    if (wavesAtObserver.length === 0) {
-      this.waveformManager.clearObservedWaveform();
-      return;
+      // If no waves have reached observer yet, clear observed waveform
+      if (wavesAtObserver.length === 0) {
+        this.waveformManager.clearObservedWaveform();
+        return;
+      }
+
+      // Use most recently arrived wave
+      const currentWave = wavesAtObserver[0].wave;
+      const arrivalTime = wavesAtObserver[0].arrivalTime;
+
+      // Calculate time since wave arrival (in seconds)
+      const timeSinceArrival = this.simulationTimeProperty.value - arrivalTime; // in seconds (s)
+
+      // Get phase at arrival from original wave
+      const phaseAtArrival = currentWave.phaseAtEmission;
+
+      // Calculate Doppler frequency
+      const observedFrequency = this.dopplerCalculator.calculateObservedFrequency(
+        currentWave,
+        this.observerPositionProperty.value,
+        this.observerVelocityProperty.value,
+        this.soundSpeedProperty.value,
+      );
+
+      // Update observed frequency property
+      this.observedFrequencyProperty.value = observedFrequency;
+
+      // Update observed waveform
+      this.waveformManager.updateObservedWaveform(
+        observedFrequency,
+        phaseAtArrival,
+        timeSinceArrival,
+        timeSpeedValue,
+      );
     }
-
-    // Use most recently arrived wave
-    const currentWave = wavesAtObserver[0].wave;
-    const arrivalTime = wavesAtObserver[0].arrivalTime;
-
-    // Calculate time since wave arrival (in seconds)
-    const timeSinceArrival = this.simulationTimeProperty.value - arrivalTime; // in seconds (s)
-
-    // Get phase at arrival from original wave
-    const phaseAtArrival = currentWave.phaseAtEmission;
-
-    // Calculate Doppler frequency
-    const observedFrequency = this.dopplerCalculator.calculateObservedFrequency(
-      currentWave,
-      this.observerPositionProperty.value,
-      this.observerVelocityProperty.value,
-      this.soundSpeedProperty.value,
-    );
-
-    // Update observed frequency property
-    this.observedFrequencyProperty.value = observedFrequency;
-
-    // Update observed waveform
-    this.waveformManager.updateObservedWaveform(
-      observedFrequency,
-      phaseAtArrival,
-      timeSinceArrival,
-      this.getTimeSpeedValue(),
-    );
   }
 
   /**
