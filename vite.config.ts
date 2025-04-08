@@ -5,5 +5,5 @@ export default defineConfig({
   base: process.env.GITHUB_PAGES ? "/dopplerEffectPhET/" : "./",
   build: {
     sourcemap: false,
-  }
+  },
 });

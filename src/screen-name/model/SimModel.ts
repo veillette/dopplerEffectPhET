@@ -364,15 +364,15 @@ export class SimModel {
   private updateWaveforms(dt: number): void {
     // Get the current time speed factor
     const timeSpeedValue = this.getTimeSpeedValue();
-    
+
     // Control how often we accumulate new waveform data points based on time speed
     this.waveformUpdateCounter = (this.waveformUpdateCounter || 0) + 1;
-    
+
     // Calculate update interval as reciprocal of time speed factor
     // When time speed is low (0.25), update every 4 frames
     // When time speed is normal (1.0), update every frame
     const updateInterval = Math.round(TIME_SPEED.NORMAL / timeSpeedValue);
-    
+
     if (this.waveformUpdateCounter % updateInterval === 0) {
       // Update emitted waveform
       this.waveformManager.updateEmittedWaveform(
@@ -405,12 +405,13 @@ export class SimModel {
       const phaseAtArrival = currentWave.phaseAtEmission;
 
       // Calculate Doppler frequency
-      const observedFrequency = this.dopplerCalculator.calculateObservedFrequency(
-        currentWave,
-        this.observerPositionProperty.value,
-        this.observerVelocityProperty.value,
-        this.soundSpeedProperty.value,
-      );
+      const observedFrequency =
+        this.dopplerCalculator.calculateObservedFrequency(
+          currentWave,
+          this.observerPositionProperty.value,
+          this.observerVelocityProperty.value,
+          this.soundSpeedProperty.value,
+        );
 
       // Update observed frequency property
       this.observedFrequencyProperty.value = observedFrequency;
