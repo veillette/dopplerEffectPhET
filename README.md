@@ -100,4 +100,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Built with [SceneryStack](https://github.com/sceneryStack)
-- Inspired by PhET Interactive Simulations
+- Inspired by [PhET](https://phet.colorado.edu) Interactive Simulations
