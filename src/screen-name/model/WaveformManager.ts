@@ -26,7 +26,7 @@ export class WaveformManager {
    * Create a new WaveformManager
    * @param soundDataSize Number of points to store in waveform arrays
    */
-  constructor(private readonly soundDataSize: number) {
+  constructor(soundDataSize: number) {
     this.initializeArrays(soundDataSize);
   }
 

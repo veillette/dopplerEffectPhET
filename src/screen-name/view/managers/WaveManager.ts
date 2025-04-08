@@ -35,7 +35,7 @@ export class WaveManager {
   constructor(
     private readonly waveLayer: Node,
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly waveColorProperty: ProfileColorProperty = DopplerEffectColors.waveColorProperty,
+    waveColorProperty: ProfileColorProperty = DopplerEffectColors.waveColorProperty,
   ) {
     // Store initial color value and listen for changes
     this.waveColorValue = waveColorProperty.value;

@@ -35,7 +35,7 @@ export class TrailManager {
   constructor(
     private readonly trailPath: Path,
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly trailColorProperty: ProfileColorProperty,
+    trailColorProperty: ProfileColorProperty,
     private readonly visibleProperty: Property<boolean>,
   ) {
     // Store initial color value and listen for changes

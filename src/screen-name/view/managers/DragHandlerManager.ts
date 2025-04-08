@@ -28,7 +28,7 @@ export class DragHandlerManager {
    */
   constructor(
     private readonly modelViewTransform: ModelViewTransform2,
-    private readonly layoutBounds: Bounds2,
+    layoutBounds: Bounds2,
   ) {
     // drag bounds are the same as the layout bounds
     this.dragBounds = layoutBounds;

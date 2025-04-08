@@ -120,9 +120,6 @@ export class SimScreenView extends ScreenView {
   // String manager instance
   private readonly stringManager: StringManager = StringManager.getInstance();
 
-  // Color profile property for projector mode
-  private readonly colorProfileProperty: Property<string>;
-
   // Derived property for interface bounds
   private readonly interfaceBoundsProperty: TReadOnlyProperty<Bounds2>;
 
@@ -133,12 +130,6 @@ export class SimScreenView extends ScreenView {
     super(options);
 
     this.model = model;
-
-    // Initialize the color profile property (default is the first color profile)
-    this.colorProfileProperty = new Property<string>("default");
-
-    // The ProjectorModeToggleSwitch will handle updating this property
-    // which will be passed to the preferences dialog
 
     // Create model-view transform - y-axis is inverted and centered on the screen
     this.modelViewTransform =
