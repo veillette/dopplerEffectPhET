@@ -68,6 +68,11 @@ jobs:
           name: dist-files
           path: dist
 
+      - name: Create ZIP package
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          zip -r doppler-effect-v${VERSION}.zip dist
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -76,13 +81,16 @@ jobs:
           draft: false
           prerelease: false
           files: |
+            doppler-effect-v*.zip
             dist/index.html
           body: |
             # Release ${{ github.ref_name }}
 
-            Doppler Effect Simulation standalone HTML file.
+            Doppler Effect Simulation.
 
-            ## Installation
+            ## Installation Options
 
-            Download the attached `index.html` file and open it in any modern browser.
-            No internet connection or web server required.
+            1. **Single HTML file**: Download the attached `index.html` file and open it in any modern browser.
+            2. **Complete package**: Download the ZIP file for the full distribution package.
+
+            No internet connection or web server required for either option.

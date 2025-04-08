@@ -19,10 +19,9 @@
     "lint": "npx eslint .",
     "format": "npx prettier --write .",
     "fix": "npx eslint --fix . && npx prettier --write .",
-    "release": "npm run build && npm version patch && git push origin main --tags",
+    "release": "npm version patch && git push && git push --tags",
     "check": "npx tsc --noEmit",
-    "serve": "npm install -g serve && serve -s dist",
-    "package-dist": "npm run build && cd dist && zip -r ../doppler-effect-v$npm_package_version.zip ."
+    "serve": "npm install -g serve && serve -s dist"
   },
   "dependencies": {
     "scenerystack": "~1.0.0"
