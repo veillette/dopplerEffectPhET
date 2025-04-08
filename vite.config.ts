@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite';
-import { resolve } from 'path';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
 export default defineConfig({
@@ -15,23 +14,9 @@ export default defineConfig({
       }
     },
     rollupOptions: {
-      external: ['fsevents', 'node:fs/promises', 'node:perf_hooks'],
-      output: {
-        // Create a single bundle
-        manualChunks: undefined,
-        inlineDynamicImports: true
-      }
+      external: ['fsevents', 'node:fs/promises', 'node:perf_hooks']
     },
     // Set a high asset limit to inline most assets
-    assetsInlineLimit: 1024 * 1024 * 10, // 10MB
-    chunkSizeWarningLimit: 5000
-  },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src')
-    }
-  },
-  optimizeDeps: {
-    include: ['scenerystack']
+    assetsInlineLimit: Infinity
   }
 }); 
