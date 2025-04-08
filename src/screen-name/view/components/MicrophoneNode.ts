@@ -53,7 +53,6 @@ const MICROPHONE = {
   gridColorProperty: DopplerEffectColors.microphoneGridColorProperty,
   detectionRingColorProperty:
     DopplerEffectColors.microphoneDetectionRingColorProperty,
-
 };
 
 /**
