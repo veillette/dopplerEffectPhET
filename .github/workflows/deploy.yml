@@ -82,15 +82,9 @@ jobs:
           prerelease: false
           files: |
             doppler-effect-v*.zip
-            dist/index.html
           body: |
             # Release ${{ github.ref_name }}
 
             Doppler Effect Simulation.
 
-            ## Installation Options
-
-            1. **Single HTML file**: Download the attached `index.html` file and open it in any modern browser.
-            2. **Complete package**: Download the ZIP file for the full distribution package.
-
-            No internet connection or web server required for either option.
+    
