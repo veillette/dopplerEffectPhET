@@ -1,6 +1,8 @@
 # Doppler Effect Simulation
 
-An interactive simulation of the Doppler Effect, built with SceneryStack. This simulation allows users to explore how the frequency of sound waves changes when there is relative motion between a sound source and an observer.
+An interactive simulation of the Doppler Effect, built with [SceneryStack](https://github.com/sceneryStack). This simulation allows users to explore how the frequency of sound waves changes when there is relative motion between a sound source and an observer.
+
+[./assets/screenshot.png](https://veillette.github.io/dopplerEffectPhET)
 
 ## Features
 
@@ -13,13 +15,15 @@ An interactive simulation of the Doppler Effect, built with SceneryStack. This s
 - Adjustable sound speed and frequency
 - Pause/Resume functionality
 - Keyboard controls
+- Projector mode
+- Extendable language support.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- npm or yarn
+- Node.js (v18 or higher)
+- npm
 
 ### Installation
 
