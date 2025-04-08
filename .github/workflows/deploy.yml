@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     tags:
-      - 'v*' # Run on version tags (v1.0.0, etc.)
+      - "v*" # Run on version tags (v1.0.0, etc.)
   workflow_dispatch:
 
 permissions:
@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: "./dist"
-          
+
       - name: Upload build artifact for release
         uses: actions/upload-artifact@v4
         with:
@@ -67,7 +67,7 @@ jobs:
         with:
           name: dist-files
           path: dist
-          
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -79,10 +79,10 @@ jobs:
             dist/index.html
           body: |
             # Release ${{ github.ref_name }}
-            
+
             Doppler Effect Simulation standalone HTML file.
-            
+
             ## Installation
-            
+
             Download the attached `index.html` file and open it in any modern browser.
             No internet connection or web server required.
