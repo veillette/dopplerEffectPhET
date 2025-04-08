@@ -2,7 +2,8 @@
 
 An interactive simulation of the Doppler Effect, built with [SceneryStack](https://github.com/sceneryStack). This simulation allows users to explore how the frequency of sound waves changes when there is relative motion between a sound source and an observer.
 
-![screenshot](./assets/screenshot.png)
+[![Interactive Doppler Effect simulation showing sound waves propagating from a moving red source to a blue observer. The visualization demonstrates frequency shifts with circular wave patterns and includes waveform displays showing the emitted and observed frequencies.](./assets/screenshot.png)](https://veillette.github.io/dopplerEffectPhET)
+
 
 🎮 [Live Demo](https://veillette.github.io/dopplerEffectPhET) 🌐
 
