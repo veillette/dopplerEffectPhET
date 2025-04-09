@@ -210,7 +210,7 @@ export class SimScreenView extends ScreenView {
       this.model.observerPositionProperty,
       this.visibleValuesProperty,
       this.visibleLineOfSightProperty,
-      this.model
+      this.model.sourceObserverDistanceProperty,
     );
 
     // Create selection highlight
