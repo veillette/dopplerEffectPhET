@@ -76,10 +76,12 @@ export class DragHandlerManager {
 
         // Calculate position difference (direction to target)
         const positionDifference = modelPoint.minus(positionProperty.value);
-        
+
         // Convert position difference to velocity using a scaling factor
         // This factor represents 1/time and converts distance to distance/time
-        const desiredVelocity = positionDifference.timesScalar(PHYSICS.POSITION_TO_VELOCITY_FACTOR);
+        const desiredVelocity = positionDifference.timesScalar(
+          PHYSICS.POSITION_TO_VELOCITY_FACTOR,
+        );
 
         // Limit velocity to maximum speed
         if (desiredVelocity.magnitude > maxSpeed) {
@@ -89,7 +91,7 @@ export class DragHandlerManager {
         // Apply velocity
         velocityProperty.value = desiredVelocity;
         movingProperty.value = true;
-      }
+      },
     });
 
     // Add the listener to the target node

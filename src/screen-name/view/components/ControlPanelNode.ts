@@ -100,10 +100,7 @@ export class ControlPanelNode extends Node {
         visibleTrailsProperty,
         strings.motionTrailsStringProperty,
       ),
-      createCheckboxItem(
-        visibleGridProperty,
-        strings.gridStringProperty,
-      ),
+      createCheckboxItem(visibleGridProperty, strings.gridStringProperty),
       createCheckboxItem(
         microphoneEnabledProperty,
         strings.microphoneClicksStringProperty,

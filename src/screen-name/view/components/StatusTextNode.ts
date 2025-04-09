@@ -68,19 +68,24 @@ export class StatusTextNode extends Node {
     const statusStringProperties = this.stringManager.getStatusTextStrings();
 
     // Create NumberDisplay for observed frequency
-    this.observedFreqDisplay = new NumberDisplay(observedFrequencyProperty, new Range(-100, 100), {
-      decimalPlaces: 1,
-      textOptions: {
-        font: new PhetFont(14),
-        fill: options.textColorProperty
+    this.observedFreqDisplay = new NumberDisplay(
+      observedFrequencyProperty,
+      new Range(-100, 100),
+      {
+        decimalPlaces: 1,
+        textOptions: {
+          font: new PhetFont(14),
+          fill: options.textColorProperty,
+        },
+        visibleProperty: visibleValuesProperty,
+        valuePattern:
+          statusStringProperties.observedFrequencyPatternStringProperty.value,
+        backgroundFill: "transparent",
+        backgroundStroke: null,
+        xMargin: 0,
+        yMargin: 0,
       },
-      visibleProperty: visibleValuesProperty,
-      valuePattern: statusStringProperties.observedFrequencyPatternStringProperty.value,
-      backgroundFill: 'transparent',
-      backgroundStroke: null,
-      xMargin: 0,
-      yMargin: 0
-    });
+    );
 
     // Derived property for shift status text content
     const shiftStatusStringProperty = new DerivedProperty(

@@ -77,8 +77,7 @@ export class StringManager {
         this.stringProperties.controls.frequencyStringProperty,
       motionTrailsStringProperty:
         this.stringProperties.controls.motionTrailsStringProperty,
-      gridStringProperty:
-        this.stringProperties.controls.gridStringProperty,
+      gridStringProperty: this.stringProperties.controls.gridStringProperty,
       metersPerSecondStringProperty:
         this.stringProperties.units.metersPerSecondStringProperty,
       hertzStringProperty: this.stringProperties.units.hertzStringProperty,

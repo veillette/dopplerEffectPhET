@@ -176,7 +176,7 @@ export class SimScreenView extends ScreenView {
       [this.visibleBoundsProperty],
       (visibleBounds) => {
         return this.modelViewTransform.viewToModelBounds(visibleBounds);
-      }
+      },
     );
 
     this.gridNode = new GridNode(
@@ -186,9 +186,9 @@ export class SimScreenView extends ScreenView {
       {
         majorGridSize: 1000, // 1000 meters between major grid lines
         minorLinesPerMajorLine: 4, // 4 minor lines between each major line
-      }
+      },
     );
-    
+
     // Add grid to the scene - behind the waves
     this.insertChild(0, this.gridNode);
 
