@@ -18,7 +18,7 @@ An interactive simulation of the Doppler Effect, built with [SceneryStack](https
 - Pause/Resume functionality
 - Keyboard controls
 - Projector mode
-- Extendable language support.
+- Extendable language support
 
 ## Getting Started
 
@@ -58,7 +58,7 @@ npm run build
 
 ### Mouse Controls
 
-- Click and drag the red source or green observer to move them
+- Click and drag the red source or blue observer to move them
 - The connecting line shows the distance between source and observer
 
 ### Keyboard Controls
@@ -71,7 +71,13 @@ npm run build
 - `H`: Toggle help display
 - `+/-`: Adjust emitted frequency
 - `,/.`: Adjust sound speed
-- `1-4`: Load preset scenarios
+- `1-6`: Load preset scenarios
+  - `1`: Source approaching observer
+  - `2`: Source receding from observer
+  - `3`: Observer approaching source
+  - `4`: Observer receding from source
+  - `5`: Same direction motion
+  - `6`: Perpendicular motion
 
 ## Physics Model
 
