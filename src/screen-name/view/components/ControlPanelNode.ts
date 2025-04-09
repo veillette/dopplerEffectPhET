@@ -44,6 +44,7 @@ export class ControlPanelNode extends Node {
    * @param visibleVelocityArrowProperty - Property for toggling velocity arrows
    * @param visibleLineOfSightProperty - Property for toggling line of sight
    * @param visibleTrailsProperty - Property for toggling motion trails
+   * @param visibleGridProperty - Property for toggling grid visibility
    * @param microphoneEnabledProperty - Property for toggling microphone
    * @param soundSpeedProperty - Property for controlling sound speed
    * @param emittedFrequencyProperty - Property for controlling emitted frequency
@@ -56,6 +57,7 @@ export class ControlPanelNode extends Node {
     visibleVelocityArrowProperty: Property<boolean>,
     visibleLineOfSightProperty: Property<boolean>,
     visibleTrailsProperty: Property<boolean>,
+    visibleGridProperty: Property<boolean>,
     microphoneEnabledProperty: Property<boolean>,
     soundSpeedProperty: Property<number>,
     emittedFrequencyProperty: Property<number>,
@@ -97,6 +99,10 @@ export class ControlPanelNode extends Node {
       createCheckboxItem(
         visibleTrailsProperty,
         strings.motionTrailsStringProperty,
+      ),
+      createCheckboxItem(
+        visibleGridProperty,
+        strings.gridStringProperty,
       ),
       createCheckboxItem(
         microphoneEnabledProperty,

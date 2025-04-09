@@ -33,6 +33,7 @@ import { GraphDisplayNode } from "./components/GraphDisplayNode";
 import { InstructionsNode } from "./components/InstructionsNode";
 import { StatusTextNode } from "./components/StatusTextNode";
 import { ScaleMarkNode } from "./components/ScaleMarkNode";
+import { GridNode } from "./components/GridNode";
 
 // Import managers directly
 import { DragHandlerManager } from "./managers/DragHandlerManager";
@@ -83,6 +84,7 @@ export class SimScreenView extends ScreenView {
   private readonly statusDisplayNode: StatusTextNode;
   private readonly controlPanel: ControlPanelNode;
   private readonly instructionsNode: InstructionsNode;
+  private readonly gridNode: GridNode;
 
   // Managers
   private readonly waveManager: WaveManager;
@@ -98,6 +100,7 @@ export class SimScreenView extends ScreenView {
   private readonly visibleVelocityArrowProperty: Property<boolean>;
   private readonly visibleLineOfSightProperty: Property<boolean>;
   private readonly visibleTrailsProperty: Property<boolean>;
+  private readonly visibleGridProperty: Property<boolean>;
 
   // Selection tracking
   private readonly selectedObjectProperty: Property<"source" | "observer"> =
@@ -144,6 +147,7 @@ export class SimScreenView extends ScreenView {
     this.visibleVelocityArrowProperty = new Property<boolean>(true);
     this.visibleLineOfSightProperty = new Property<boolean>(false);
     this.visibleTrailsProperty = new Property<boolean>(false);
+    this.visibleGridProperty = new Property<boolean>(false);
 
     // Matches visibleBounds horizontally, layoutBounds vertically
     this.interfaceBoundsProperty = new DerivedProperty(
@@ -177,6 +181,27 @@ export class SimScreenView extends ScreenView {
       this.graphLayer,
       this.controlLayer,
     ].forEach((layer) => this.addChild(layer));
+
+    // Create grid node
+    const modelBoundsProperty = new DerivedProperty(
+      [this.visibleBoundsProperty],
+      (visibleBounds) => {
+        return this.modelViewTransform.viewToModelBounds(visibleBounds);
+      }
+    );
+
+    this.gridNode = new GridNode(
+      this.modelViewTransform,
+      this.visibleGridProperty,
+      modelBoundsProperty,
+      {
+        majorGridSize: 1000, // 1000 meters between major grid lines
+        minorLinesPerMajorLine: 4, // 4 minor lines between each major line
+      }
+    );
+    
+    // Add grid to the scene - behind the waves
+    this.insertChild(0, this.gridNode);
 
     // Create source and observer nodes
     this.sourceNode = new Circle(this.UI.SOURCE_RADIUS, {
@@ -332,6 +357,7 @@ export class SimScreenView extends ScreenView {
       this.visibleVelocityArrowProperty,
       this.visibleLineOfSightProperty,
       this.visibleTrailsProperty,
+      this.visibleGridProperty,
       this.model.microphoneEnabledProperty,
       this.model.soundSpeedProperty,
       this.model.emittedFrequencyProperty,
@@ -539,6 +565,7 @@ export class SimScreenView extends ScreenView {
     this.visibleVelocityArrowProperty.reset();
     this.visibleLineOfSightProperty.reset();
     this.visibleTrailsProperty.reset();
+    this.visibleGridProperty.reset();
 
     // Reset components
     this.waveManager.clearWaveNodes();

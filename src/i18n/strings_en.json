@@ -10,6 +10,7 @@
     "soundSpeed": "Speed of Sound",
     "frequency": "Frequency",
     "motionTrails": "Motion Trails",
+    "grid": "Grid",
     "microphoneClicks": "Microphone Clicks"
   },
   "units": {

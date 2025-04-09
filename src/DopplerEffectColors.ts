@@ -198,6 +198,24 @@ const DopplerEffectColors = {
       projector: BLUE,
     },
   ),
+
+  // Grid colors
+  gridMajorLineColorProperty: new ProfileColorProperty(
+    dopplerEffect,
+    "gridMajorLineColor",
+    {
+      default: new Color(120, 120, 120), // Medium gray for default
+      projector: new Color(80, 80, 80), // Darker gray for projector
+    },
+  ),
+  gridMinorLineColorProperty: new ProfileColorProperty(
+    dopplerEffect,
+    "gridMinorLineColor",
+    {
+      default: new Color(70, 70, 70), // Dark gray for default
+      projector: new Color(180, 180, 180), // Light gray for projector
+    },
+  ),
 };
 
 // Register the namespace
