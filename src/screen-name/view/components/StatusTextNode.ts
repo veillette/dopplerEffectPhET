@@ -49,11 +49,13 @@ export class StatusTextNode extends Node {
    * Constructor for the StatusTextNode
    *
    * @param observedFrequencyProperty - Property for the observed frequency value
+   * @param emittedFrequencyProperty - Property for the emitted frequency value
    * @param visibleValuesProperty - Property that controls visibility of values
    * @param options - Configuration options
    */
   constructor(
     observedFrequencyProperty: ReadOnlyProperty<number>,
+    emittedFrequencyProperty: ReadOnlyProperty<number>,
     visibleValuesProperty: ReadOnlyProperty<boolean>,
     options: StatusTextOptions,
   ) {
@@ -89,11 +91,11 @@ export class StatusTextNode extends Node {
 
     // Derived property for shift status text content
     const shiftStatusStringProperty = new DerivedProperty(
-      [observedFrequencyProperty],
-      (observed) => {
-        if (observed < 0) {
+      [observedFrequencyProperty, emittedFrequencyProperty],
+      (observed, emitted) => {
+        if (observed > emitted) {
           return statusStringProperties.blueshiftStringProperty.value;
-        } else if (observed > 0) {
+        } else if (observed < emitted) {
           return statusStringProperties.redshiftStringProperty.value;
         } else {
           return "";
@@ -101,12 +103,25 @@ export class StatusTextNode extends Node {
       },
     );
 
-    this.shiftStatusText = new Text("", {
+    // Derived property for shift status text color
+    const shiftStatusFillProperty = new DerivedProperty(
+      [observedFrequencyProperty, emittedFrequencyProperty],
+      (observed, emitted) => {
+        if (observed > emitted) {
+          return this.blueshiftColorProperty.value;
+        } else if (observed < emitted) {
+          return this.redshiftColorProperty.value;
+        } else {
+          return this.textColorProperty.value;
+        }
+      },
+    );
+
+    this.shiftStatusText = new Text(shiftStatusStringProperty, {
       font: new PhetFont(16),
-      fill: options.textColorProperty,
+      fill: shiftStatusFillProperty,
       fontWeight: "bold",
-      visibleProperty: visibleValuesProperty,
-      stringProperty: shiftStatusStringProperty,
+      visibleProperty: visibleValuesProperty
     });
 
     // Position text elements
@@ -114,7 +129,7 @@ export class StatusTextNode extends Node {
     const centerX = options.layoutBounds.centerX;
 
     // Position observed frequency display near the center, slightly to the left
-    this.observedFreqDisplay.centerX = centerX - 100;
+    this.observedFreqDisplay.centerX = centerX - 10;
     this.observedFreqDisplay.bottom = 25;
 
     // Position shift status text to the right of the frequency display
@@ -124,23 +139,5 @@ export class StatusTextNode extends Node {
     // Add all elements to this node
     this.addChild(this.observedFreqDisplay);
     this.addChild(this.shiftStatusText);
-
-    // Update the color when frequencies change
-    observedFrequencyProperty.link((value: number) => {
-      this.updateShiftStatusColor(value);
-    });
-  }
-
-  /**
-   * Update the shift status text color based on frequency comparison
-   */
-  private updateShiftStatusColor(observed: number): void {
-    if (observed > 0) {
-      this.shiftStatusText.fill = this.blueshiftColorProperty;
-    } else if (observed < 0) {
-      this.shiftStatusText.fill = this.redshiftColorProperty;
-    } else {
-      this.shiftStatusText.fill = this.textColorProperty;
-    }
   }
 }

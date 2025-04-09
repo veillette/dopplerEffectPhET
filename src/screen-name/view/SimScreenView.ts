@@ -317,6 +317,7 @@ export class SimScreenView extends ScreenView {
     // Create status text display
     this.statusDisplayNode = new StatusTextNode(
       this.model.observedFrequencyProperty,
+      this.model.emittedFrequencyProperty,
       this.visibleValuesProperty,
       {
         layoutBounds: this.layoutBounds,
