@@ -71,15 +71,15 @@ export class KeyboardHandlerManager {
 
       // Handle arrow key movement
       if (playProperty.value) {
-        let targetVel: Property<Vector2>;
+        let targetVelocity: Property<Vector2>;
         let isMoving: Property<boolean>;
 
         // Determine which object to control
         if (selectedObjectProperty.value === "source") {
-          targetVel = sourceVelocityProperty;
+          targetVelocity = sourceVelocityProperty;
           isMoving = sourceMovingProperty;
         } else {
-          targetVel = observerVelocityProperty;
+          targetVelocity = observerVelocityProperty;
           isMoving = observerMovingProperty;
         }
 
@@ -100,7 +100,7 @@ export class KeyboardHandlerManager {
 
         // Apply velocity if any keys were pressed
         if (velocity.magnitude > 0) {
-          targetVel.value = velocity;
+          targetVelocity.value = velocity;
           isMoving.value = true;
         }
       }
@@ -138,11 +138,11 @@ export class KeyboardHandlerManager {
 
       // Adjust emitted frequency
       if (key === "+" || key === "=") {
-        emittedFrequencyProperty.value += 0.01;
+        emittedFrequencyProperty.value += 0.1;
       } else if (key === "-" || key === "_") {
         emittedFrequencyProperty.value = Math.max(
           0.1,
-          emittedFrequencyProperty.value - 0.01,
+          emittedFrequencyProperty.value - 0.1,
         );
       }
 
