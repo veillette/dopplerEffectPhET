@@ -4,7 +4,6 @@ import {
   ComboBox,
   DerivedProperty,
   InfoButton,
-  Line,
   ModelViewTransform2,
   Node,
   Path,
@@ -34,6 +33,7 @@ import { InstructionsNode } from "./components/InstructionsNode";
 import { StatusTextNode } from "./components/StatusTextNode";
 import { ScaleMarkNode } from "./components/ScaleMarkNode";
 import { GridNode } from "./components/GridNode";
+import { ConnectingLineNode } from "./components/ConnectingLineNode";
 
 // Import managers directly
 import { DragHandlerManager } from "./managers/DragHandlerManager";
@@ -74,7 +74,7 @@ export class SimScreenView extends ScreenView {
   private readonly microphoneNode: MicrophoneNode;
   private readonly sourceVelocityVectorNode: ArrowNode;
   private readonly observerVelocityVectorNode: ArrowNode;
-  private readonly connectingLineNode: Line;
+  private readonly connectingLineNode: ConnectingLineNode;
   private readonly selectionHighlightCircle: Circle;
   private readonly sourceTrailPath: Path;
   private readonly observerTrailPath: Path;
@@ -203,12 +203,15 @@ export class SimScreenView extends ScreenView {
       cursor: "pointer",
     });
 
-    // Create connecting line
-    this.connectingLineNode = new Line(0, 0, 0, 0, {
-      visibleProperty: this.visibleLineOfSightProperty,
-      stroke: DopplerEffectColors.connectingLineColorProperty,
-      lineDash: [10, 5],
-    });
+    // Create connecting line using the new ConnectingLineNode class
+    this.connectingLineNode = new ConnectingLineNode(
+      this.modelViewTransform,
+      this.model.sourcePositionProperty,
+      this.model.observerPositionProperty,
+      this.visibleValuesProperty,
+      this.visibleLineOfSightProperty,
+      this.model
+    );
 
     // Create selection highlight
     this.selectionHighlightCircle = new Circle(this.UI.SOURCE_RADIUS + 5, {
@@ -639,20 +642,6 @@ export class SimScreenView extends ScreenView {
 
     // Update selection highlight
     this.updateSelectionHighlight();
-
-    // Update line of sight
-    const sourcePos = this.modelViewTransform.modelToViewPosition(
-      this.model.sourcePositionProperty.value,
-    );
-    const observerPos = this.modelViewTransform.modelToViewPosition(
-      this.model.observerPositionProperty.value,
-    );
-    this.connectingLineNode.setLine(
-      sourcePos.x,
-      sourcePos.y,
-      observerPos.x,
-      observerPos.y,
-    );
 
     // Update velocity vectors
     this.vectorManager.updateVectors(

@@ -11,8 +11,6 @@ import dopplerEffect from "./DopplerEffectNamespace";
 // Basic color constants
 const BLACK = new Color(0, 0, 0);
 const WHITE = new Color(255, 255, 255);
-const RED = new Color(255, 0, 0);
-const BLUE = new Color(0, 0, 255);
 const YELLOW = new Color(255, 255, 0);
 
 /**

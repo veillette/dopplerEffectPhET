@@ -1,6 +1,7 @@
 import {
   BooleanProperty,
   createObservableArray,
+  DerivedProperty,
   Enumeration,
   EnumerationProperty,
   EnumerationValue,
@@ -9,6 +10,7 @@ import {
   Property,
   RangeWithValue,
   TimeSpeed,
+  TReadOnlyProperty,
   Vector2,
 } from "scenerystack";
 import {
@@ -99,6 +101,9 @@ export class SimModel {
   public readonly observerPositionProperty; // in meters (m)
   public readonly observerVelocityProperty; // in meters per second (m/s)
   public readonly observerMovingProperty;
+
+  // Distance between source and observer
+  public readonly sourceObserverDistanceProperty: TReadOnlyProperty<number>;
 
   // Position history for trails
   private sourcePositionHistory: PositionHistoryPoint[] = [];
@@ -192,6 +197,14 @@ export class SimModel {
     this.observerPositionProperty = this.observer.positionProperty;
     this.observerVelocityProperty = this.observer.velocityProperty;
     this.observerMovingProperty = this.observer.movingProperty;
+
+    // Create the source-observer distance property
+    this.sourceObserverDistanceProperty = new DerivedProperty(
+      [this.sourcePositionProperty, this.observerPositionProperty],
+      (sourcePosition: Vector2, observerPosition: Vector2) => {
+        return sourcePosition.distance(observerPosition);
+      }
+    );
 
     // Create specialized component classes
     this.waveGenerator = new WaveGenerator(
@@ -548,5 +561,12 @@ export class SimModel {
         break; // Only detect one wave per frame
       }
     }
+  }
+
+  /**
+   * Get the distance between the source and observer in meters
+   */
+  public getSourceObserverDistance(): number {
+    return this.sourcePositionProperty.value.distance(this.observerPositionProperty.value);
   }
 }
