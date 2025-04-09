@@ -8,14 +8,15 @@
 import {
   DerivedProperty,
   Node,
-  PatternStringProperty,
   PhetFont,
   ReadOnlyProperty,
   Text,
   ProfileColorProperty,
   Bounds2,
+  Range,
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
+import { NumberDisplay } from "scenerystack/scenery-phet";
 
 // Configuration options for the status text display
 type StatusTextOptions = {
@@ -33,7 +34,7 @@ type StatusTextOptions = {
  * Component that displays status information for the simulation
  */
 export class StatusTextNode extends Node {
-  private readonly observedFreqText: Text;
+  private readonly observedFreqDisplay: NumberDisplay;
   private readonly shiftStatusText: Text;
 
   // Store color references
@@ -66,17 +67,19 @@ export class StatusTextNode extends Node {
     // Get strings from string manager
     const statusStringProperties = this.stringManager.getStatusTextStrings();
 
-    // Create text nodes
-    this.observedFreqText = new Text("", {
-      font: new PhetFont(14),
-      fill: options.textColorProperty,
+    // Create NumberDisplay for observed frequency
+    this.observedFreqDisplay = new NumberDisplay(observedFrequencyProperty, new Range(-100, 100), {
+      decimalPlaces: 1,
+      textOptions: {
+        font: new PhetFont(14),
+        fill: options.textColorProperty
+      },
       visibleProperty: visibleValuesProperty,
-      stringProperty: new PatternStringProperty(
-        statusStringProperties.observedFrequencyPatternStringProperty,
-        {
-          value: new DerivedProperty([observedFrequencyProperty], (value) => Number(value.toFixed(1))),
-        },
-      ),
+      valuePattern: statusStringProperties.observedFrequencyPatternStringProperty.value,
+      backgroundFill: 'transparent',
+      backgroundStroke: null,
+      xMargin: 0,
+      yMargin: 0
     });
 
     // Derived property for shift status text content
@@ -102,18 +105,19 @@ export class StatusTextNode extends Node {
     });
 
     // Position text elements
-    const textX =
-      options.layoutBounds.maxX - options.graphMargin - options.graphWidth / 2;
+    // Calculate the center position for the text elements
+    const centerX = options.layoutBounds.centerX;
 
-    // Position text elements in the middle of the screen at the top
-    this.shiftStatusText.centerX = textX;
+    // Position observed frequency display near the center, slightly to the left
+    this.observedFreqDisplay.centerX = centerX - 100;
+    this.observedFreqDisplay.bottom = 25;
+
+    // Position shift status text to the right of the frequency display
+    this.shiftStatusText.left = this.observedFreqDisplay.right + 20; // Add some spacing between elements
     this.shiftStatusText.bottom = 25;
 
-    this.observedFreqText.centerX = textX;
-    this.observedFreqText.bottom = this.shiftStatusText.top - 5;
-
     // Add all elements to this node
-    this.addChild(this.observedFreqText);
+    this.addChild(this.observedFreqDisplay);
     this.addChild(this.shiftStatusText);
 
     // Update the color when frequencies change
