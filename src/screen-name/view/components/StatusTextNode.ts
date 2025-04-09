@@ -91,9 +91,9 @@ export class StatusTextNode extends Node {
     const shiftStatusStringProperty = new DerivedProperty(
       [observedFrequencyProperty],
       (observed) => {
-        if (observed > 0) {
+        if (observed < 0) {
           return statusStringProperties.blueshiftStringProperty.value;
-        } else if (observed < 0) {
+        } else if (observed > 0) {
           return statusStringProperties.redshiftStringProperty.value;
         } else {
           return "";
