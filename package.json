@@ -21,7 +21,10 @@
     "fix": "npx eslint --fix . && npx prettier --write .",
     "release": "npm version patch && git push && git push --tags",
     "check": "npx tsc --noEmit",
-    "serve": "npm install -g serve && serve -s dist"
+    "serve": "npx serve -s dist",
+    "dev": "npx run vite",
+    "watch": "npx run tsc --watch",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "scenerystack": "~1.0.0"
@@ -34,6 +37,6 @@
     "prettier": "^3.4.2",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.18.2",
-    "vite": "^5.4.10"
+    "vite": "^6.2.5"
   }
 }

@@ -101,6 +101,7 @@ export class SimScreenView extends ScreenView {
   private readonly visibleLineOfSightProperty: Property<boolean>;
   private readonly visibleTrailsProperty: Property<boolean>;
   private readonly visibleGridProperty: Property<boolean>;
+  private readonly visibleInstructionsProperty: Property<boolean>;
 
   // Selection tracking
   private readonly selectedObjectProperty: Property<"source" | "observer"> =
