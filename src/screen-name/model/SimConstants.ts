@@ -51,26 +51,6 @@ export const TIME_SPEED = {
   NORMAL: 1.0, // Normal simulation speed (dimensionless)
 } as const;
 
-// Preset scenarios (velocities in m/s)
-export const SCENARIOS = {
-  SOURCE_TOWARD_OBSERVER: {
-    sourceVelocity: new Vector2(60, 0), // Source moves right at 60 m/s
-    observerVelocity: new Vector2(0, 0), // Observer stationary (m/s)
-  },
-  OBSERVER_TOWARD_SOURCE: {
-    sourceVelocity: new Vector2(0, 0), // Source stationary (m/s)
-    observerVelocity: new Vector2(-60, 0), // Observer moves left at 60 m/s
-  },
-  MOVING_APART: {
-    sourceVelocity: new Vector2(-60, 0), // Source moves left at 60 m/s
-    observerVelocity: new Vector2(60, 0), // Observer moves right at 60 m/s
-  },
-  PERPENDICULAR: {
-    sourceVelocity: new Vector2(0, 60), // Source moves up at 60 m/s
-    observerVelocity: new Vector2(0, -60), // Observer moves down at 60 m/s
-  },
-} as const;
-
 // Scale factors for converting between model and view coordinates
 export const SCALE = {
   // Time scaling: 1 second in model time = 1 seconds in real time
