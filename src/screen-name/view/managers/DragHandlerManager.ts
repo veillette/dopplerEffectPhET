@@ -20,6 +20,7 @@ import { PHYSICS } from "../../../screen-name/model/SimConstants";
 export class DragHandlerManager {
   private readonly dragBounds: Bounds2;
   private dragListener: DragListener | null = null;
+  private dragOffset: Vector2 = new Vector2(0, 0);
 
   /**
    * Constructor for the DragHandlerManager
@@ -61,19 +62,14 @@ export class DragHandlerManager {
         onSelected();
 
         // Store the initial offset between pointer and object position
-        const viewPos = this.modelViewTransform.modelToViewPosition(
+        const viewPosition = this.modelViewTransform.modelToViewPosition(
           positionProperty.value,
         );
-        (
-          this.dragListener as DragListener & { dragOffset: Vector2 }
-        ).dragOffset = viewPos.minus(event.pointer.point);
+        this.dragOffset = viewPosition.minus(event.pointer.point);
       },
       drag: (event) => {
         // Convert view coordinates to model coordinates, accounting for initial offset
-        const viewPoint = event.pointer.point.plus(
-          (this.dragListener as DragListener & { dragOffset: Vector2 })
-            .dragOffset,
-        );
+        const viewPoint = event.pointer.point.plus(this.dragOffset);
         const modelPoint =
           this.modelViewTransform.viewToModelPosition(viewPoint);
 
@@ -92,7 +88,7 @@ export class DragHandlerManager {
         // Apply velocity
         velocityProperty.value = desiredVelocity;
         movingProperty.value = true;
-      },
+      }
     });
 
     // Add the listener to the target node
