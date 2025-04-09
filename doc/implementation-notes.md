@@ -110,6 +110,17 @@ Specialized manager classes handle specific visualization aspects:
 3. **DragHandlerManager**: Manages user drag interactions
 4. **KeyboardHandlerManager**: Processes keyboard controls
 
+### Color Scheme
+
+The simulation uses a carefully selected color scheme to avoid confusion with Doppler shift terminology:
+
+- **Source**: Green (to avoid confusion with redshift)
+- **Observer**: Purple (to avoid confusion with blueshift)
+- **Velocity Arrows**: Match their respective objects (green for source, purple for observer)
+- **Wave Visualization**: Neutral colors that don't conflict with the source/observer colors
+
+This color scheme helps users distinguish between the source and observer while avoiding confusion with the blue shift and red shift phenomena in the Doppler effect.
+
 ### Performance Optimizations
 
 We have attempted to optimize this simulation, but trying to reduce its footprint.

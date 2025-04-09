@@ -41,15 +41,15 @@ const DopplerEffectColors = {
 
   // Source and observer colors
   sourceColorProperty: new ProfileColorProperty(dopplerEffect, "sourceColor", {
-    default: new Color(255, 100, 100), // Lighter red for projector
-    projector: new Color(255, 0, 0), // Red
+    default: new Color(100, 255, 100), // Lighter green for default
+    projector: new Color(0, 200, 0), // Green for projector
   }),
   observerColorProperty: new ProfileColorProperty(
     dopplerEffect,
     "observerColor",
     {
-      default: new Color(100, 100, 255), // Lighter blue for projector
-      projector: new Color(0, 0, 255), // Blue
+      default: new Color(180, 50, 255), // More vibrant purple for default
+      projector: new Color(120, 0, 180), // Deeper purple for projector
     },
   ),
 
@@ -186,16 +186,16 @@ const DopplerEffectColors = {
     dopplerEffect,
     "sourceVelocityArrowColor",
     {
-      default: new Color(255, 120, 120),
-      projector: RED,
+      default: new Color(100, 255, 100), // Green to match source
+      projector: new Color(0, 200, 0), // Darker green for projector
     },
   ),
   observerVelocityArrowColorProperty: new ProfileColorProperty(
     dopplerEffect,
     "observerVelocityArrowColor",
     {
-      default: new Color(120, 120, 255),
-      projector: BLUE,
+      default: new Color(180, 50, 255), // More vibrant purple to match observer
+      projector: new Color(120, 0, 180), // Deeper purple for projector
     },
   ),
 
