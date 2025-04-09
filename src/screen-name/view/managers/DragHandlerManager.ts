@@ -12,6 +12,7 @@ import {
   Bounds2,
 } from "scenerystack";
 import { Node } from "scenerystack";
+import { PHYSICS } from "../../../screen-name/model/SimConstants";
 
 /**
  * Manager for creating and attaching a drag handler to a simulation object
@@ -76,8 +77,12 @@ export class DragHandlerManager {
         const modelPoint =
           this.modelViewTransform.viewToModelPosition(viewPoint);
 
-        // Calculate desired velocity (direction to target)
-        const desiredVelocity = modelPoint.minus(positionProperty.value);
+        // Calculate position difference (direction to target)
+        const positionDifference = modelPoint.minus(positionProperty.value);
+        
+        // Convert position difference to velocity using a scaling factor
+        // This factor represents 1/time and converts distance to distance/time
+        const desiredVelocity = positionDifference.timesScalar(PHYSICS.POSITION_TO_VELOCITY_FACTOR);
 
         // Limit velocity to maximum speed
         if (desiredVelocity.magnitude > maxSpeed) {
