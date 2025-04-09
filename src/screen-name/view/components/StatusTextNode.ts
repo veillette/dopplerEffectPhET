@@ -34,7 +34,7 @@ type StatusTextOptions = {
  * Component that displays status information for the simulation
  */
 export class StatusTextNode extends Node {
-  private readonly observedFreqDisplay: NumberDisplay;
+  private readonly observedFrequencyDisplay: NumberDisplay;
   private readonly shiftStatusText: Text;
 
   // Store color references
@@ -70,7 +70,7 @@ export class StatusTextNode extends Node {
     const statusStringProperties = this.stringManager.getStatusTextStrings();
 
     // Create NumberDisplay for observed frequency
-    this.observedFreqDisplay = new NumberDisplay(
+    this.observedFrequencyDisplay = new NumberDisplay(
       observedFrequencyProperty,
       new Range(-100, 100),
       {
@@ -118,10 +118,12 @@ export class StatusTextNode extends Node {
     );
 
     this.shiftStatusText = new Text(shiftStatusStringProperty, {
-      font: new PhetFont(16),
+      font: new PhetFont({
+        size: 16,
+        weight: "bold",
+      }),
       fill: shiftStatusFillProperty,
-      fontWeight: "bold",
-      visibleProperty: visibleValuesProperty
+      visibleProperty: visibleValuesProperty,
     });
 
     // Position text elements
@@ -129,15 +131,15 @@ export class StatusTextNode extends Node {
     const centerX = options.layoutBounds.centerX;
 
     // Position observed frequency display near the center, slightly to the left
-    this.observedFreqDisplay.centerX = centerX - 10;
-    this.observedFreqDisplay.bottom = 25;
+    this.observedFrequencyDisplay.centerX = centerX - 10;
+    this.observedFrequencyDisplay.bottom = 25;
 
     // Position shift status text to the right of the frequency display
-    this.shiftStatusText.left = this.observedFreqDisplay.right + 20; // Add some spacing between elements
+    this.shiftStatusText.left = this.observedFrequencyDisplay.right + 20; // Add some spacing between elements
     this.shiftStatusText.bottom = 25;
 
     // Add all elements to this node
-    this.addChild(this.observedFreqDisplay);
+    this.addChild(this.observedFrequencyDisplay);
     this.addChild(this.shiftStatusText);
   }
 }
