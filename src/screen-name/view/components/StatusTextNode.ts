@@ -67,14 +67,14 @@ export class StatusTextNode extends Node {
     const statusStringProperties = this.stringManager.getStatusTextStrings();
 
     // Create text nodes
-    this.observedFreqText = new Text(observedFrequencyProperty.value, {
+    this.observedFreqText = new Text("", {
       font: new PhetFont(14),
       fill: options.textColorProperty,
       visibleProperty: visibleValuesProperty,
       stringProperty: new PatternStringProperty(
         statusStringProperties.observedFrequencyPatternStringProperty,
         {
-          value: observedFrequencyProperty,
+          value: new DerivedProperty([observedFrequencyProperty], (value) => Number(value.toFixed(1))),
         },
       ),
     });
