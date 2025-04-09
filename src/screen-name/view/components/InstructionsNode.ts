@@ -4,7 +4,14 @@
  * Contains the help instructions functionality for the Doppler Effect simulation.
  */
 
-import { Bounds2, Node, PhetFont, Property, Rectangle, Text } from "scenerystack";
+import {
+  Bounds2,
+  Node,
+  PhetFont,
+  Property,
+  Rectangle,
+  Text,
+} from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
 
@@ -32,10 +39,16 @@ export class InstructionsNode extends Node {
     const strings = StringManager.getInstance().getInstructionsStrings();
 
     // Create background rectangle with semi-transparent white
-    const background = new Rectangle(0, 0, options.layoutBounds.width / 2, 200, {
-      fill: DopplerEffectColors.controlPanelBackgroundColorProperty,
-      cornerRadius: 5,
-    });
+    const background = new Rectangle(
+      0,
+      0,
+      options.layoutBounds.width / 2,
+      200,
+      {
+        fill: DopplerEffectColors.controlPanelBackgroundColorProperty,
+        cornerRadius: 5,
+      },
+    );
     this.addChild(background);
 
     // Add title
@@ -78,7 +91,6 @@ export class InstructionsNode extends Node {
 
     // Position the instructions box
     this.center = options.layoutBounds.center;
-
   }
 
   /**

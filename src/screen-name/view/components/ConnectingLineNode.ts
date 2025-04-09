@@ -31,9 +31,9 @@ export class ConnectingLineNode extends Node {
     observerPositionProperty: TReadOnlyProperty<Vector2>,
     visibleValuesProperty: Property<boolean>,
     visibleLineOfSightProperty: Property<boolean>,
-    sourceObserverDistanceProperty: TReadOnlyProperty<number>
+    sourceObserverDistanceProperty: TReadOnlyProperty<number>,
   ) {
-    super( {
+    super({
       visibleProperty: visibleLineOfSightProperty,
     });
 
@@ -55,29 +55,39 @@ export class ConnectingLineNode extends Node {
           fill: DopplerEffectColors.textColorProperty,
         },
         visibleProperty: visibleValuesProperty,
-        valuePattern: StringManager.getInstance().getAllStringProperties().units.metersStringProperty,
+        valuePattern:
+          StringManager.getInstance().getAllStringProperties().units
+            .metersStringProperty,
         backgroundFill: "transparent",
         backgroundStroke: null,
         xMargin: 0,
         yMargin: 0,
-      }
+      },
     );
     this.addChild(distanceLabel);
 
     // Update the line and label when positions change
-    Multilink.multilink([sourcePositionProperty, observerPositionProperty], ( sourcePosition, observerPosition)=>{
-       // Convert source and observer positions to view coordinates
-    const viewSourcePosition = modelViewTransform.modelToViewPosition(sourcePosition);              
-    const viewObserverPosition = modelViewTransform.modelToViewPosition(observerPosition);
+    Multilink.multilink(
+      [sourcePositionProperty, observerPositionProperty],
+      (sourcePosition, observerPosition) => {
+        // Convert source and observer positions to view coordinates
+        const viewSourcePosition =
+          modelViewTransform.modelToViewPosition(sourcePosition);
+        const viewObserverPosition =
+          modelViewTransform.modelToViewPosition(observerPosition);
 
-    // Update the line position
-    line.setPoint1(viewSourcePosition).setPoint2(viewObserverPosition);
+        // Update the line position
+        line.setPoint1(viewSourcePosition).setPoint2(viewObserverPosition);
 
-    // Calculate the midpoint between source and observer in view coordinates
-    const viewMidPosition = viewSourcePosition.blend(viewObserverPosition, 0.5);
+        // Calculate the midpoint between source and observer in view coordinates
+        const viewMidPosition = viewSourcePosition.blend(
+          viewObserverPosition,
+          0.5,
+        );
 
-    // Position the label at the midpoint of the line
-    distanceLabel.center = viewMidPosition.addXY(0, -15); // offset above the line
-    });
+        // Position the label at the midpoint of the line
+        distanceLabel.center = viewMidPosition.addXY(0, -15); // offset above the line
+      },
+    );
   }
-} 
+}

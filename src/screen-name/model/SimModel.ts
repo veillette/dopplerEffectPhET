@@ -203,7 +203,7 @@ export class SimModel {
       [this.sourcePositionProperty, this.observerPositionProperty],
       (sourcePosition: Vector2, observerPosition: Vector2) => {
         return sourcePosition.distance(observerPosition);
-      }
+      },
     );
 
     // Create specialized component classes
@@ -567,6 +567,8 @@ export class SimModel {
    * Get the distance between the source and observer in meters
    */
   public getSourceObserverDistance(): number {
-    return this.sourcePositionProperty.value.distance(this.observerPositionProperty.value);
+    return this.sourcePositionProperty.value.distance(
+      this.observerPositionProperty.value,
+    );
   }
 }
