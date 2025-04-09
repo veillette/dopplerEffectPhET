@@ -158,17 +158,6 @@ export class SimScreenView extends ScreenView {
           .withMaxY(this.layoutBounds.maxY),
     );
 
-    // Create a derived property for the selected object name
-    const selectedObjectNameProperty = new DerivedProperty(
-      [
-        this.selectedObjectProperty,
-        this.stringManager.getObjectStrings().sourceStringProperty,
-        this.stringManager.getObjectStrings().observerStringProperty,
-      ],
-      (selected, sourceName, observerName) =>
-        selected === "source" ? sourceName : observerName,
-    );
-
     // Create display layers and add to the view in correct order (waves behind objects)
     this.waveLayer = new Node();
     this.objectLayer = new Node();
@@ -327,16 +316,13 @@ export class SimScreenView extends ScreenView {
 
     // Create status text display
     this.statusDisplayNode = new StatusTextNode(
-      this.model.emittedFrequencyProperty,
       this.model.observedFrequencyProperty,
-      selectedObjectNameProperty,
       this.visibleValuesProperty,
       {
         layoutBounds: this.layoutBounds,
         textColorProperty: DopplerEffectColors.textColorProperty,
         blueshiftColorProperty: DopplerEffectColors.blueshiftColorProperty,
         redshiftColorProperty: DopplerEffectColors.redshiftColorProperty,
-        selectionColorProperty: DopplerEffectColors.selectionColorProperty,
         graphWidth: this.UI.GRAPH_WIDTH,
         graphHeight: this.UI.GRAPH_HEIGHT,
         graphMargin: this.UI.GRAPH_MARGIN,
