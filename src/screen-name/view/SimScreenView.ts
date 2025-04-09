@@ -141,7 +141,7 @@ export class SimScreenView extends ScreenView {
 
     // Create property values
     this.visibleValuesProperty = new Property<boolean>(false);
-    this.visibleVelocityArrowProperty = new Property<boolean>(false);
+    this.visibleVelocityArrowProperty = new Property<boolean>(true);
     this.visibleLineOfSightProperty = new Property<boolean>(false);
     this.visibleTrailsProperty = new Property<boolean>(false);
 
