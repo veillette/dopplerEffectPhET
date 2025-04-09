@@ -34,16 +34,18 @@
     "objectSelection": "S : Sélectionner l'émetteur | O : Sélectionner l'observateur | Flèches : Déplacer l'objet sélectionné",
     "controls": "Espace : Pause/Reprendre | R : Réinitialiser | H : Afficher/Masquer l'aide",
     "adjust": "+/- : Ajuster la fréquence émise | ,/. : Ajuster la vitesse du son",
-    "scenarios": "1-4 : Charger des scénarios prédéfinis (émetteur en approche, observateur, etc.)",
+    "scenarios": "0-6 : Charger des scénarios prédéfinis (0 : Mode libre, 1-6 : Différents scénarios)",
     "toggleMotionTrails": "Appuyez sur 'T' pour activer/désactiver les trajectoires qui montrent les chemins des objets.",
     "toggleMicrophone": "Appuyez sur 'M' pour activer/désactiver le microphone qui clique lorsque les ondes le traversent.",
     "dragMicrophone": "Faites glisser le microphone pour le positionner n'importe où dans la simulation."
   },
   "scenarios": {
     "freePlay": "Mode libre",
-    "sourceMovingTowardObserver": "Émetteur se déplaçant vers l'observateur",
-    "observerMovingTowardSource": "Observateur se déplaçant vers l'émetteur",
-    "movingAway": "Observateur et émetteur s'éloignant",
-    "perpendicular": "Observateur et émetteur se déplaçant perpendiculairement"
+    "sourceApproaching": "Émetteur en mouvement, Observateur immobile (Approche)",
+    "sourceReceding": "Émetteur en mouvement, Observateur immobile (Éloignement)",
+    "observerApproaching": "Émetteur immobile, Observateur en mouvement (Approche)",
+    "observerReceding": "Émetteur immobile, Observateur en mouvement (Éloignement)",
+    "sameDirection": "Mouvement dans la même direction",
+    "perpendicular": "Mouvement perpendiculaire"
   }
 }

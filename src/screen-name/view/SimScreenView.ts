@@ -738,31 +738,47 @@ export class SimScreenView extends ScreenView {
           }),
       },
       {
-        value: Scenario.SCENARIO_1,
+        value: Scenario.SOURCE_APPROACHING,
         createNode: () =>
-          new Text(scenarioStrings.sourceMovingTowardObserverStringProperty, {
+          new Text(scenarioStrings.sourceApproachingStringProperty, {
             font: new PhetFont(14),
             fill: textColorProperty,
           }),
       },
       {
-        value: Scenario.SCENARIO_2,
+        value: Scenario.SOURCE_RECEDING,
         createNode: () =>
-          new Text(scenarioStrings.observerMovingTowardSourceStringProperty, {
+          new Text(scenarioStrings.sourceRecedingStringProperty, {
             font: new PhetFont(14),
             fill: textColorProperty,
           }),
       },
       {
-        value: Scenario.SCENARIO_3,
+        value: Scenario.OBSERVER_APPROACHING,
         createNode: () =>
-          new Text(scenarioStrings.movingAwayStringProperty, {
+          new Text(scenarioStrings.observerApproachingStringProperty, {
             font: new PhetFont(14),
             fill: textColorProperty,
           }),
       },
       {
-        value: Scenario.SCENARIO_4,
+        value: Scenario.OBSERVER_RECEDING,
+        createNode: () =>
+          new Text(scenarioStrings.observerRecedingStringProperty, {
+            font: new PhetFont(14),
+            fill: textColorProperty,
+          }),
+      },
+      {
+        value: Scenario.SAME_DIRECTION,
+        createNode: () =>
+          new Text(scenarioStrings.sameDirectionStringProperty, {
+            font: new PhetFont(14),
+            fill: textColorProperty,
+          }),
+      },
+      {
+        value: Scenario.PERPENDICULAR,
         createNode: () =>
           new Text(scenarioStrings.perpendicularStringProperty, {
             font: new PhetFont(14),

@@ -138,14 +138,16 @@ export class StringManager {
     return {
       freePlayStringProperty:
         this.stringProperties.scenarios.freePlayStringProperty,
-      sourceMovingTowardObserverStringProperty:
-        this.stringProperties.scenarios
-          .sourceMovingTowardObserverStringProperty,
-      observerMovingTowardSourceStringProperty:
-        this.stringProperties.scenarios
-          .observerMovingTowardSourceStringProperty,
-      movingAwayStringProperty:
-        this.stringProperties.scenarios.movingAwayStringProperty,
+      sourceApproachingStringProperty:
+        this.stringProperties.scenarios.sourceApproachingStringProperty,
+      sourceRecedingStringProperty:
+        this.stringProperties.scenarios.sourceRecedingStringProperty,
+      observerApproachingStringProperty:
+        this.stringProperties.scenarios.observerApproachingStringProperty,
+      observerRecedingStringProperty:
+        this.stringProperties.scenarios.observerRecedingStringProperty,
+      sameDirectionStringProperty:
+        this.stringProperties.scenarios.sameDirectionStringProperty,
       perpendicularStringProperty:
         this.stringProperties.scenarios.perpendicularStringProperty,
     };

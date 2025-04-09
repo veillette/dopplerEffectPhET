@@ -127,13 +127,19 @@ export class KeyboardHandlerManager {
 
       // Preset scenarios
       if (key === "1") {
-        setupScenario(Scenario.SCENARIO_1);
+        setupScenario(Scenario.SOURCE_APPROACHING);
       } else if (key === "2") {
-        setupScenario(Scenario.SCENARIO_2);
+        setupScenario(Scenario.SOURCE_RECEDING);
       } else if (key === "3") {
-        setupScenario(Scenario.SCENARIO_3);
+        setupScenario(Scenario.OBSERVER_APPROACHING);
       } else if (key === "4") {
-        setupScenario(Scenario.SCENARIO_4);
+        setupScenario(Scenario.OBSERVER_RECEDING);
+      } else if (key === "5") {
+        setupScenario(Scenario.SAME_DIRECTION);
+      } else if (key === "6") {
+        setupScenario(Scenario.PERPENDICULAR);
+      } else if (key === "0") {
+        setupScenario(Scenario.FREE_PLAY);
       }
 
       // Adjust emitted frequency

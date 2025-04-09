@@ -15,7 +15,6 @@ import {
   INITIAL_POSITIONS,
   PHYSICS,
   SCALE,
-  SCENARIOS,
   SOUND_DATA,
   TIME_SPEED,
   WaveformPoint,
@@ -49,10 +48,12 @@ export type PositionHistoryPoint = {
 
 export class Scenario extends EnumerationValue {
   public static readonly FREE_PLAY = new Scenario();
-  public static readonly SCENARIO_1 = new Scenario();
-  public static readonly SCENARIO_2 = new Scenario();
-  public static readonly SCENARIO_3 = new Scenario();
-  public static readonly SCENARIO_4 = new Scenario();
+  public static readonly SOURCE_APPROACHING = new Scenario();
+  public static readonly SOURCE_RECEDING = new Scenario();
+  public static readonly OBSERVER_APPROACHING = new Scenario();
+  public static readonly OBSERVER_RECEDING = new Scenario();
+  public static readonly SAME_DIRECTION = new Scenario();
+  public static readonly PERPENDICULAR = new Scenario();
 
   // Gets a list of keys, values and mapping between them. For use in EnumerationProperty and PhET-iO
   public static readonly enumeration = new Enumeration(Scenario);
@@ -433,40 +434,52 @@ export class SimModel {
    */
   private configureScenarioVelocities(scenario: Scenario): void {
     switch (scenario) {
-      case Scenario.SCENARIO_1:
-        this.sourceVelocityProperty.value =
-          SCENARIOS.SOURCE_TOWARD_OBSERVER.sourceVelocity;
-        this.observerVelocityProperty.value =
-          SCENARIOS.SOURCE_TOWARD_OBSERVER.observerVelocity;
+      case Scenario.SOURCE_APPROACHING:
+        // Source moves toward a stationary observer
+        this.sourceVelocityProperty.value = new Vector2(100, 0); // Positive x = moving right (toward observer)
+        this.observerVelocityProperty.value = new Vector2(0, 0);
         this.sourceMovingProperty.value = true;
         this.observerMovingProperty.value = false;
         break;
 
-      case Scenario.SCENARIO_2:
-        this.sourceVelocityProperty.value =
-          SCENARIOS.OBSERVER_TOWARD_SOURCE.sourceVelocity;
-        this.observerVelocityProperty.value =
-          SCENARIOS.OBSERVER_TOWARD_SOURCE.observerVelocity;
+      case Scenario.SOURCE_RECEDING:
+        // Source moves away from a stationary observer
+        this.sourceVelocityProperty.value = new Vector2(-100, 0); // Negative x = moving left (away from observer)
+        this.observerVelocityProperty.value = new Vector2(0, 0);
+        this.sourceMovingProperty.value = true;
+        this.observerMovingProperty.value = false;
+        break;
+
+      case Scenario.OBSERVER_APPROACHING:
+        // Observer moves toward a stationary source
+        this.sourceVelocityProperty.value = new Vector2(0, 0);
+        this.observerVelocityProperty.value = new Vector2(-100, 0);
         this.sourceMovingProperty.value = false;
         this.observerMovingProperty.value = true;
         break;
 
-      case Scenario.SCENARIO_3:
-        this.sourceVelocityProperty.value =
-          SCENARIOS.MOVING_APART.sourceVelocity;
-        this.observerVelocityProperty.value =
-          SCENARIOS.MOVING_APART.observerVelocity;
+      case Scenario.OBSERVER_RECEDING:
+        // Observer moves away from a stationary source
+        this.sourceVelocityProperty.value = new Vector2(0, 0);
+        this.observerVelocityProperty.value = new Vector2(100, 0);
+        this.sourceMovingProperty.value = false;
+        this.observerMovingProperty.value = true;
+        break;
+
+      case Scenario.SAME_DIRECTION:
+        // Both source and observer moving in the same direction at same speed
+        this.sourceVelocityProperty.value = new Vector2(100, 0);
+        this.observerVelocityProperty.value = new Vector2(100, 0);
         this.sourceMovingProperty.value = true;
         this.observerMovingProperty.value = true;
         break;
 
-      case Scenario.SCENARIO_4:
-        this.sourceVelocityProperty.value =
-          SCENARIOS.PERPENDICULAR.sourceVelocity;
-        this.observerVelocityProperty.value =
-          SCENARIOS.PERPENDICULAR.observerVelocity;
+      case Scenario.PERPENDICULAR:
+        // Source moving perpendicular to the line connecting with observer
+        this.sourceVelocityProperty.value = new Vector2(0, 100);
+        this.observerVelocityProperty.value = new Vector2(0, 0);
         this.sourceMovingProperty.value = true;
-        this.observerMovingProperty.value = true;
+        this.observerMovingProperty.value = false;
         break;
 
       case Scenario.FREE_PLAY:
