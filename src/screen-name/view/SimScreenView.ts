@@ -148,6 +148,7 @@ export class SimScreenView extends ScreenView {
     this.visibleLineOfSightProperty = new Property<boolean>(false);
     this.visibleTrailsProperty = new Property<boolean>(false);
     this.visibleGridProperty = new Property<boolean>(false);
+    this.visibleInstructionsProperty = new Property<boolean>(false);
 
     // Matches visibleBounds horizontally, layoutBounds vertically
     this.interfaceBoundsProperty = new DerivedProperty(
@@ -337,6 +338,7 @@ export class SimScreenView extends ScreenView {
 
     // Create instructions display
     this.instructionsNode = new InstructionsNode({
+      visibleProperty: this.visibleInstructionsProperty,
       layoutBounds: this.layoutBounds,
     });
     this.controlLayer.addChild(this.instructionsNode);

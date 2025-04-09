@@ -4,12 +4,13 @@
  * Contains the help instructions functionality for the Doppler Effect simulation.
  */
 
-import { Bounds2, Node, PhetFont, Rectangle, Text } from "scenerystack";
+import { Bounds2, Node, PhetFont, Property, Rectangle, Text } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
 
 // Configuration options for the instructions display
 type InstructionsOptions = {
+  visibleProperty: Property<boolean>;
   layoutBounds: Bounds2;
 };
 
@@ -17,12 +18,6 @@ type InstructionsOptions = {
  * Component that renders the help instructions for the simulation
  */
 export class InstructionsNode extends Node {
-  // Background for the instructions
-  private readonly background: Rectangle;
-
-  // String manager instance
-  private readonly stringManager: StringManager = StringManager.getInstance();
-
   /**
    * Constructor for the InstructionsNode
    *
@@ -30,24 +25,24 @@ export class InstructionsNode extends Node {
    */
   constructor(options: InstructionsOptions) {
     super({
-      visible: false, // Initially hidden
+      visibleProperty: options.visibleProperty,
     });
 
     // Get strings from string manager
-    const strings = this.stringManager.getInstructionsStrings();
+    const strings = StringManager.getInstance().getInstructionsStrings();
 
     // Create background rectangle with semi-transparent white
-    this.background = new Rectangle(0, 0, options.layoutBounds.width / 2, 200, {
+    const background = new Rectangle(0, 0, options.layoutBounds.width / 2, 200, {
       fill: DopplerEffectColors.controlPanelBackgroundColorProperty,
       cornerRadius: 5,
     });
-    this.addChild(this.background);
+    this.addChild(background);
 
     // Add title
     const title = new Text(strings.titleStringProperty, {
       font: new PhetFont({ size: 16, weight: "bold" }),
       fill: DopplerEffectColors.textColorProperty,
-      centerX: this.background.centerX,
+      centerX: background.centerX,
       top: 10,
     });
     this.addChild(title);
@@ -79,17 +74,17 @@ export class InstructionsNode extends Node {
     });
 
     // Adjust background to fit content
-    this.background.setRectHeight(yPosition + 10);
+    background.setRectHeight(yPosition + 10);
 
     // Position the instructions box
-    this.centerX = options.layoutBounds.centerX;
-    this.centerY = options.layoutBounds.centerY;
+    this.center = options.layoutBounds.center;
+
   }
 
   /**
    * Toggle visibility of the instructions
    */
   public toggleVisibility(): void {
-    this.visible = !this.visible;
+    this.visibleProperty.value = !this.visibleProperty.value;
   }
 }
