@@ -8,10 +8,10 @@ import {
   DragListener,
   ModelViewTransform2,
   Vector2,
+  Node,
   Property,
   Bounds2,
 } from "scenerystack";
-import { Node } from "scenerystack";
 import { PHYSICS } from "../../../screen-name/model/SimConstants";
 
 /**
