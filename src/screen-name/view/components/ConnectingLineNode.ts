@@ -65,7 +65,7 @@ export class ConnectingLineNode extends Node {
       this.distanceProperty,
       new Range(0, 10000), // Reasonable range for distance in meters
       {
-        decimalPlaces: 1,
+        decimalPlaces: 0,
         textOptions: {
           font: new PhetFont(14),
           fill: DopplerEffectColors.textColorProperty,
