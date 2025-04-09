@@ -7,6 +7,7 @@ import {
   Property,
   PhetFont,
   Range,
+  Multilink,
 } from "scenerystack";
 import DopplerEffectColors from "../../../DopplerEffectColors";
 import { NumberDisplay } from "scenerystack/scenery-phet";
@@ -80,46 +81,19 @@ export class ConnectingLineNode extends Node {
     this.addChild(this.distanceLabel);
 
     // Update the line and label when positions change
-    this.updateLine();
-    this.updateDistanceLabel();
-
-    // Listen for position changes
-    this.sourcePositionProperty.lazyLink(() => this.updateLine());
-    this.observerPositionProperty.lazyLink(() => this.updateLine());
-  }
-
-  /**
-   * Update the line position based on current source and observer positions
-   */
-  private updateLine(): void {
-    // Convert source and observer positions to view coordinates
-    const sourcePosition = this.modelViewTransform.modelToViewPosition(
-      this.sourcePositionProperty.value
-    );              
-    const observerPosition = this.modelViewTransform.modelToViewPosition(
-      this.observerPositionProperty.value
-    );
+    Multilink.multilink([this.sourcePositionProperty, this.observerPositionProperty], ( sourcePosition, observerPosition)=>{
+       // Convert source and observer positions to view coordinates
+    const viewSourcePosition = this.modelViewTransform.modelToViewPosition(sourcePosition    );              
+    const viewObserverPosition = this.modelViewTransform.modelToViewPosition(observerPosition)
 
     // Update the line position
-    this.line.setPoint1(sourcePosition).setPoint2(observerPosition);
-
-    // Update the distance label position and value
-    this.updateDistanceLabel();
-  }
-
-  /**
-   * Update the distance label position and text
-   */
-  private updateDistanceLabel(): void {
-
-    // Calculate the midpoint between source and observer in model coordinates
-    const midPosition = this.sourcePositionProperty.value.blend(this.observerPositionProperty.value, 0.5);
+    this.line.setPoint1(viewSourcePosition).setPoint2(viewObserverPosition);
 
     // Calculate the midpoint between source and observer in view coordinates
-    const viewMidPosition = this.modelViewTransform.modelToViewPosition(
-      midPosition);
+    const viewMidPosition = viewSourcePosition.blend(viewObserverPosition, 0.5);
 
     // Position the label at the midpoint of the line
     this.distanceLabel.center = viewMidPosition.addXY(0,-15); // offset above the line
+    });
   }
 } 
