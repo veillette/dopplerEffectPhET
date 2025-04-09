@@ -480,7 +480,6 @@ export class SimScreenView extends ScreenView {
         },
       },
       this.model.playProperty,
-      this.model.setupScenario.bind(this.model),
       this.model.sourceVelocityProperty,
       this.model.observerVelocityProperty,
       this.model.sourceMovingProperty,
@@ -489,6 +488,7 @@ export class SimScreenView extends ScreenView {
       this.model.soundSpeedProperty,
       this.model.microphoneEnabledProperty,
       this.selectedObjectProperty,
+      this.model.scenarioProperty,
     );
 
     // Setup drag handlers

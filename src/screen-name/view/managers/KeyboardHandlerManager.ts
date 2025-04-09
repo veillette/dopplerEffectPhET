@@ -34,7 +34,6 @@ export class KeyboardHandlerManager {
    * @param targetNode - Node to attach keyboard listeners to
    * @param callbacks - Callback functions for various keyboard actions
    * @param playProperty - Property for simulation play state
-   * @param setupScenario - Function to set up a scenario
    * @param sourceVelocityProperty - Model property for source velocity
    * @param observerVelocityProperty - Model property for observer velocity
    * @param sourceMovingProperty - Model property for source moving state
@@ -43,12 +42,12 @@ export class KeyboardHandlerManager {
    * @param soundSpeedProperty - Model property for sound speed
    * @param microphoneEnabledProperty - Model property for microphone state
    * @param selectedObjectProperty - Property indicating currently selected object
+   * @param scenarioProperty - Property for the current scenario
    */
   public attachKeyboardHandlers(
     targetNode: Node,
     callbacks: KeyboardCallbacks,
     playProperty: Property<boolean>,
-    setupScenario: (scenario: Scenario) => void,
     sourceVelocityProperty: Property<Vector2>,
     observerVelocityProperty: Property<Vector2>,
     sourceMovingProperty: Property<boolean>,
@@ -57,6 +56,7 @@ export class KeyboardHandlerManager {
     soundSpeedProperty: Property<number>,
     microphoneEnabledProperty: Property<boolean>,
     selectedObjectProperty: Property<"source" | "observer">,
+    scenarioProperty: Property<Scenario>,
   ): void {
     // Create a shared handler function for keydown events
     const handleKeydown = (key: string) => {
@@ -127,19 +127,19 @@ export class KeyboardHandlerManager {
 
       // Preset scenarios
       if (key === "1") {
-        setupScenario(Scenario.SOURCE_APPROACHING);
+        scenarioProperty.value = Scenario.SOURCE_APPROACHING;
       } else if (key === "2") {
-        setupScenario(Scenario.SOURCE_RECEDING);
+        scenarioProperty.value = Scenario.SOURCE_RECEDING;
       } else if (key === "3") {
-        setupScenario(Scenario.OBSERVER_APPROACHING);
+        scenarioProperty.value = Scenario.OBSERVER_APPROACHING;
       } else if (key === "4") {
-        setupScenario(Scenario.OBSERVER_RECEDING);
+        scenarioProperty.value = Scenario.OBSERVER_RECEDING;
       } else if (key === "5") {
-        setupScenario(Scenario.SAME_DIRECTION);
+        scenarioProperty.value = Scenario.SAME_DIRECTION;
       } else if (key === "6") {
-        setupScenario(Scenario.PERPENDICULAR);
+        scenarioProperty.value = Scenario.PERPENDICULAR;
       } else if (key === "0") {
-        setupScenario(Scenario.FREE_PLAY);
+        scenarioProperty.value = Scenario.FREE_PLAY;
       }
 
       // Adjust emitted frequency

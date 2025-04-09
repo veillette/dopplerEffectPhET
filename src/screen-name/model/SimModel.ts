@@ -494,17 +494,6 @@ export class SimModel {
   }
 
   /**
-   * Setup a preset scenario with initial positions and velocities
-   * @param scenario - the scenario to apply
-   */
-  public setupScenario(scenario: Scenario): void {
-    // Reset the simulation
-    this.reset();
-
-    this.applyScenario(scenario);
-  }
-
-  /**
    * Apply the current scenario settings
    * This is called when the scenario property changes
    * @param scenario - the scenario to apply
