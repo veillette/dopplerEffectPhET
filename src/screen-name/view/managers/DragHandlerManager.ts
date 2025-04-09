@@ -58,6 +58,7 @@ export class DragHandlerManager {
     this.dragListener = new DragListener({
       targetNode: targetNode,
       dragBoundsProperty: new Property(this.dragBounds),
+      allowTouchSnag: true,
       start: (event) => {
         onSelected();
 
