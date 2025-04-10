@@ -54,7 +54,7 @@
     },
     "scenarios": "0-6 : Charger des scénarios prédéfinis (0 : Mode libre, 1-6 : Différents scénarios)",
     "toggleMotionTrails": "Appuyez sur 'T' pour activer/désactiver les trajectoires qui montrent les chemins des objets.",
-    "toggleMicrophone": "Appuyez sur 'M' pour activer/désactiver le microphone qui clique lorsque les ondes le traversent.",
+    "toggleMicrophone": "Appuyez sur 'M' pour activer/désactiver le microphone.",
     "dragMicrophone": "Faites glisser le microphone pour le positionner n'importe où dans la simulation."
   },
   "scenarios": {
