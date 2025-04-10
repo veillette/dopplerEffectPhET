@@ -109,34 +109,58 @@ export class StringManager {
       keyboardControlsStringProperty:
         this.stringProperties.help.keyboardControlsStringProperty,
       sections: {
-        navigationStringProperty: this.stringProperties.help.sections.navigationStringProperty,
-        simulationControlsStringProperty: this.stringProperties.help.sections.simulationControlsStringProperty,
-        parameterAdjustmentStringProperty: this.stringProperties.help.sections.parameterAdjustmentStringProperty,
-        scenariosStringProperty: this.stringProperties.help.sections.scenariosStringProperty,
-        visibilityOptionsStringProperty: this.stringProperties.help.sections.visibilityOptionsStringProperty
+        navigationStringProperty:
+          this.stringProperties.help.sections.navigationStringProperty,
+        simulationControlsStringProperty:
+          this.stringProperties.help.sections.simulationControlsStringProperty,
+        parameterAdjustmentStringProperty:
+          this.stringProperties.help.sections.parameterAdjustmentStringProperty,
+        scenariosStringProperty:
+          this.stringProperties.help.sections.scenariosStringProperty,
+        visibilityOptionsStringProperty:
+          this.stringProperties.help.sections.visibilityOptionsStringProperty,
       },
       objectSelection: {
-        selectSourceStringProperty: this.stringProperties.help.objectSelection.selectSourceStringProperty,
-        selectObserverStringProperty: this.stringProperties.help.objectSelection.selectObserverStringProperty,
-        moveObjectStringProperty: this.stringProperties.help.objectSelection.moveObjectStringProperty
+        selectSourceStringProperty:
+          this.stringProperties.help.objectSelection.selectSourceStringProperty,
+        selectObserverStringProperty:
+          this.stringProperties.help.objectSelection
+            .selectObserverStringProperty,
+        moveObjectStringProperty:
+          this.stringProperties.help.objectSelection.moveObjectStringProperty,
       },
       controls: {
-        pauseResumeStringProperty: this.stringProperties.help.controls.pauseResumeStringProperty,
-        resetStringProperty: this.stringProperties.help.controls.resetStringProperty,
-        toggleHelpStringProperty: this.stringProperties.help.controls.toggleHelpStringProperty
+        pauseResumeStringProperty:
+          this.stringProperties.help.controls.pauseResumeStringProperty,
+        resetStringProperty:
+          this.stringProperties.help.controls.resetStringProperty,
+        toggleHelpStringProperty:
+          this.stringProperties.help.controls.toggleHelpStringProperty,
       },
       adjust: {
-        frequencyStringProperty: this.stringProperties.help.adjust.frequencyStringProperty,
-        soundSpeedStringProperty: this.stringProperties.help.adjust.soundSpeedStringProperty
+        frequencyStringProperty:
+          this.stringProperties.help.adjust.frequencyStringProperty,
+        soundSpeedStringProperty:
+          this.stringProperties.help.adjust.soundSpeedStringProperty,
       },
       scenarioKeys: {
-        freePlayStringProperty: this.stringProperties.help.scenarioKeys.freePlayStringProperty,
-        sourceApproachingStringProperty: this.stringProperties.help.scenarioKeys.sourceApproachingStringProperty,
-        sourceRecedingStringProperty: this.stringProperties.help.scenarioKeys.sourceRecedingStringProperty,
-        observerApproachingStringProperty: this.stringProperties.help.scenarioKeys.observerApproachingStringProperty,
-        observerRecedingStringProperty: this.stringProperties.help.scenarioKeys.observerRecedingStringProperty,
-        sameDirectionStringProperty: this.stringProperties.help.scenarioKeys.sameDirectionStringProperty,
-        perpendicularStringProperty: this.stringProperties.help.scenarioKeys.perpendicularStringProperty
+        freePlayStringProperty:
+          this.stringProperties.help.scenarioKeys.freePlayStringProperty,
+        sourceApproachingStringProperty:
+          this.stringProperties.help.scenarioKeys
+            .sourceApproachingStringProperty,
+        sourceRecedingStringProperty:
+          this.stringProperties.help.scenarioKeys.sourceRecedingStringProperty,
+        observerApproachingStringProperty:
+          this.stringProperties.help.scenarioKeys
+            .observerApproachingStringProperty,
+        observerRecedingStringProperty:
+          this.stringProperties.help.scenarioKeys
+            .observerRecedingStringProperty,
+        sameDirectionStringProperty:
+          this.stringProperties.help.scenarioKeys.sameDirectionStringProperty,
+        perpendicularStringProperty:
+          this.stringProperties.help.scenarioKeys.perpendicularStringProperty,
       },
       toggleMotionTrailsStringProperty:
         this.stringProperties.help.toggleMotionTrailsStringProperty,
@@ -146,31 +170,57 @@ export class StringManager {
         this.stringProperties.help.dragMicrophoneStringProperty,
       a11y: {
         objectSelection: {
-          selectSourceStringProperty: this.stringProperties.help.a11y.objectSelection.selectSourceStringProperty,
-          selectObserverStringProperty: this.stringProperties.help.a11y.objectSelection.selectObserverStringProperty,
-          moveObjectStringProperty: this.stringProperties.help.a11y.objectSelection.moveObjectStringProperty
+          selectSourceStringProperty:
+            this.stringProperties.help.a11y.objectSelection
+              .selectSourceStringProperty,
+          selectObserverStringProperty:
+            this.stringProperties.help.a11y.objectSelection
+              .selectObserverStringProperty,
+          moveObjectStringProperty:
+            this.stringProperties.help.a11y.objectSelection
+              .moveObjectStringProperty,
         },
         controls: {
-          pauseResumeStringProperty: this.stringProperties.help.a11y.controls.pauseResumeStringProperty,
-          resetStringProperty: this.stringProperties.help.a11y.controls.resetStringProperty,
-          toggleHelpStringProperty: this.stringProperties.help.a11y.controls.toggleHelpStringProperty
+          pauseResumeStringProperty:
+            this.stringProperties.help.a11y.controls.pauseResumeStringProperty,
+          resetStringProperty:
+            this.stringProperties.help.a11y.controls.resetStringProperty,
+          toggleHelpStringProperty:
+            this.stringProperties.help.a11y.controls.toggleHelpStringProperty,
         },
         adjust: {
-          frequencyStringProperty: this.stringProperties.help.a11y.adjust.frequencyStringProperty,
-          soundSpeedStringProperty: this.stringProperties.help.a11y.adjust.soundSpeedStringProperty
+          frequencyStringProperty:
+            this.stringProperties.help.a11y.adjust.frequencyStringProperty,
+          soundSpeedStringProperty:
+            this.stringProperties.help.a11y.adjust.soundSpeedStringProperty,
         },
         scenarioKeys: {
-          freePlayStringProperty: this.stringProperties.help.a11y.scenarioKeys.freePlayStringProperty,
-          sourceApproachingStringProperty: this.stringProperties.help.a11y.scenarioKeys.sourceApproachingStringProperty,
-          sourceRecedingStringProperty: this.stringProperties.help.a11y.scenarioKeys.sourceRecedingStringProperty,
-          observerApproachingStringProperty: this.stringProperties.help.a11y.scenarioKeys.observerApproachingStringProperty,
-          observerRecedingStringProperty: this.stringProperties.help.a11y.scenarioKeys.observerRecedingStringProperty,
-          sameDirectionStringProperty: this.stringProperties.help.a11y.scenarioKeys.sameDirectionStringProperty,
-          perpendicularStringProperty: this.stringProperties.help.a11y.scenarioKeys.perpendicularStringProperty
+          freePlayStringProperty:
+            this.stringProperties.help.a11y.scenarioKeys.freePlayStringProperty,
+          sourceApproachingStringProperty:
+            this.stringProperties.help.a11y.scenarioKeys
+              .sourceApproachingStringProperty,
+          sourceRecedingStringProperty:
+            this.stringProperties.help.a11y.scenarioKeys
+              .sourceRecedingStringProperty,
+          observerApproachingStringProperty:
+            this.stringProperties.help.a11y.scenarioKeys
+              .observerApproachingStringProperty,
+          observerRecedingStringProperty:
+            this.stringProperties.help.a11y.scenarioKeys
+              .observerRecedingStringProperty,
+          sameDirectionStringProperty:
+            this.stringProperties.help.a11y.scenarioKeys
+              .sameDirectionStringProperty,
+          perpendicularStringProperty:
+            this.stringProperties.help.a11y.scenarioKeys
+              .perpendicularStringProperty,
         },
-        toggleMotionTrailsStringProperty: this.stringProperties.help.a11y.toggleMotionTrailsStringProperty,
-        toggleMicrophoneStringProperty: this.stringProperties.help.a11y.toggleMicrophoneStringProperty
-      }
+        toggleMotionTrailsStringProperty:
+          this.stringProperties.help.a11y.toggleMotionTrailsStringProperty,
+        toggleMicrophoneStringProperty:
+          this.stringProperties.help.a11y.toggleMicrophoneStringProperty,
+      },
     };
   }
 

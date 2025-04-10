@@ -136,7 +136,8 @@ export class SimScreenView extends ScreenView {
       labelTagName: "h1",
       labelContent: StringManager.getInstance().getTitleStringProperty(),
       // Add a high-level description for screen readers
-      descriptionContent: "An interactive simulation of the Doppler Effect. Drag the source and observer to see how their relative motion affects the observed frequency. The simulation shows how sound waves change when objects move toward or away from each other. Use the control panel to adjust settings, toggle features, and select different scenarios. The graph display shows the frequency changes in real-time.",
+      descriptionContent:
+        "An interactive simulation of the Doppler Effect. Drag the source and observer to see how their relative motion affects the observed frequency. The simulation shows how sound waves change when objects move toward or away from each other. Use the control panel to adjust settings, toggle features, and select different scenarios. The graph display shows the frequency changes in real-time.",
       ...options,
     });
 
@@ -217,7 +218,7 @@ export class SimScreenView extends ScreenView {
       cursor: "pointer",
       // Add accessibility attributes
       tagName: "button",
-      accessibleName: "Observer"
+      accessibleName: "Observer",
     });
 
     // Create connecting line using the new ConnectingLineNode class
@@ -472,7 +473,7 @@ export class SimScreenView extends ScreenView {
     // Create keyboard shortcuts node
     this.keyboardShorcutsNode = new KeyboardShorcutsNode({
       visibleProperty: this.keyboardHelpVisibleProperty,
-      layoutBounds: this.layoutBounds
+      layoutBounds: this.layoutBounds,
     });
     this.keyboardShorcutsNode.setAccessibleName("Keyboard shortcuts help");
     this.controlLayer.addChild(this.keyboardShorcutsNode);
@@ -487,7 +488,8 @@ export class SimScreenView extends ScreenView {
           this.visibleTrailsProperty.value = !this.visibleTrailsProperty.value;
         },
         onToggleHelp: () => {
-          this.keyboardHelpVisibleProperty.value = !this.keyboardHelpVisibleProperty.value;
+          this.keyboardHelpVisibleProperty.value =
+            !this.keyboardHelpVisibleProperty.value;
         },
         onReset: () => {
           this.model.reset();

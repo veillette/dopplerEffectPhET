@@ -39,7 +39,7 @@
       "visibilityOptions": "Visibility Options"
     },
     "objectSelection": {
-      "selectSource":  "Select source",
+      "selectSource": "Select source",
       "selectObserver": "Select observer",
       "moveObject": "Arrow keys or WASD: Move selected object"
     },
