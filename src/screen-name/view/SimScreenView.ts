@@ -32,6 +32,7 @@ import { StatusTextNode } from "./components/StatusTextNode";
 import { ScaleMarkNode } from "./components/ScaleMarkNode";
 import { GridNode } from "./components/GridNode";
 import { ConnectingLineNode } from "./components/ConnectingLineNode";
+import { KeyboardShorcutsNode } from "./components/KeyboardShorcutsNode";
 
 // Import managers directly
 import { DragHandlerManager } from "./managers/DragHandlerManager";
@@ -82,6 +83,7 @@ export class SimScreenView extends ScreenView {
   private readonly statusDisplayNode: StatusTextNode;
   private readonly controlPanel: ControlPanelNode;
   private readonly gridNode: GridNode;
+  private readonly keyboardShorcutsNode: KeyboardShorcutsNode;
 
   // Managers
   private readonly waveManager: WaveManager;
@@ -98,6 +100,7 @@ export class SimScreenView extends ScreenView {
   private readonly visibleLineOfSightProperty: Property<boolean>;
   private readonly visibleTrailsProperty: Property<boolean>;
   private readonly visibleGridProperty: Property<boolean>;
+  private readonly keyboardHelpVisibleProperty: Property<boolean>;
 
   // Selection tracking
   private readonly selectedObjectProperty: Property<"source" | "observer"> =
@@ -154,7 +157,7 @@ export class SimScreenView extends ScreenView {
     this.visibleLineOfSightProperty = new Property<boolean>(false);
     this.visibleTrailsProperty = new Property<boolean>(false);
     this.visibleGridProperty = new Property<boolean>(false);
-
+    this.keyboardHelpVisibleProperty = new Property<boolean>(false);
 
     // Matches visibleBounds horizontally, layoutBounds vertically
     this.interfaceBoundsProperty = new DerivedProperty(
@@ -466,6 +469,14 @@ export class SimScreenView extends ScreenView {
     timeControlNode.bottom = this.layoutBounds.maxY - 10;
     this.controlLayer.addChild(timeControlNode);
 
+    // Create keyboard shortcuts node
+    this.keyboardShorcutsNode = new KeyboardShorcutsNode({
+      visibleProperty: this.keyboardHelpVisibleProperty,
+      layoutBounds: this.layoutBounds
+    });
+    this.keyboardShorcutsNode.setAccessibleName("Keyboard shortcuts help");
+    this.controlLayer.addChild(this.keyboardShorcutsNode);
+
     // Setup keyboard handlers
     this.keyboardManager.attachKeyboardHandlers(
       this,
@@ -476,7 +487,7 @@ export class SimScreenView extends ScreenView {
           this.visibleTrailsProperty.value = !this.visibleTrailsProperty.value;
         },
         onToggleHelp: () => {
-          // no op
+          this.keyboardHelpVisibleProperty.value = !this.keyboardHelpVisibleProperty.value;
         },
         onReset: () => {
           this.model.reset();
@@ -565,6 +576,7 @@ export class SimScreenView extends ScreenView {
     this.visibleLineOfSightProperty.reset();
     this.visibleTrailsProperty.reset();
     this.visibleGridProperty.reset();
+    this.keyboardHelpVisibleProperty.reset();
 
     // Reset components
     this.waveManager.clearWaveNodes();

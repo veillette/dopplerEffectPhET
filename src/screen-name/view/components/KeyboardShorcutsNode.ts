@@ -151,6 +151,13 @@ export class KeyboardShorcutsNode extends Node {
         {
           labelInnerContent: strings.a11y.toggleMicrophoneStringProperty
         }
+      ),
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.controls.toggleHelpStringProperty, 
+        new LetterKeyNode('H'),
+        {
+          labelInnerContent: strings.a11y.controls.toggleHelpStringProperty
+        }
       )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
