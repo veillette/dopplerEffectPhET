@@ -17,6 +17,7 @@ import {
   PhetFont
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
+import { KeyboardHelpIconFactory, LetterKeyNode } from "scenerystack/scenery-phet";
 
 // Configuration options for the keyboard shortcuts display
 type KeyboardShorcutsOptions = {
@@ -56,71 +57,71 @@ export class KeyboardShorcutsNode extends Node {
     });
     this.addChild(backgroundPanel);
     
-    // Helper function to create a simple key icon
-    const createKeyIcon = (keyText: string) => {
-      const keyRect = new Rectangle(0, 0, 30, 30, {
-        fill: 'white',
-        stroke: 'black',
-        cornerRadius: 5
-      });
-      
-      const keyLabel = new Text(keyText, {
-        font: new PhetFont(14),
-        fill: 'black',
-        center: keyRect.center
-      });
-      
-      return new Node({
-        children: [keyRect, keyLabel]
-      });
-    };
-    
-    // Create a row icon for arrow keys
-    const arrowKeysIcon = new Node({
-      children: [
-        new Rectangle(0, 0, 80, 30, {
-          fill: 'white',
-          stroke: 'black',
-          cornerRadius: 5
-        }),
-        new Text('← ↑ ↓ →', {
-          font: new PhetFont(14),
-          fill: 'black',
-          center: new Rectangle(0, 0, 80, 30).center
-        })
-      ]
-    });
-    
     // Create the content for object movement
     const navigationSection = new KeyboardHelpSection("Navigation", [
-      KeyboardHelpSectionRow.labelWithIcon(strings.objectSelectionStringProperty.value.split("|")[0].trim(), createKeyIcon('S')),
-      KeyboardHelpSectionRow.labelWithIcon(strings.objectSelectionStringProperty.value.split("|")[1].trim(), createKeyIcon('O')),
-      KeyboardHelpSectionRow.labelWithIcon(strings.objectSelectionStringProperty.value.split("|")[2].trim(), arrowKeysIcon),
-
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.objectSelectionStringProperty.value.split("|")[0].trim(), 
+        new LetterKeyNode('S')
+      ),
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.objectSelectionStringProperty.value.split("|")[1].trim(), 
+        new LetterKeyNode('O')
+      ),
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.objectSelectionStringProperty.value.split("|")[2].trim(), 
+        KeyboardHelpIconFactory.arrowKeysRowIcon()
+      ),
     ],{textMaxWidth: TEXT_MAX_WIDTH});
     
     // Create the content for simulation controls
     const controlsSection = new KeyboardHelpSection("Simulation Controls", [
-      KeyboardHelpSectionRow.labelWithIcon(strings.controlsStringProperty.value.split("|")[0].trim(), createKeyIcon('Space')),
-      KeyboardHelpSectionRow.labelWithIcon(strings.controlsStringProperty.value.split("|")[1].trim(), createKeyIcon('R')),
-      KeyboardHelpSectionRow.labelWithIcon(strings.controlsStringProperty.value.split("|")[2].trim(), createKeyIcon('H'))
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.controlsStringProperty.value.split("|")[0].trim(), 
+        KeyboardHelpIconFactory.spaceOrEnter()
+      ),
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.controlsStringProperty.value.split("|")[1].trim(), 
+        new LetterKeyNode('R')
+      ),
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.controlsStringProperty.value.split("|")[2].trim(), 
+        new LetterKeyNode('H')
+      )
     ],{textMaxWidth: TEXT_MAX_WIDTH});
     
     // Create the content for parameter adjustment
     const adjustmentSection = new KeyboardHelpSection("Parameter Adjustment", [
-      KeyboardHelpSectionRow.labelWithIcon(strings.adjustStringProperty.value.split("|")[0].trim(), createKeyIcon('+/-')),
-      KeyboardHelpSectionRow.labelWithIcon(strings.adjustStringProperty.value.split("|")[1].trim(), createKeyIcon(',/.'))
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.adjustStringProperty.value.split("|")[0].trim(), 
+        new Text('+/-', { font: new PhetFont(14) })
+      ),
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.adjustStringProperty.value.split("|")[1].trim(), 
+        new Text(',/.', { font: new PhetFont(14) })
+      )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
     // Create the content for scenarios
     const scenariosSection = new KeyboardHelpSection("Scenarios", [
-      KeyboardHelpSectionRow.labelWithIcon(strings.scenariosStringProperty.value, createKeyIcon('0-6'))
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.scenariosStringProperty.value, 
+        KeyboardHelpIconFactory.iconToIcon(
+          new LetterKeyNode('0'),
+          new LetterKeyNode('6')
+        )
+      )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
     // Create the content for visibility toggles
     const visibilitySection = new KeyboardHelpSection("Visibility Options", [
-      KeyboardHelpSectionRow.labelWithIcon(strings.toggleMotionTrailsStringProperty.value, createKeyIcon('T')),
-      KeyboardHelpSectionRow.labelWithIcon(strings.toggleMicrophoneStringProperty.value, createKeyIcon('M'))
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.toggleMotionTrailsStringProperty.value, 
+        new LetterKeyNode('T')
+      ),
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.toggleMicrophoneStringProperty.value, 
+        new LetterKeyNode('M')
+      )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
     // Main content container
