@@ -59,15 +59,24 @@ export class KeyboardShorcutsNode extends Node {
     const navigationSection = new KeyboardHelpSection(strings.sections.navigationStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
         strings.objectSelection.selectSourceStringProperty, 
-        new LetterKeyNode('S')
+        new LetterKeyNode('S'),
+        {
+          labelInnerContent: strings.a11y.objectSelection.selectSourceStringProperty
+        }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.objectSelection.selectObserverStringProperty, 
-        new LetterKeyNode('O')
+        new LetterKeyNode('O'),
+        {
+          labelInnerContent: strings.a11y.objectSelection.selectObserverStringProperty
+        }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.objectSelection.moveObjectStringProperty, 
-        KeyboardHelpIconFactory.arrowKeysRowIcon()
+        KeyboardHelpIconFactory.arrowKeysRowIcon(),
+        {
+          labelInnerContent: strings.a11y.objectSelection.moveObjectStringProperty
+        }
       ),
     ],{textMaxWidth: TEXT_MAX_WIDTH});
     
@@ -75,15 +84,24 @@ export class KeyboardShorcutsNode extends Node {
     const controlsSection = new KeyboardHelpSection(strings.sections.simulationControlsStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
         strings.controls.pauseResumeStringProperty, 
-        KeyboardHelpIconFactory.spaceOrEnter()
+        KeyboardHelpIconFactory.spaceOrEnter(),
+        {
+          labelInnerContent: strings.a11y.controls.pauseResumeStringProperty
+        }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.controls.resetStringProperty, 
-        new LetterKeyNode('R')
+        new LetterKeyNode('R'),
+        {
+          labelInnerContent: strings.a11y.controls.resetStringProperty
+        }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.controls.toggleHelpStringProperty, 
-        new LetterKeyNode('H')
+        new LetterKeyNode('H'),
+        {
+          labelInnerContent: strings.a11y.controls.toggleHelpStringProperty
+        }
       )
     ],{textMaxWidth: TEXT_MAX_WIDTH});
     
@@ -93,24 +111,34 @@ export class KeyboardShorcutsNode extends Node {
         strings.adjust.frequencyStringProperty, 
         KeyboardHelpIconFactory.iconToIcon(
           new LetterKeyNode('+'), new LetterKeyNode('-')
-        )
+        ),
+        {
+          labelInnerContent: strings.a11y.adjust.frequencyStringProperty
+        }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.adjust.soundSpeedStringProperty, 
         KeyboardHelpIconFactory.iconToIcon(
           new LetterKeyNode(','), new LetterKeyNode('.')
-        )
+        ),
+        {
+          labelInnerContent: strings.a11y.adjust.soundSpeedStringProperty
+        }
       )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
     // Create the content for scenarios
     const scenariosSection = new KeyboardHelpSection(strings.sections.scenariosStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.scenariosStringProperty, 
+        strings.scenarioKeys.freePlayStringProperty, 
         KeyboardHelpIconFactory.iconToIcon(
           new LetterKeyNode('0'),
           new LetterKeyNode('6')
-        )
+        ),
+        {
+          // Combine multiple accessibility descriptions into one comprehensive one
+          labelInnerContent: strings.a11y.scenarioKeys.freePlayStringProperty
+        }
       )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
@@ -118,11 +146,17 @@ export class KeyboardShorcutsNode extends Node {
     const visibilitySection = new KeyboardHelpSection(strings.sections.visibilityOptionsStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
         strings.toggleMotionTrailsStringProperty, 
-        new LetterKeyNode('T')
+        new LetterKeyNode('T'),
+        {
+          labelInnerContent: strings.a11y.toggleMotionTrailsStringProperty
+        }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.toggleMicrophoneStringProperty, 
-        new LetterKeyNode('M')
+        new LetterKeyNode('M'),
+        {
+          labelInnerContent: strings.a11y.toggleMicrophoneStringProperty
+        }
       )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     

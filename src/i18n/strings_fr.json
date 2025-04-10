@@ -41,7 +41,7 @@
     "objectSelection": {
       "selectSource": "Sélectionner l'émetteur",
       "selectObserver": "Sélectionner l'observateur",
-      "moveObject": "Flèches : Déplacer l'objet sélectionné"
+      "moveObject": "Déplacer l'objet sélectionné"
     },
     "controls": {
       "pauseResume": "Pause/Reprendre",
@@ -52,10 +52,45 @@
       "frequency": "Ajuster la fréquence émise",
       "soundSpeed": "Ajuster la vitesse du son"
     },
-    "scenarios": "Charger des scénarios prédéfinis (0 : Mode libre, 1-6 : Différents scénarios)",
-    "toggleMotionTrails": "Appuyez sur 'T' pour activer/désactiver les trajectoires qui montrent les chemins des objets.",
-    "toggleMicrophone": "Appuyez sur 'M' pour activer/désactiver le microphone.",
-    "dragMicrophone": "Faites glisser le microphone pour le positionner n'importe où dans la simulation."
+    "scenarioKeys": {
+      "freePlay": "Charger des scénarios prédéfinis (0-6)",
+      "sourceApproaching": "Émetteur s'approchant de l'observateur",
+      "sourceReceding": "Émetteur s'éloignant de l'observateur",
+      "observerApproaching": "Observateur s'approchant de l'émetteur",
+      "observerReceding": "Observateur s'éloignant de l'émetteur",
+      "sameDirection": "Les deux se déplaçant dans la même direction",
+      "perpendicular": "Mouvement perpendiculaire"
+    },
+    "toggleMotionTrails": "Activer/désactiver les trajectoires qui montrent les chemins des objets.",
+    "toggleMicrophone": "Activer/désactiver le microphone.",
+    "dragMicrophone": "Faites glisser le microphone pour le positionner n'importe où dans la simulation.",
+    "a11y": {
+      "objectSelection": {
+        "selectSource": "Appuyez sur la touche S pour sélectionner l'émetteur sonore à déplacer avec les flèches.",
+        "selectObserver": "Appuyez sur la touche O pour sélectionner l'observateur à déplacer avec les flèches.",
+        "moveObject": "Utilisez les flèches pour déplacer l'objet actuellement sélectionné dans n'importe quelle direction."
+      },
+      "controls": {
+        "pauseResume": "Appuyez sur Espace ou Entrée pour mettre en pause ou reprendre la simulation.",
+        "reset": "Appuyez sur la touche R pour réinitialiser toute la simulation à son état initial.",
+        "toggleHelp": "Appuyez sur la touche H pour afficher ou masquer cette boîte de dialogue d'aide."
+      },
+      "adjust": {
+        "frequency": "Appuyez sur + ou - pour augmenter ou diminuer la fréquence du son émis.",
+        "soundSpeed": "Appuyez sur , (virgule) ou . (point) pour augmenter ou diminuer la vitesse du son."
+      },
+      "scenarioKeys": {
+        "freePlay": "Utilisez les touches numériques 0-6 pour charger différents scénarios : 0 pour le mode libre, 1 pour l'émetteur qui s'approche, 2 pour l'émetteur qui s'éloigne, 3 pour l'observateur qui s'approche, 4 pour l'observateur qui s'éloigne, 5 pour le mouvement dans la même direction, et 6 pour le mouvement perpendiculaire.",
+        "sourceApproaching": "Appuyez sur 1 pour voir l'émetteur s'approcher d'un observateur immobile.",
+        "sourceReceding": "Appuyez sur 2 pour voir l'émetteur s'éloigner d'un observateur immobile.",
+        "observerApproaching": "Appuyez sur 3 pour voir l'observateur s'approcher d'un émetteur immobile.",
+        "observerReceding": "Appuyez sur 4 pour voir l'observateur s'éloigner d'un émetteur immobile.",
+        "sameDirection": "Appuyez sur 5 pour voir les deux objets se déplacer dans la même direction.",
+        "perpendicular": "Appuyez sur 6 pour voir les objets se déplacer perpendiculairement l'un à l'autre."
+      },
+      "toggleMotionTrails": "Appuyez sur la touche T pour afficher ou masquer les trajectoires qui suivent le mouvement des objets.",
+      "toggleMicrophone": "Appuyez sur la touche M pour activer ou désactiver le microphone qui produit des clics."
+    }
   },
   "scenarios": {
     "freePlay": "Mode libre",

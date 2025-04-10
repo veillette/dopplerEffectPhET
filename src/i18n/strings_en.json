@@ -52,10 +52,45 @@
       "frequency": "Adjust emitted frequency",
       "soundSpeed": "Adjust sound speed"
     },
-    "scenarios": "Load preset scenarios (0: Free Play, 1-6: Different scenarios)",
-    "toggleMotionTrails": "Press 'T' to toggle motion trails that show object paths.",
-    "toggleMicrophone": "Press 'M' to toggle the microphone ",
-    "dragMicrophone": "Drag the microphone to position it anywhere in the simulation."
+    "scenarioKeys": {
+      "freePlay": "Load preset scenarios (0-6)",
+      "sourceApproaching": "Source approaching observer",
+      "sourceReceding": "Source moving away from observer",
+      "observerApproaching": "Observer approaching source",
+      "observerReceding": "Observer moving away from source",
+      "sameDirection": "Both moving in same direction",
+      "perpendicular": "Perpendicular motion"
+    },
+    "toggleMotionTrails": "Toggle motion trails that show object paths.",
+    "toggleMicrophone": "Toggle the microphone",
+    "dragMicrophone": "Drag the microphone to position it anywhere in the simulation.",
+    "a11y": {
+      "objectSelection": {
+        "selectSource": "Press the S key to select the sound source for movement with arrow keys.",
+        "selectObserver": "Press the O key to select the observer for movement with arrow keys.",
+        "moveObject": "Use arrow keys to move the currently selected object in any direction."
+      },
+      "controls": {
+        "pauseResume": "Press Space or Enter to pause or resume the simulation.",
+        "reset": "Press the R key to reset the entire simulation to its initial state.",
+        "toggleHelp": "Press the H key to show or hide this help dialog."
+      },
+      "adjust": {
+        "frequency": "Press + or - to increase or decrease the emitted sound frequency.",
+        "soundSpeed": "Press , (comma) or . (period) to increase or decrease the speed of sound."
+      },
+      "scenarioKeys": {
+        "freePlay": "Use number keys 0-6 to load different scenarios: 0 for free play, 1 for source approaching, 2 for source receding, 3 for observer approaching, 4 for observer receding, 5 for same direction motion, and 6 for perpendicular motion.",
+        "sourceApproaching": "Press 1 to see the source approaching a stationary observer.",
+        "sourceReceding": "Press 2 to see the source moving away from a stationary observer.",
+        "observerApproaching": "Press 3 to see the observer approaching a stationary source.",
+        "observerReceding": "Press 4 to see the observer moving away from a stationary source.",
+        "sameDirection": "Press 5 to see both objects moving in the same direction.",
+        "perpendicular": "Press 6 to see objects moving perpendicular to each other."
+      },
+      "toggleMotionTrails": "Press the T key to show or hide the motion trails that track object movement.",
+      "toggleMicrophone": "Press the M key to enable or disable the microphone that produces clicks."
+    }
   },
   "scenarios": {
     "freePlay": "Free Play",
