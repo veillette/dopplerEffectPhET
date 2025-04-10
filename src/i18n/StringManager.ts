@@ -108,10 +108,27 @@ export class StringManager {
         this.stringProperties.help.dragAndDropStringProperty,
       keyboardControlsStringProperty:
         this.stringProperties.help.keyboardControlsStringProperty,
-      objectSelectionStringProperty:
-        this.stringProperties.help.objectSelectionStringProperty,
-      controlsStringProperty: this.stringProperties.help.controlsStringProperty,
-      adjustStringProperty: this.stringProperties.help.adjustStringProperty,
+      sections: {
+        navigationStringProperty: this.stringProperties.help.sections.navigationStringProperty,
+        simulationControlsStringProperty: this.stringProperties.help.sections.simulationControlsStringProperty,
+        parameterAdjustmentStringProperty: this.stringProperties.help.sections.parameterAdjustmentStringProperty,
+        scenariosStringProperty: this.stringProperties.help.sections.scenariosStringProperty,
+        visibilityOptionsStringProperty: this.stringProperties.help.sections.visibilityOptionsStringProperty
+      },
+      objectSelection: {
+        selectSourceStringProperty: this.stringProperties.help.objectSelection.selectSourceStringProperty,
+        selectObserverStringProperty: this.stringProperties.help.objectSelection.selectObserverStringProperty,
+        moveObjectStringProperty: this.stringProperties.help.objectSelection.moveObjectStringProperty
+      },
+      controls: {
+        pauseResumeStringProperty: this.stringProperties.help.controls.pauseResumeStringProperty,
+        resetStringProperty: this.stringProperties.help.controls.resetStringProperty,
+        toggleHelpStringProperty: this.stringProperties.help.controls.toggleHelpStringProperty
+      },
+      adjust: {
+        frequencyStringProperty: this.stringProperties.help.adjust.frequencyStringProperty,
+        soundSpeedStringProperty: this.stringProperties.help.adjust.soundSpeedStringProperty
+      },
       scenariosStringProperty:
         this.stringProperties.help.scenariosStringProperty,
       toggleMotionTrailsStringProperty:

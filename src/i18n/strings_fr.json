@@ -31,9 +31,27 @@
   "help": {
     "dragAndDrop": "Cliquez et faites glisser l'émetteur (rouge) ou l'observateur (vert) pour les déplacer",
     "keyboardControls": "Contrôles clavier :",
-    "objectSelection": "S : Sélectionner l'émetteur | O : Sélectionner l'observateur | Flèches : Déplacer l'objet sélectionné",
-    "controls": "Espace : Pause/Reprendre | R : Réinitialiser | H : Afficher/Masquer l'aide",
-    "adjust": "+/- : Ajuster la fréquence émise | ,/. : Ajuster la vitesse du son",
+    "sections": {
+      "navigation": "Navigation",
+      "simulationControls": "Contrôles de Simulation",
+      "parameterAdjustment": "Ajustement des Paramètres",
+      "scenarios": "Scénarios",
+      "visibilityOptions": "Options de Visibilité"
+    },
+    "objectSelection": {
+      "selectSource": "Sélectionner l'émetteur",
+      "selectObserver": "Sélectionner l'observateur",
+      "moveObject": "Flèches : Déplacer l'objet sélectionné"
+    },
+    "controls": {
+      "pauseResume": "Pause/Reprendre",
+      "reset": "Réinitialiser",
+      "toggleHelp": "Afficher/Masquer l'aide"
+    },
+    "adjust": {
+      "frequency": "Ajuster la fréquence émise",
+      "soundSpeed": "Ajuster la vitesse du son"
+    },
     "scenarios": "0-6 : Charger des scénarios prédéfinis (0 : Mode libre, 1-6 : Différents scénarios)",
     "toggleMotionTrails": "Appuyez sur 'T' pour activer/désactiver les trajectoires qui montrent les chemins des objets.",
     "toggleMicrophone": "Appuyez sur 'M' pour activer/désactiver le microphone qui clique lorsque les ondes le traversent.",

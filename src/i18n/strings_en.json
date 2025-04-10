@@ -31,9 +31,27 @@
   "help": {
     "dragAndDrop": "Click and drag source (red) or observer (green) to move them",
     "keyboardControls": "Keyboard Controls:",
-    "objectSelection": "S: Select source | O: Select observer | Arrow keys: Move selected object",
-    "controls": "Space: Pause/Resume | R: Reset | H: Toggle help",
-    "adjust": "+/-: Adjust emitted frequency | ,/.: Adjust sound speed",
+    "sections": {
+      "navigation": "Navigation",
+      "simulationControls": "Simulation Controls",
+      "parameterAdjustment": "Parameter Adjustment",
+      "scenarios": "Scenarios",
+      "visibilityOptions": "Visibility Options"
+    },
+    "objectSelection": {
+      "selectSource":  "Select source",
+      "selectObserver": "Select observer",
+      "moveObject": "Arrow keys: Move selected object"
+    },
+    "controls": {
+      "pauseResume": "Pause/Resume",
+      "reset": "Reset",
+      "toggleHelp": "Toggle help"
+    },
+    "adjust": {
+      "frequency": "Adjust emitted frequency",
+      "soundSpeed": "Adjust sound speed"
+    },
     "scenarios": "0-6: Load preset scenarios (0: Free Play, 1-6: Different scenarios)",
     "toggleMotionTrails": "Press 'T' to toggle motion trails that show object paths.",
     "toggleMicrophone": "Press 'M' to toggle the microphone that clicks when waves pass through it.",

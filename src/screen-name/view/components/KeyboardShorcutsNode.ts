@@ -12,9 +12,7 @@ import {
   Rectangle,
   VBox,
   KeyboardHelpSectionRow,
-  KeyboardHelpSection,
-  Text,
-  PhetFont
+  KeyboardHelpSection
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 import { KeyboardHelpIconFactory, LetterKeyNode } from "scenerystack/scenery-phet";
@@ -58,53 +56,57 @@ export class KeyboardShorcutsNode extends Node {
     this.addChild(backgroundPanel);
     
     // Create the content for object movement
-    const navigationSection = new KeyboardHelpSection("Navigation", [
+    const navigationSection = new KeyboardHelpSection(strings.sections.navigationStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.objectSelectionStringProperty.value.split("|")[0].trim(), 
+        strings.objectSelection.selectSourceStringProperty, 
         new LetterKeyNode('S')
       ),
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.objectSelectionStringProperty.value.split("|")[1].trim(), 
+        strings.objectSelection.selectObserverStringProperty, 
         new LetterKeyNode('O')
       ),
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.objectSelectionStringProperty.value.split("|")[2].trim(), 
+        strings.objectSelection.moveObjectStringProperty, 
         KeyboardHelpIconFactory.arrowKeysRowIcon()
       ),
     ],{textMaxWidth: TEXT_MAX_WIDTH});
     
     // Create the content for simulation controls
-    const controlsSection = new KeyboardHelpSection("Simulation Controls", [
+    const controlsSection = new KeyboardHelpSection(strings.sections.simulationControlsStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.controlsStringProperty.value.split("|")[0].trim(), 
+        strings.controls.pauseResumeStringProperty, 
         KeyboardHelpIconFactory.spaceOrEnter()
       ),
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.controlsStringProperty.value.split("|")[1].trim(), 
+        strings.controls.resetStringProperty, 
         new LetterKeyNode('R')
       ),
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.controlsStringProperty.value.split("|")[2].trim(), 
+        strings.controls.toggleHelpStringProperty, 
         new LetterKeyNode('H')
       )
     ],{textMaxWidth: TEXT_MAX_WIDTH});
     
     // Create the content for parameter adjustment
-    const adjustmentSection = new KeyboardHelpSection("Parameter Adjustment", [
+    const adjustmentSection = new KeyboardHelpSection(strings.sections.parameterAdjustmentStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.adjustStringProperty.value.split("|")[0].trim(), 
-        new Text('+/-', { font: new PhetFont(14) })
+        strings.adjust.frequencyStringProperty, 
+        KeyboardHelpIconFactory.iconToIcon(
+          new LetterKeyNode('+'), new LetterKeyNode('-')
+        )
       ),
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.adjustStringProperty.value.split("|")[1].trim(), 
-        new Text(',/.', { font: new PhetFont(14) })
+        strings.adjust.soundSpeedStringProperty, 
+        KeyboardHelpIconFactory.iconToIcon(
+          new LetterKeyNode(','), new LetterKeyNode('.')
+        )
       )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
     // Create the content for scenarios
-    const scenariosSection = new KeyboardHelpSection("Scenarios", [
+    const scenariosSection = new KeyboardHelpSection(strings.sections.scenariosStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.scenariosStringProperty.value, 
+        strings.scenariosStringProperty, 
         KeyboardHelpIconFactory.iconToIcon(
           new LetterKeyNode('0'),
           new LetterKeyNode('6')
@@ -113,13 +115,13 @@ export class KeyboardShorcutsNode extends Node {
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
     // Create the content for visibility toggles
-    const visibilitySection = new KeyboardHelpSection("Visibility Options", [
+    const visibilitySection = new KeyboardHelpSection(strings.sections.visibilityOptionsStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.toggleMotionTrailsStringProperty.value, 
+        strings.toggleMotionTrailsStringProperty, 
         new LetterKeyNode('T')
       ),
       KeyboardHelpSectionRow.labelWithIcon(
-        strings.toggleMicrophoneStringProperty.value, 
+        strings.toggleMicrophoneStringProperty, 
         new LetterKeyNode('M')
       )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
@@ -140,7 +142,9 @@ export class KeyboardShorcutsNode extends Node {
     this.addChild(contentContainer);
     
     // Set the background panel size to enclose the content with padding
-    backgroundPanel.rectBounds = contentContainer.bounds.dilated(20);
+    contentContainer.boundsProperty.link( bounds =>{
+      backgroundPanel.rectBounds = bounds.dilated(20);
+    });
     
     // Position the entire node
     this.center = options.layoutBounds.center;
