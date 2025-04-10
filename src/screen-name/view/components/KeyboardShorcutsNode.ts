@@ -10,12 +10,16 @@ import {
   Node,
   Property,
   Rectangle,
-  VBox,
   KeyboardHelpSectionRow,
   KeyboardHelpSection
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
-import { KeyboardHelpIconFactory, LetterKeyNode } from "scenerystack/scenery-phet";
+import { 
+  KeyboardHelpIconFactory, 
+  LetterKeyNode, 
+  BasicActionsKeyboardHelpSection,
+  TwoColumnKeyboardHelpContent
+} from "scenerystack/scenery-phet";
 
 // Configuration options for the keyboard shortcuts display
 type KeyboardShorcutsOptions = {
@@ -80,31 +84,6 @@ export class KeyboardShorcutsNode extends Node {
       ),
     ],{textMaxWidth: TEXT_MAX_WIDTH});
     
-    // Create the content for simulation controls
-    const controlsSection = new KeyboardHelpSection(strings.sections.simulationControlsStringProperty, [
-      KeyboardHelpSectionRow.labelWithIcon(
-        strings.controls.pauseResumeStringProperty, 
-        KeyboardHelpIconFactory.spaceOrEnter(),
-        {
-          labelInnerContent: strings.a11y.controls.pauseResumeStringProperty
-        }
-      ),
-      KeyboardHelpSectionRow.labelWithIcon(
-        strings.controls.resetStringProperty, 
-        new LetterKeyNode('R'),
-        {
-          labelInnerContent: strings.a11y.controls.resetStringProperty
-        }
-      ),
-      KeyboardHelpSectionRow.labelWithIcon(
-        strings.controls.toggleHelpStringProperty, 
-        new LetterKeyNode('H'),
-        {
-          labelInnerContent: strings.a11y.controls.toggleHelpStringProperty
-        }
-      )
-    ],{textMaxWidth: TEXT_MAX_WIDTH});
-    
     // Create the content for parameter adjustment
     const adjustmentSection = new KeyboardHelpSection(strings.sections.parameterAdjustmentStringProperty, [
       KeyboardHelpSectionRow.labelWithIcon(
@@ -136,7 +115,6 @@ export class KeyboardShorcutsNode extends Node {
           new LetterKeyNode('6')
         ),
         {
-          // Combine multiple accessibility descriptions into one comprehensive one
           labelInnerContent: strings.a11y.scenarioKeys.freePlayStringProperty
         }
       )
@@ -160,33 +138,33 @@ export class KeyboardShorcutsNode extends Node {
       )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
-    // Align icons for each group of related sections
-    KeyboardHelpSection.alignHelpSectionIcons([navigationSection, controlsSection]);
-    KeyboardHelpSection.alignHelpSectionIcons([adjustmentSection, scenariosSection]);
-    KeyboardHelpSection.alignHelpSectionIcons([visibilitySection]);
-    
-    // Main content container
-    const contentContainer = new VBox({
-      align: 'left',
-      spacing: 15,
-      children: [
-        navigationSection,
-        controlsSection,
-        adjustmentSection,
-        scenariosSection,
-        visibilitySection,
-      ]
+    // Create standard basic actions section (includes tab navigation, space/enter, etc.)
+    const basicActionsSection = new BasicActionsKeyboardHelpSection({
+      withCheckboxContent: true,
+      textMaxWidth: TEXT_MAX_WIDTH
     });
     
-    this.addChild(contentContainer);
+    // Use TwoColumnKeyboardHelpContent for better organization
+    const helpContent = new TwoColumnKeyboardHelpContent(
+      // Left column sections
+      [navigationSection, adjustmentSection, scenariosSection], 
+      // Right column sections
+      [visibilitySection, basicActionsSection]
+    );
+    
+    this.addChild(helpContent);
     
     // Set the background panel size to enclose the content with padding
-    contentContainer.boundsProperty.link(bounds => {
+    helpContent.boundsProperty.link(bounds => {
       backgroundPanel.rectBounds = bounds.dilated(20);
     });
     
     // Position the entire node
     this.center = options.layoutBounds.center;
+    
+    // Align icons within each group
+    KeyboardHelpSection.alignHelpSectionIcons([navigationSection, adjustmentSection, scenariosSection]);
+    KeyboardHelpSection.alignHelpSectionIcons([visibilitySection]);
   }
   
   /**
