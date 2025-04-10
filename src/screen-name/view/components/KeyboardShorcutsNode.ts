@@ -126,6 +126,11 @@ export class KeyboardShorcutsNode extends Node {
       )
     ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
+    // Align icons for each group of related sections
+    KeyboardHelpSection.alignHelpSectionIcons([navigationSection, controlsSection]);
+    KeyboardHelpSection.alignHelpSectionIcons([adjustmentSection, scenariosSection]);
+    KeyboardHelpSection.alignHelpSectionIcons([visibilitySection]);
+    
     // Main content container
     const contentContainer = new VBox({
       align: 'left',
@@ -142,7 +147,7 @@ export class KeyboardShorcutsNode extends Node {
     this.addChild(contentContainer);
     
     // Set the background panel size to enclose the content with padding
-    contentContainer.boundsProperty.link( bounds =>{
+    contentContainer.boundsProperty.link(bounds => {
       backgroundPanel.rectBounds = bounds.dilated(20);
     });
     
