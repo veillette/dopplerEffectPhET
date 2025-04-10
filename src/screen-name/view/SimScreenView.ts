@@ -131,8 +131,17 @@ export class SimScreenView extends ScreenView {
    * Constructor for the Doppler Effect SimScreenView
    */
   public constructor(model: SimModel, options?: ScreenViewOptions) {
-    super(options);
+    // Call super first before accessing any instance properties
+    super({
+      tagName: "div",
+      labelTagName: "h1",
+      labelContent: StringManager.getInstance().getTitleStringProperty(),
+      // Add a high-level description for screen readers
+      descriptionContent: "An interactive simulation of the Doppler Effect. Drag the source and observer to see how their relative motion affects the observed frequency. The simulation shows how sound waves change when objects move toward or away from each other. Use the control panel to adjust settings, toggle features, and select different scenarios. The graph display shows the frequency changes in real-time.",
+      ...options,
+    });
 
+    this.stringManager = StringManager.getInstance();
     this.model = model;
 
     // Create model-view transform - y-axis is inverted and centered on the screen
@@ -190,19 +199,26 @@ export class SimScreenView extends ScreenView {
         minorLinesPerMajorLine: 4, // 4 minor lines between each major line
       },
     );
+    this.gridNode.setAccessibleName("Grid lines showing distance scale");
 
     // Add grid to the scene - behind the waves
     this.insertChild(0, this.gridNode);
 
-    // Create source and observer nodes
+    // Create source and observer nodes with accessibility
     this.sourceNode = new Circle(this.UI.SOURCE_RADIUS, {
       fill: DopplerEffectColors.sourceColorProperty,
       cursor: "pointer",
+      // Add accessibility attributes
+      tagName: "button",
+      accessibleName: "Sound source",
     });
 
     this.observerNode = new Circle(this.UI.OBSERVER_RADIUS, {
       fill: DopplerEffectColors.observerColorProperty,
       cursor: "pointer",
+      // Add accessibility attributes
+      tagName: "button",
+      accessibleName: "Observer"
     });
 
     // Create connecting line using the new ConnectingLineNode class
@@ -219,6 +235,8 @@ export class SimScreenView extends ScreenView {
     this.selectionHighlightCircle = new Circle(this.UI.SOURCE_RADIUS + 5, {
       stroke: DopplerEffectColors.selectionColorProperty,
       lineWidth: 2,
+      // Make purely visual elements non-accessible
+      tagName: null,
     });
 
     // Create velocity vector nodes
@@ -228,6 +246,8 @@ export class SimScreenView extends ScreenView {
       tailWidth: 2,
       scaleTailToo: true,
       visibleProperty: this.visibleVelocityArrowProperty,
+      // Make purely visual elements non-accessible
+      tagName: null,
     };
 
     this.sourceVelocityVectorNode = new ArrowNode(0, 0, 0, 0, {
@@ -245,10 +265,14 @@ export class SimScreenView extends ScreenView {
     this.sourceTrailPath = new Path(new Shape(), {
       stroke: DopplerEffectColors.sourceColorProperty,
       lineWidth: this.UI.TRAIL_WIDTH,
+      // Make purely visual elements non-accessible
+      tagName: null,
     });
     this.observerTrailPath = new Path(new Shape(), {
       stroke: DopplerEffectColors.observerColorProperty,
       lineWidth: this.UI.TRAIL_WIDTH,
+      // Make purely visual elements non-accessible
+      tagName: null,
     });
 
     // Add objects to object layer
@@ -270,6 +294,7 @@ export class SimScreenView extends ScreenView {
         this.modelViewTransform.viewToModelBounds(this.layoutBounds),
       ),
     );
+    this.microphoneNode.setAccessibleName("Microphone");
     this.objectLayer.addChild(this.microphoneNode);
 
     // Initialize managers
@@ -317,6 +342,7 @@ export class SimScreenView extends ScreenView {
       graphMargin: this.UI.GRAPH_MARGIN,
       graphSpacing: this.UI.GRAPH_SPACING,
     });
+    this.graphDisplayNode.setAccessibleName("Frequency graphs");
     this.graphLayer.addChild(this.graphDisplayNode);
 
     // Create status text display
@@ -335,6 +361,8 @@ export class SimScreenView extends ScreenView {
         graphSpacing: this.UI.GRAPH_SPACING,
       },
     );
+    this.statusDisplayNode.setAccessibleName("Status information");
+    this.statusDisplayNode.setAriaRole("status");
     this.controlLayer.addChild(this.statusDisplayNode);
 
     // Create instructions display
@@ -342,6 +370,7 @@ export class SimScreenView extends ScreenView {
       visibleProperty: this.visibleInstructionsProperty,
       layoutBounds: this.layoutBounds,
     });
+    this.instructionsNode.setAccessibleName("Instructions");
     this.controlLayer.addChild(this.instructionsNode);
 
     // Create control panel
@@ -361,6 +390,7 @@ export class SimScreenView extends ScreenView {
         graphBottom: this.graphDisplayNode.observedGraphBottom,
       },
     );
+    this.controlPanel.setAccessibleName("Control panel");
     this.controlLayer.addChild(this.controlPanel);
 
     // Create scenario items for the combo box
@@ -383,6 +413,7 @@ export class SimScreenView extends ScreenView {
         highlightFill: DopplerEffectColors.highlightColorProperty,
       },
     );
+    scenarioComboBoxNode.setAccessibleName("Scenario selector");
 
     // Position the combo box
     scenarioComboBoxNode.left = 10;
@@ -401,6 +432,7 @@ export class SimScreenView extends ScreenView {
       right: this.layoutBounds.maxX - 10,
       bottom: this.layoutBounds.maxY - 10,
     });
+    resetAllButtonNode.setAccessibleName("Reset simulation");
     this.controlLayer.addChild(resetAllButtonNode);
 
     // Create scale mark node to show model-to-view scale
@@ -411,6 +443,7 @@ export class SimScreenView extends ScreenView {
         scaleModelLength: 1000, // 1000 meters scale for better visibility
       },
     );
+    scaleMarkNode.setAccessibleName("Scale: 1000 meters");
 
     // Position the scale mark
     scaleMarkNode.right = resetAllButtonNode.left - 30;
@@ -426,6 +459,7 @@ export class SimScreenView extends ScreenView {
       left: this.layoutBounds.minX + 10,
       bottom: this.layoutBounds.maxY - 10,
     });
+    infoButtonNode.setAccessibleName("Toggle instructions");
     this.controlLayer.addChild(infoButtonNode);
 
     // Add time control node
@@ -451,6 +485,7 @@ export class SimScreenView extends ScreenView {
         },
       },
     });
+    timeControlNode.setAccessibleName("Simulation speed control");
     timeControlNode.centerX = this.layoutBounds.centerX;
     timeControlNode.bottom = this.layoutBounds.maxY - 10;
     this.controlLayer.addChild(timeControlNode);
