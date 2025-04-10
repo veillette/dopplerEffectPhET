@@ -20,6 +20,7 @@ import {
   BasicActionsKeyboardHelpSection,
   TwoColumnKeyboardHelpContent
 } from "scenerystack/scenery-phet";
+import DopplerEffectColors from "../../../DopplerEffectColors";
 
 // Configuration options for the keyboard shortcuts display
 type KeyboardShorcutsOptions = {
@@ -53,11 +54,19 @@ export class KeyboardShorcutsNode extends Node {
     
     // Create background panel
     const backgroundPanel = new Rectangle(0, 0, 1, 1, {
-      fill: 'rgba(240, 240, 240, 0.9)',
-      stroke: 'black',
+      fill: DopplerEffectColors.controlPanelBackgroundColorProperty,
+      stroke: DopplerEffectColors.controlPanelBorderColorProperty,
       cornerRadius: 10
     });
     this.addChild(backgroundPanel);
+    
+    // Common options for all sections
+    const sectionOptions = {
+      textMaxWidth: TEXT_MAX_WIDTH,
+      headingOptions: {
+        fill: DopplerEffectColors.controlPanelTextColorProperty
+      }
+    };
     
     // Create the content for object movement
     const navigationSection = new KeyboardHelpSection(strings.sections.navigationStringProperty, [
@@ -65,21 +74,30 @@ export class KeyboardShorcutsNode extends Node {
         strings.objectSelection.selectSourceStringProperty, 
         new LetterKeyNode('S'),
         {
-          labelInnerContent: strings.a11y.objectSelection.selectSourceStringProperty
+          labelInnerContent: strings.a11y.objectSelection.selectSourceStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.objectSelection.selectObserverStringProperty, 
         new LetterKeyNode('O'),
         {
-          labelInnerContent: strings.a11y.objectSelection.selectObserverStringProperty
+          labelInnerContent: strings.a11y.objectSelection.selectObserverStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.objectSelection.moveObjectStringProperty, 
         KeyboardHelpIconFactory.arrowKeysRowIcon(),
         {
-          labelInnerContent: strings.a11y.objectSelection.moveObjectStringProperty
+          labelInnerContent: strings.a11y.objectSelection.moveObjectStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
@@ -95,10 +113,13 @@ export class KeyboardShorcutsNode extends Node {
           )
         ),
         {
-          labelInnerContent: strings.a11y.objectSelection.moveObjectStringProperty
+          labelInnerContent: strings.a11y.objectSelection.moveObjectStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       ),
-    ],{textMaxWidth: TEXT_MAX_WIDTH});
+    ], sectionOptions);
     
     // Create the content for parameter adjustment
     const adjustmentSection = new KeyboardHelpSection(strings.sections.parameterAdjustmentStringProperty, [
@@ -108,7 +129,10 @@ export class KeyboardShorcutsNode extends Node {
           new LetterKeyNode('+'), new LetterKeyNode('-')
         ),
         {
-          labelInnerContent: strings.a11y.adjust.frequencyStringProperty
+          labelInnerContent: strings.a11y.adjust.frequencyStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
@@ -117,10 +141,13 @@ export class KeyboardShorcutsNode extends Node {
           new LetterKeyNode(','), new LetterKeyNode('.')
         ),
         {
-          labelInnerContent: strings.a11y.adjust.soundSpeedStringProperty
+          labelInnerContent: strings.a11y.adjust.soundSpeedStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       )
-    ],{textMaxWidth:  TEXT_MAX_WIDTH});
+    ], sectionOptions);
     
     // Create the content for scenarios
     const scenariosSection = new KeyboardHelpSection(strings.sections.scenariosStringProperty, [
@@ -131,10 +158,13 @@ export class KeyboardShorcutsNode extends Node {
           new LetterKeyNode('6')
         ),
         {
-          labelInnerContent: strings.a11y.scenarioKeys.freePlayStringProperty
+          labelInnerContent: strings.a11y.scenarioKeys.freePlayStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       )
-    ],{textMaxWidth:  TEXT_MAX_WIDTH});
+    ], sectionOptions);
     
     // Create the content for visibility toggles
     const visibilitySection = new KeyboardHelpSection(strings.sections.visibilityOptionsStringProperty, [
@@ -142,29 +172,42 @@ export class KeyboardShorcutsNode extends Node {
         strings.toggleMotionTrailsStringProperty, 
         new LetterKeyNode('T'),
         {
-          labelInnerContent: strings.a11y.toggleMotionTrailsStringProperty
+          labelInnerContent: strings.a11y.toggleMotionTrailsStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.toggleMicrophoneStringProperty, 
         new LetterKeyNode('M'),
         {
-          labelInnerContent: strings.a11y.toggleMicrophoneStringProperty
+          labelInnerContent: strings.a11y.toggleMicrophoneStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       ),
       KeyboardHelpSectionRow.labelWithIcon(
         strings.controls.toggleHelpStringProperty, 
         new LetterKeyNode('H'),
         {
-          labelInnerContent: strings.a11y.controls.toggleHelpStringProperty
+          labelInnerContent: strings.a11y.controls.toggleHelpStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty
+          }
         }
       )
-    ],{textMaxWidth:  TEXT_MAX_WIDTH});
+    ], sectionOptions);
     
     // Create standard basic actions section (includes tab navigation, space/enter, etc.)
+    //TODO, figure out how to pass textcolorProperty to inner content
     const basicActionsSection = new BasicActionsKeyboardHelpSection({
       withCheckboxContent: true,
-      textMaxWidth: TEXT_MAX_WIDTH
+      textMaxWidth: TEXT_MAX_WIDTH,
+      headingOptions: {
+        fill: DopplerEffectColors.controlPanelTextColorProperty
+      }
     });
     
     // Use TwoColumnKeyboardHelpContent for better organization
