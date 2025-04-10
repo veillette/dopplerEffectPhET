@@ -52,7 +52,7 @@
       "frequency": "Adjust emitted frequency",
       "soundSpeed": "Adjust sound speed"
     },
-    "scenarios": "0-6: Load preset scenarios (0: Free Play, 1-6: Different scenarios)",
+    "scenarios": "Load preset scenarios (0: Free Play, 1-6: Different scenarios)",
     "toggleMotionTrails": "Press 'T' to toggle motion trails that show object paths.",
     "toggleMicrophone": "Press 'M' to toggle the microphone ",
     "dragMicrophone": "Drag the microphone to position it anywhere in the simulation."

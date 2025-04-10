@@ -52,7 +52,7 @@
       "frequency": "Ajuster la fréquence émise",
       "soundSpeed": "Ajuster la vitesse du son"
     },
-    "scenarios": "0-6 : Charger des scénarios prédéfinis (0 : Mode libre, 1-6 : Différents scénarios)",
+    "scenarios": "Charger des scénarios prédéfinis (0 : Mode libre, 1-6 : Différents scénarios)",
     "toggleMotionTrails": "Appuyez sur 'T' pour activer/désactiver les trajectoires qui montrent les chemins des objets.",
     "toggleMicrophone": "Appuyez sur 'M' pour activer/désactiver le microphone.",
     "dragMicrophone": "Faites glisser le microphone pour le positionner n'importe où dans la simulation."
