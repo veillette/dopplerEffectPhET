@@ -24,6 +24,8 @@ type KeyboardShorcutsOptions = {
   layoutBounds: Bounds2;
 };
 
+const TEXT_MAX_WIDTH = 1000;
+
 /**
  * Component that renders the keyboard help instructions for the simulation in a structured format
  */
@@ -93,56 +95,33 @@ export class KeyboardShorcutsNode extends Node {
     const navigationSection = new KeyboardHelpSection("Navigation", [
       KeyboardHelpSectionRow.labelWithIcon(strings.objectSelectionStringProperty.value.split("|")[0].trim(), createKeyIcon('S')),
       KeyboardHelpSectionRow.labelWithIcon(strings.objectSelectionStringProperty.value.split("|")[1].trim(), createKeyIcon('O')),
-      KeyboardHelpSectionRow.labelWithIcon(strings.objectSelectionStringProperty.value.split("|")[2].trim(), arrowKeysIcon)
-    ]);
+      KeyboardHelpSectionRow.labelWithIcon(strings.objectSelectionStringProperty.value.split("|")[2].trim(), arrowKeysIcon),
+
+    ],{textMaxWidth: TEXT_MAX_WIDTH});
     
     // Create the content for simulation controls
     const controlsSection = new KeyboardHelpSection("Simulation Controls", [
       KeyboardHelpSectionRow.labelWithIcon(strings.controlsStringProperty.value.split("|")[0].trim(), createKeyIcon('Space')),
       KeyboardHelpSectionRow.labelWithIcon(strings.controlsStringProperty.value.split("|")[1].trim(), createKeyIcon('R')),
       KeyboardHelpSectionRow.labelWithIcon(strings.controlsStringProperty.value.split("|")[2].trim(), createKeyIcon('H'))
-    ]);
+    ],{textMaxWidth: TEXT_MAX_WIDTH});
     
     // Create the content for parameter adjustment
     const adjustmentSection = new KeyboardHelpSection("Parameter Adjustment", [
       KeyboardHelpSectionRow.labelWithIcon(strings.adjustStringProperty.value.split("|")[0].trim(), createKeyIcon('+/-')),
       KeyboardHelpSectionRow.labelWithIcon(strings.adjustStringProperty.value.split("|")[1].trim(), createKeyIcon(',/.'))
-    ]);
+    ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
     // Create the content for scenarios
     const scenariosSection = new KeyboardHelpSection("Scenarios", [
       KeyboardHelpSectionRow.labelWithIcon(strings.scenariosStringProperty.value, createKeyIcon('0-6'))
-    ]);
+    ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
     // Create the content for visibility toggles
     const visibilitySection = new KeyboardHelpSection("Visibility Options", [
       KeyboardHelpSectionRow.labelWithIcon(strings.toggleMotionTrailsStringProperty.value, createKeyIcon('T')),
       KeyboardHelpSectionRow.labelWithIcon(strings.toggleMicrophoneStringProperty.value, createKeyIcon('M'))
-    ]);
-    
-    // Helper to create a mouse icon
-    const createMouseIcon = () => {
-      return new Node({
-        children: [
-          new Rectangle(0, 0, 30, 40, {
-            fill: 'white',
-            stroke: 'black',
-            cornerRadius: 15
-          }),
-          new Text('🖰', {
-            font: new PhetFont(20),
-            fill: 'black',
-            center: new Rectangle(0, 0, 30, 40).center
-          })
-        ]
-      });
-    };
-    
-    // Create the content for drag and drop
-    const interactionSection = new KeyboardHelpSection("Mouse Interaction", [
-      KeyboardHelpSectionRow.labelWithIcon(strings.dragAndDropStringProperty.value, createMouseIcon()),
-      KeyboardHelpSectionRow.labelWithIcon(strings.dragMicrophoneStringProperty.value, createMouseIcon())
-    ]);
+    ],{textMaxWidth:  TEXT_MAX_WIDTH});
     
     // Main content container
     const contentContainer = new VBox({
@@ -154,7 +133,6 @@ export class KeyboardShorcutsNode extends Node {
         adjustmentSection,
         scenariosSection,
         visibilitySection,
-        interactionSection
       ]
     });
     
