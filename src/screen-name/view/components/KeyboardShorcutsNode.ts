@@ -82,6 +82,22 @@ export class KeyboardShorcutsNode extends Node {
           labelInnerContent: strings.a11y.objectSelection.moveObjectStringProperty
         }
       ),
+      KeyboardHelpSectionRow.labelWithIcon(
+        strings.objectSelection.moveObjectStringProperty, 
+        KeyboardHelpIconFactory.iconToIcon(
+          new LetterKeyNode('W'),
+          KeyboardHelpIconFactory.iconToIcon(
+            new LetterKeyNode('A'),
+            KeyboardHelpIconFactory.iconToIcon(
+              new LetterKeyNode('S'),
+              new LetterKeyNode('D')
+            )
+          )
+        ),
+        {
+          labelInnerContent: strings.a11y.objectSelection.moveObjectStringProperty
+        }
+      ),
     ],{textMaxWidth: TEXT_MAX_WIDTH});
     
     // Create the content for parameter adjustment

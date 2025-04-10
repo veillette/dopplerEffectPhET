@@ -86,15 +86,15 @@ export class KeyboardHandlerManager {
         // Set velocity based on key
         const velocity = new Vector2(0, 0);
 
-        if (key === "arrowleft") {
+        if (key === "arrowleft" || key === "a") {
           velocity.x = -100.0;
-        } else if (key === "arrowright") {
+        } else if (key === "arrowright" || key === "d") {
           velocity.x = 100.0;
         }
 
-        if (key === "arrowup") {
+        if (key === "arrowup" || key === "w") {
           velocity.y = 100.0;
-        } else if (key === "arrowdown") {
+        } else if (key === "arrowdown" || key === "s") {
           velocity.y = -100.0;
         }
 

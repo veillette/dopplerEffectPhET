@@ -41,7 +41,7 @@
     "objectSelection": {
       "selectSource":  "Select source",
       "selectObserver": "Select observer",
-      "moveObject": "Arrow keys: Move selected object"
+      "moveObject": "Arrow keys or WASD: Move selected object"
     },
     "controls": {
       "pauseResume": "Pause/Resume",
@@ -66,9 +66,9 @@
     "dragMicrophone": "Drag the microphone to position it anywhere in the simulation.",
     "a11y": {
       "objectSelection": {
-        "selectSource": "Press the S key to select the sound source for movement with arrow keys.",
-        "selectObserver": "Press the O key to select the observer for movement with arrow keys.",
-        "moveObject": "Use arrow keys to move the currently selected object in any direction."
+        "selectSource": "Press the S key to select the sound source for movement with arrow keys or WASD keys.",
+        "selectObserver": "Press the O key to select the observer for movement with arrow keys or WASD keys.",
+        "moveObject": "Use arrow keys or WASD keys to move the currently selected object in any direction."
       },
       "controls": {
         "pauseResume": "Press Space or Enter to pause or resume the simulation.",

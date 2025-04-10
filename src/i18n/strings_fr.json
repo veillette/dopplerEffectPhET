@@ -41,7 +41,7 @@
     "objectSelection": {
       "selectSource": "Sélectionner l'émetteur",
       "selectObserver": "Sélectionner l'observateur",
-      "moveObject": "Déplacer l'objet sélectionné"
+      "moveObject": "Flèches ou WASD : Déplacer l'objet sélectionné"
     },
     "controls": {
       "pauseResume": "Pause/Reprendre",
@@ -66,9 +66,9 @@
     "dragMicrophone": "Faites glisser le microphone pour le positionner n'importe où dans la simulation.",
     "a11y": {
       "objectSelection": {
-        "selectSource": "Appuyez sur la touche S pour sélectionner l'émetteur sonore à déplacer avec les flèches.",
-        "selectObserver": "Appuyez sur la touche O pour sélectionner l'observateur à déplacer avec les flèches.",
-        "moveObject": "Utilisez les flèches pour déplacer l'objet actuellement sélectionné dans n'importe quelle direction."
+        "selectSource": "Appuyez sur la touche S pour sélectionner l'émetteur sonore à déplacer avec les flèches ou les touches WASD.",
+        "selectObserver": "Appuyez sur la touche O pour sélectionner l'observateur à déplacer avec les flèches ou les touches WASD.",
+        "moveObject": "Utilisez les flèches ou les touches WASD pour déplacer l'objet actuellement sélectionné dans n'importe quelle direction."
       },
       "controls": {
         "pauseResume": "Appuyez sur Espace ou Entrée pour mettre en pause ou reprendre la simulation.",
