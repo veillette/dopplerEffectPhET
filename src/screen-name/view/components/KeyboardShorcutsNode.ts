@@ -1,7 +1,7 @@
 /**
- * InstructionsNode.ts
+ * KeyboardShorcutsNode.ts
  *
- * Contains the help instructions functionality for the Doppler Effect simulation.
+ * Contains the keyboard shorcuts functionality for the Doppler Effect simulation.
  */
 
 import {
@@ -9,14 +9,13 @@ import {
   Node,
   PhetFont,
   Property,
-  Rectangle,
   Text,
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
-import DopplerEffectColors from "../../../DopplerEffectColors";
+
 
 // Configuration options for the instructions display
-type InstructionsOptions = {
+type KeyboardShorcutsOptions = {
   visibleProperty: Property<boolean>;
   layoutBounds: Bounds2;
 };
@@ -24,41 +23,19 @@ type InstructionsOptions = {
 /**
  * Component that renders the help instructions for the simulation
  */
-export class InstructionsNode extends Node {
+export class KeyboardShorcutsNode extends Node {
   /**
    * Constructor for the InstructionsNode
    *
    * @param options - Configuration options
    */
-  constructor(options: InstructionsOptions) {
+  constructor(options: KeyboardShorcutsOptions) {
     super({
       visibleProperty: options.visibleProperty,
     });
 
     // Get strings from string manager
     const strings = StringManager.getInstance().getInstructionsStrings();
-
-    // Create background rectangle with semi-transparent white
-    const background = new Rectangle(
-      0,
-      0,
-      options.layoutBounds.width / 2,
-      200,
-      {
-        fill: DopplerEffectColors.controlPanelBackgroundColorProperty,
-        cornerRadius: 5,
-      },
-    );
-    this.addChild(background);
-
-    // Add title
-    const title = new Text(strings.titleStringProperty, {
-      font: new PhetFont({ size: 16, weight: "bold" }),
-      fill: DopplerEffectColors.textColorProperty,
-      centerX: background.centerX,
-      top: 10,
-    });
-    this.addChild(title);
 
     // Instructions text array
     const instructions = [
@@ -74,11 +51,11 @@ export class InstructionsNode extends Node {
     ];
 
     // Add instruction lines
-    let yPosition = title.bottom + 15;
+    let yPosition = 15;
     instructions.forEach((instruction) => {
       const line = new Text(instruction, {
         font: new PhetFont(14),
-        fill: DopplerEffectColors.textColorProperty,
+        fill: "black",
         left: 15,
         top: yPosition,
       });
@@ -86,13 +63,9 @@ export class InstructionsNode extends Node {
       yPosition = line.bottom + 10;
     });
 
-    // Adjust background to fit content
-    background.setRectHeight(yPosition + 10);
-
     // Position the instructions box
     this.center = options.layoutBounds.center;
   }
-
   /**
    * Toggle visibility of the instructions
    */

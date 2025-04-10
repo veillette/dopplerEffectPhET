@@ -1,9 +1,10 @@
 import { onReadyToLaunch, Sim } from "scenerystack/sim";
-import { Tandem } from "scenerystack";
+import { Tandem, Property, Bounds2 } from "scenerystack";
 import { SimScreen } from "./screen-name/SimScreen.js";
 import { StringManager } from "./i18n/StringManager";
 import { PreferencesModel } from "scenerystack/sim";
 import DopplerEffectColors from "./DopplerEffectColors";
+import {KeyboardShorcutsNode} from "./screen-name/view/components/KeyboardShorcutsNode.js";
 
 onReadyToLaunch(() => {
   // Get string manager instance
@@ -26,6 +27,12 @@ onReadyToLaunch(() => {
     new SimScreen({
       tandem: Tandem.ROOT.createTandem("simScreen"),
       backgroundColorProperty: DopplerEffectColors.backgroundColorProperty,
+      createKeyboardHelpNode: () => {
+        return new KeyboardShorcutsNode({
+          visibleProperty: new Property(true),
+          layoutBounds: new Bounds2(0, 0, 800, 600)
+        })
+      }
     }),
   ];
 

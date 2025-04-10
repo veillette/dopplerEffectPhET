@@ -3,7 +3,6 @@ import {
   Circle,
   ComboBox,
   DerivedProperty,
-  InfoButton,
   ModelViewTransform2,
   Node,
   Path,
@@ -29,7 +28,6 @@ import DopplerEffectColors from "../../DopplerEffectColors";
 // Import components directly
 import { ControlPanelNode } from "./components/ControlPanelNode";
 import { GraphDisplayNode } from "./components/GraphDisplayNode";
-import { InstructionsNode } from "./components/InstructionsNode";
 import { StatusTextNode } from "./components/StatusTextNode";
 import { ScaleMarkNode } from "./components/ScaleMarkNode";
 import { GridNode } from "./components/GridNode";
@@ -83,7 +81,6 @@ export class SimScreenView extends ScreenView {
   private readonly graphDisplayNode: GraphDisplayNode;
   private readonly statusDisplayNode: StatusTextNode;
   private readonly controlPanel: ControlPanelNode;
-  private readonly instructionsNode: InstructionsNode;
   private readonly gridNode: GridNode;
 
   // Managers
@@ -101,7 +98,6 @@ export class SimScreenView extends ScreenView {
   private readonly visibleLineOfSightProperty: Property<boolean>;
   private readonly visibleTrailsProperty: Property<boolean>;
   private readonly visibleGridProperty: Property<boolean>;
-  private readonly visibleInstructionsProperty: Property<boolean>;
 
   // Selection tracking
   private readonly selectedObjectProperty: Property<"source" | "observer"> =
@@ -158,7 +154,7 @@ export class SimScreenView extends ScreenView {
     this.visibleLineOfSightProperty = new Property<boolean>(false);
     this.visibleTrailsProperty = new Property<boolean>(false);
     this.visibleGridProperty = new Property<boolean>(false);
-    this.visibleInstructionsProperty = new Property<boolean>(false);
+
 
     // Matches visibleBounds horizontally, layoutBounds vertically
     this.interfaceBoundsProperty = new DerivedProperty(
@@ -365,14 +361,6 @@ export class SimScreenView extends ScreenView {
     this.statusDisplayNode.setAriaRole("status");
     this.controlLayer.addChild(this.statusDisplayNode);
 
-    // Create instructions display
-    this.instructionsNode = new InstructionsNode({
-      visibleProperty: this.visibleInstructionsProperty,
-      layoutBounds: this.layoutBounds,
-    });
-    this.instructionsNode.setAccessibleName("Instructions");
-    this.controlLayer.addChild(this.instructionsNode);
-
     // Create control panel
     this.controlPanel = new ControlPanelNode(
       this.visibleValuesProperty,
@@ -450,18 +438,6 @@ export class SimScreenView extends ScreenView {
     scaleMarkNode.bottom = resetAllButtonNode.bottom;
     this.controlLayer.addChild(scaleMarkNode);
 
-    // Create an info button to toggle instructions
-    const infoButtonNode = new InfoButton({
-      listener: () => {
-        this.instructionsNode.toggleVisibility();
-      },
-      // Position the button in the lower left corner with padding
-      left: this.layoutBounds.minX + 10,
-      bottom: this.layoutBounds.maxY - 10,
-    });
-    infoButtonNode.setAccessibleName("Toggle instructions");
-    this.controlLayer.addChild(infoButtonNode);
-
     // Add time control node
     const timeControlNode = new TimeControlNode(this.model.playProperty, {
       timeSpeedProperty: this.model.timeSpeedProperty,
@@ -500,7 +476,7 @@ export class SimScreenView extends ScreenView {
           this.visibleTrailsProperty.value = !this.visibleTrailsProperty.value;
         },
         onToggleHelp: () => {
-          this.instructionsNode.toggleVisibility();
+          // no op
         },
         onReset: () => {
           this.model.reset();
@@ -569,8 +545,6 @@ export class SimScreenView extends ScreenView {
       this.controlPanel.top = this.graphLayer.bottom + 10;
       timeControlNode.centerX = interfaceBounds.centerX;
       timeControlNode.bottom = interfaceBounds.bottom - 10;
-      infoButtonNode.left = interfaceBounds.minX + 10;
-      infoButtonNode.bottom = interfaceBounds.bottom - 10;
       scenarioComboBoxNode.left = interfaceBounds.minX + 10;
       scenarioComboBoxNode.top = interfaceBounds.top + 10;
       scaleMarkNode.right = resetAllButtonNode.left - 30;
@@ -584,9 +558,6 @@ export class SimScreenView extends ScreenView {
   public reset(): void {
     // Reset selected object
     this.selectedObjectProperty.reset();
-
-    // Update visibility directly
-    this.instructionsNode.setVisible(false);
 
     // Reset property values
     this.visibleValuesProperty.reset();
