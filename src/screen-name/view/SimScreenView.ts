@@ -138,7 +138,6 @@ export class SimScreenView extends ScreenView {
       ...options,
     });
 
-    this.stringManager = StringManager.getInstance();
     this.model = model;
 
     // Create model-view transform - y-axis is inverted and centered on the screen
