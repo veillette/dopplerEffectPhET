@@ -25,6 +25,7 @@ import { WaveGenerator } from "./WaveGenerator";
 import { WaveformManager } from "./WaveformManager";
 import { MovableObject } from "./MovableObject";
 import { DopplerCalculator } from "./DopplerCalculator";
+import { StringManager } from "../../i18n/StringManager";
 
 // Export the Wave type
 export type Wave = {
@@ -49,15 +50,49 @@ export type PositionHistoryPoint = {
 };
 
 export class Scenario extends EnumerationValue {
-  public static readonly FREE_PLAY = new Scenario();
-  public static readonly SOURCE_APPROACHING = new Scenario();
-  public static readonly SOURCE_RECEDING = new Scenario();
-  public static readonly OBSERVER_APPROACHING = new Scenario();
-  public static readonly OBSERVER_RECEDING = new Scenario();
-  public static readonly SAME_DIRECTION = new Scenario();
-  public static readonly PERPENDICULAR = new Scenario();
+  // String property for display name
+  public readonly displayNameProperty: TReadOnlyProperty<string>;
+  
 
-  // Gets a list of keys, values and mapping between them. For use in EnumerationProperty and PhET-iO
+  // Constructor with string properties
+  public constructor(
+    displayNameProperty: TReadOnlyProperty<string>,
+  ) {
+    super();
+    
+    this.displayNameProperty = displayNameProperty;
+  }
+
+  // Static initialization for each scenario type
+  public static readonly FREE_PLAY = new Scenario(
+    StringManager.getInstance().getScenarioStrings().freePlayStringProperty,
+  );
+  
+  public static readonly SOURCE_APPROACHING = new Scenario(
+    StringManager.getInstance().getScenarioStrings().sourceApproachingStringProperty,
+  );
+  
+  public static readonly SOURCE_RECEDING = new Scenario(
+    StringManager.getInstance().getScenarioStrings().sourceRecedingStringProperty,
+   );
+  
+  public static readonly OBSERVER_APPROACHING = new Scenario(
+    StringManager.getInstance().getScenarioStrings().observerApproachingStringProperty,
+   );
+  
+  public static readonly OBSERVER_RECEDING = new Scenario(
+    StringManager.getInstance().getScenarioStrings().observerRecedingStringProperty,
+  );
+  
+  public static readonly SAME_DIRECTION = new Scenario(
+    StringManager.getInstance().getScenarioStrings().sameDirectionStringProperty,
+  );
+  
+  public static readonly PERPENDICULAR = new Scenario(
+    StringManager.getInstance().getScenarioStrings().perpendicularStringProperty,
+  );
+
+  // Gets a list of keys, values and mapping between them. For use in EnumerationProperty 
   public static readonly enumeration = new Enumeration(Scenario);
 }
 

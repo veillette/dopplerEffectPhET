@@ -120,9 +120,6 @@ export class SimScreenView extends ScreenView {
   // Sound elements
   private readonly clickSound: Sound;
 
-  // String manager instance
-  private readonly stringManager: StringManager = StringManager.getInstance();
-
   // Derived property for interface bounds
   private readonly interfaceBoundsProperty: TReadOnlyProperty<Bounds2>;
 
@@ -715,65 +712,15 @@ export class SimScreenView extends ScreenView {
   private createScenarioItems(
     textColorProperty: ProfileColorProperty,
   ): { value: Scenario; createNode: () => Text }[] {
-    const scenarioStrings = this.stringManager.getScenarioStrings();
 
-    return [
-      {
-        value: Scenario.FREE_PLAY,
-        createNode: () =>
-          new Text(scenarioStrings.freePlayStringProperty, {
-            font: new PhetFont(14),
-            fill: textColorProperty,
-          }),
-      },
-      {
-        value: Scenario.SOURCE_APPROACHING,
-        createNode: () =>
-          new Text(scenarioStrings.sourceApproachingStringProperty, {
-            font: new PhetFont(14),
-            fill: textColorProperty,
-          }),
-      },
-      {
-        value: Scenario.SOURCE_RECEDING,
-        createNode: () =>
-          new Text(scenarioStrings.sourceRecedingStringProperty, {
-            font: new PhetFont(14),
-            fill: textColorProperty,
-          }),
-      },
-      {
-        value: Scenario.OBSERVER_APPROACHING,
-        createNode: () =>
-          new Text(scenarioStrings.observerApproachingStringProperty, {
-            font: new PhetFont(14),
-            fill: textColorProperty,
-          }),
-      },
-      {
-        value: Scenario.OBSERVER_RECEDING,
-        createNode: () =>
-          new Text(scenarioStrings.observerRecedingStringProperty, {
-            font: new PhetFont(14),
-            fill: textColorProperty,
-          }),
-      },
-      {
-        value: Scenario.SAME_DIRECTION,
-        createNode: () =>
-          new Text(scenarioStrings.sameDirectionStringProperty, {
-            font: new PhetFont(14),
-            fill: textColorProperty,
-          }),
-      },
-      {
-        value: Scenario.PERPENDICULAR,
-        createNode: () =>
-          new Text(scenarioStrings.perpendicularStringProperty, {
-            font: new PhetFont(14),
-            fill: textColorProperty,
-          }),
-      },
-    ];
+    // Generate items by iterating through the scenario enumeration
+    // Use the displayNameProperty from each Scenario instance
+    return Scenario.enumeration.values.map(scenario => ({
+      value: scenario,
+      createNode: () => new Text(scenario.displayNameProperty,{
+        font: new PhetFont(14),
+        fill: textColorProperty,
+      })
+    }));
   }
 }
