@@ -407,10 +407,6 @@ export class SimScreenView extends ScreenView {
     );
     scenarioComboBoxNode.setAccessibleName("Scenario selector");
 
-    // Position the combo box
-    scenarioComboBoxNode.left = 10;
-    scenarioComboBoxNode.top = 10;
-
     // Add to control layer
     this.controlLayer.addChild(scenarioComboBoxNode);
     this.controlLayer.addChild(listParentNode);
@@ -420,9 +416,7 @@ export class SimScreenView extends ScreenView {
         this.interruptSubtreeInput(); // Stop any ongoing interactions
         model.reset();
         this.reset();
-      },
-      right: this.layoutBounds.maxX - 10,
-      bottom: this.layoutBounds.maxY - 10,
+      }
     });
     resetAllButtonNode.setAccessibleName("Reset simulation");
     this.controlLayer.addChild(resetAllButtonNode);
@@ -438,8 +432,7 @@ export class SimScreenView extends ScreenView {
     scaleMarkNode.setAccessibleName("Scale: 1000 meters");
 
     // Position the scale mark
-    scaleMarkNode.right = resetAllButtonNode.left - 30;
-    scaleMarkNode.bottom = resetAllButtonNode.bottom;
+    scaleMarkNode.top = this.modelViewTransform.modelToViewY(-2000);
     this.controlLayer.addChild(scaleMarkNode);
 
     // Add time control node
@@ -466,8 +459,6 @@ export class SimScreenView extends ScreenView {
       },
     });
     timeControlNode.setAccessibleName("Simulation speed control");
-    timeControlNode.centerX = this.layoutBounds.centerX;
-    timeControlNode.bottom = this.layoutBounds.maxY - 10;
     this.controlLayer.addChild(timeControlNode);
 
     // Create keyboard shortcuts node
@@ -561,7 +552,6 @@ export class SimScreenView extends ScreenView {
       scenarioComboBoxNode.left = interfaceBounds.minX + 10;
       scenarioComboBoxNode.top = interfaceBounds.top + 10;
       scaleMarkNode.right = resetAllButtonNode.left - 30;
-      scaleMarkNode.bottom = resetAllButtonNode.bottom;
     });
   }
 
