@@ -622,13 +622,6 @@ export class SimScreenView extends ScreenView {
       );
     });
 
-    // Update text displays when relevant properties change
-    const updateTextOnChange = () => this.updateText();
-
-    this.model.emittedFrequencyProperty.link(updateTextOnChange);
-    this.model.observedFrequencyProperty.link(updateTextOnChange);
-    this.selectedObjectProperty.link(updateTextOnChange);
-
     // Listen for wave detection to play click sound
     this.model.waveDetectedProperty.link((detected) => {
       if (detected) {
@@ -671,17 +664,6 @@ export class SimScreenView extends ScreenView {
       this.model.waves,
       this.model.simulationTimeProperty.value,
     );
-
-    // Update text displays
-    this.updateText();
-  }
-
-  /**
-   * Update text displays with current values
-   */
-  private updateText(): void {
-    // No need to call updateValues as the properties are now linked in StatusTextNode
-    // Any change to the source properties will automatically update the text
   }
 
   /**
