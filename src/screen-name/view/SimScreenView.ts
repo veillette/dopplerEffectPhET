@@ -1,5 +1,4 @@
 import {
-  ArrowNode,
   Circle,
   ComboBox,
   DerivedProperty,
@@ -38,7 +37,7 @@ import { KeyboardShorcutsNode } from "./components/KeyboardShorcutsNode";
 import { DragHandlerManager } from "./managers/DragHandlerManager";
 import { KeyboardHandlerManager } from "./managers/KeyboardHandlerManager";
 import { WaveManager } from "./managers/WaveManager";
-import { VectorDisplayManager } from "./managers/VectorDisplayManager";
+import { VectorDisplay } from "./managers/VectorDisplay";
 import { TrailManager } from "./managers/TrailManager";
 
 /**
@@ -71,8 +70,6 @@ export class SimScreenView extends ScreenView {
   private readonly sourceNode: Circle;
   private readonly observerNode: Circle;
   private readonly microphoneNode: MicrophoneNode;
-  private readonly sourceVelocityVectorNode: ArrowNode;
-  private readonly observerVelocityVectorNode: ArrowNode;
   private readonly connectingLineNode: ConnectingLineNode;
   private readonly selectionHighlightCircle: Circle;
   private readonly sourceTrailPath: Path;
@@ -87,7 +84,6 @@ export class SimScreenView extends ScreenView {
 
   // Managers
   private readonly waveManager: WaveManager;
-  private readonly vectorManager: VectorDisplayManager;
   private readonly sourceTrailManager: TrailManager;
   private readonly observerTrailManager: TrailManager;
   private readonly sourceDragManager: DragHandlerManager;
@@ -122,6 +118,10 @@ export class SimScreenView extends ScreenView {
 
   // Derived property for interface bounds
   private readonly interfaceBoundsProperty: TReadOnlyProperty<Bounds2>;
+
+  // New VectorDisplay instances
+  private readonly sourceVelocityVector: VectorDisplay;
+  private readonly observerVelocityVector: VectorDisplay;
 
   /**
    * Constructor for the Doppler Effect SimScreenView
@@ -235,27 +235,32 @@ export class SimScreenView extends ScreenView {
       tagName: null,
     });
 
-    // Create velocity vector nodes
-    const velocityVectorOptions = {
-      headHeight: 10,
-      headWidth: 10,
-      tailWidth: 2,
-      scaleTailToo: true,
-      visibleProperty: this.visibleVelocityArrowProperty,
-      // Make purely visual elements non-accessible
-      tagName: null,
-    };
+    // Create velocity vector displays
+    this.sourceVelocityVector = new VectorDisplay(
+      this.modelViewTransform,
+      SCALE.VELOCITY_VECTOR,
+      {
+        visibleProperty: this.visibleVelocityArrowProperty,
+        fillColorProperty: DopplerEffectColors.sourceVelocityArrowColorProperty,
+        strokeColorProperty: DopplerEffectColors.sourceVelocityArrowColorProperty,
+        showVelocityValue: true,
+        textColorProperty: DopplerEffectColors.textColorProperty,
+        visibleValuesProperty: this.visibleValuesProperty,
+      },
+    );
 
-    this.sourceVelocityVectorNode = new ArrowNode(0, 0, 0, 0, {
-      ...velocityVectorOptions,
-      fill: DopplerEffectColors.sourceVelocityArrowColorProperty,
-      stroke: DopplerEffectColors.sourceVelocityArrowColorProperty,
-    });
-    this.observerVelocityVectorNode = new ArrowNode(0, 0, 0, 0, {
-      ...velocityVectorOptions,
-      fill: DopplerEffectColors.observerVelocityArrowColorProperty,
-      stroke: DopplerEffectColors.observerVelocityArrowColorProperty,
-    });
+    this.observerVelocityVector = new VectorDisplay(
+      this.modelViewTransform,
+      SCALE.VELOCITY_VECTOR,
+      {
+        visibleProperty: this.visibleVelocityArrowProperty,
+        fillColorProperty: DopplerEffectColors.observerVelocityArrowColorProperty,
+        strokeColorProperty: DopplerEffectColors.observerVelocityArrowColorProperty,
+        showVelocityValue: true,
+        textColorProperty: DopplerEffectColors.textColorProperty,
+        visibleValuesProperty: this.visibleValuesProperty,
+      },
+    );
 
     // Create trail paths
     this.sourceTrailPath = new Path(new Shape(), {
@@ -276,8 +281,8 @@ export class SimScreenView extends ScreenView {
     this.objectLayer.addChild(this.selectionHighlightCircle);
     this.objectLayer.addChild(this.sourceNode);
     this.objectLayer.addChild(this.observerNode);
-    this.objectLayer.addChild(this.sourceVelocityVectorNode);
-    this.objectLayer.addChild(this.observerVelocityVectorNode);
+    this.objectLayer.addChild(this.sourceVelocityVector);
+    this.objectLayer.addChild(this.observerVelocityVector);
     this.objectLayer.addChild(this.sourceTrailPath);
     this.objectLayer.addChild(this.observerTrailPath);
 
@@ -298,11 +303,6 @@ export class SimScreenView extends ScreenView {
       this.waveLayer,
       this.modelViewTransform,
       DopplerEffectColors.waveColorProperty,
-    );
-
-    this.vectorManager = new VectorDisplayManager(
-      this.modelViewTransform,
-      SCALE.VELOCITY_VECTOR,
     );
 
     this.sourceTrailManager = new TrailManager(
@@ -646,12 +646,12 @@ export class SimScreenView extends ScreenView {
     this.updateSelectionHighlight();
 
     // Update velocity vectors
-    this.vectorManager.updateVectors(
-      this.sourceVelocityVectorNode,
-      this.observerVelocityVectorNode,
+    this.sourceVelocityVector.updateVector(
       this.model.sourcePositionProperty.value,
-      this.model.observerPositionProperty.value,
       this.model.sourceVelocityProperty.value,
+    );
+    this.observerVelocityVector.updateVector(
+      this.model.observerPositionProperty.value,
       this.model.observerVelocityProperty.value,
     );
 
