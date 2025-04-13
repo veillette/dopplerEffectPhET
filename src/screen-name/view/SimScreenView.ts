@@ -189,32 +189,34 @@ export class SimScreenView extends ScreenView {
     // Add grid to the scene - behind the waves
     this.insertChild(0, this.gridNode);
 
-    // Create source and observer views
-    this.sourceView = new MoveableObjectView(this.modelViewTransform, {
-      radius: this.UI.SOURCE_RADIUS,
-      fillColorProperty: DopplerEffectColors.sourceColorProperty,
-      velocityArrowColorProperty: DopplerEffectColors.sourceVelocityArrowColorProperty,
-      trailColorProperty: DopplerEffectColors.sourceColorProperty,
+    // common options for both source and observer
+    const commonMoveableObjectViewOptions = {
       visibleVelocityArrowProperty: this.visibleVelocityArrowProperty,
       visibleTrailsProperty: this.visibleTrailsProperty,
       visibleValuesProperty: this.visibleValuesProperty,
       textColorProperty: DopplerEffectColors.textColorProperty,
       velocityScale: SCALE.VELOCITY_VECTOR,
       trailWidth: this.UI.TRAIL_WIDTH,
+    };
+
+    // Create source and observer views
+    this.sourceView = new MoveableObjectView(this.modelViewTransform, {
+      ...commonMoveableObjectViewOptions,
+      radius: this.UI.SOURCE_RADIUS,
+      fillColorProperty: DopplerEffectColors.sourceColorProperty,
+      velocityArrowColorProperty:
+        DopplerEffectColors.sourceVelocityArrowColorProperty,
+      trailColorProperty: DopplerEffectColors.sourceColorProperty,
       accessibleName: "Sound source",
     });
 
     this.observerView = new MoveableObjectView(this.modelViewTransform, {
+      ...commonMoveableObjectViewOptions,
       radius: this.UI.OBSERVER_RADIUS,
       fillColorProperty: DopplerEffectColors.observerColorProperty,
-      velocityArrowColorProperty: DopplerEffectColors.observerVelocityArrowColorProperty,
+      velocityArrowColorProperty:
+        DopplerEffectColors.observerVelocityArrowColorProperty,
       trailColorProperty: DopplerEffectColors.observerColorProperty,
-      visibleVelocityArrowProperty: this.visibleVelocityArrowProperty,
-      visibleTrailsProperty: this.visibleTrailsProperty,
-      visibleValuesProperty: this.visibleValuesProperty,
-      textColorProperty: DopplerEffectColors.textColorProperty,
-      velocityScale: SCALE.VELOCITY_VECTOR,
-      trailWidth: this.UI.TRAIL_WIDTH,
       accessibleName: "Observer",
     });
 
@@ -354,7 +356,7 @@ export class SimScreenView extends ScreenView {
         this.interruptSubtreeInput(); // Stop any ongoing interactions
         model.reset();
         this.reset();
-      }
+      },
     });
     resetAllButtonNode.setAccessibleName("Reset simulation");
     this.controlLayer.addChild(resetAllButtonNode);
@@ -604,14 +606,16 @@ export class SimScreenView extends ScreenView {
   private updateSelectionHighlight(): void {
     if (this.selectedObjectProperty.value === "source") {
       this.selectionHighlightCircle.radius = this.UI.SOURCE_RADIUS + 5;
-      this.selectionHighlightCircle.center = this.modelViewTransform.modelToViewPosition(
-        this.model.sourcePositionProperty.value,
-      );
+      this.selectionHighlightCircle.center =
+        this.modelViewTransform.modelToViewPosition(
+          this.model.sourcePositionProperty.value,
+        );
     } else {
       this.selectionHighlightCircle.radius = this.UI.OBSERVER_RADIUS + 5;
-      this.selectionHighlightCircle.center = this.modelViewTransform.modelToViewPosition(
-        this.model.observerPositionProperty.value,
-      );
+      this.selectionHighlightCircle.center =
+        this.modelViewTransform.modelToViewPosition(
+          this.model.observerPositionProperty.value,
+        );
     }
   }
 
@@ -623,15 +627,15 @@ export class SimScreenView extends ScreenView {
   private createScenarioItems(
     textColorProperty: ProfileColorProperty,
   ): { value: Scenario; createNode: () => Text }[] {
-
     // Generate items by iterating through the scenario enumeration
     // Use the displayNameProperty from each Scenario instance
-    return Scenario.enumeration.values.map(scenario => ({
+    return Scenario.enumeration.values.map((scenario) => ({
       value: scenario,
-      createNode: () => new Text(scenario.displayNameProperty,{
-        font: new PhetFont(14),
-        fill: textColorProperty,
-      })
+      createNode: () =>
+        new Text(scenario.displayNameProperty, {
+          font: new PhetFont(14),
+          fill: textColorProperty,
+        }),
     }));
   }
 }

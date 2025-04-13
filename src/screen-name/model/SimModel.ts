@@ -52,14 +52,11 @@ export type PositionHistoryPoint = {
 export class Scenario extends EnumerationValue {
   // String property for display name
   public readonly displayNameProperty: TReadOnlyProperty<string>;
-  
 
   // Constructor with string properties
-  public constructor(
-    displayNameProperty: TReadOnlyProperty<string>,
-  ) {
+  public constructor(displayNameProperty: TReadOnlyProperty<string>) {
     super();
-    
+
     this.displayNameProperty = displayNameProperty;
   }
 
@@ -67,32 +64,32 @@ export class Scenario extends EnumerationValue {
   public static readonly FREE_PLAY = new Scenario(
     StringManager.getInstance().getScenarioStrings().freePlayStringProperty,
   );
-  
+
   public static readonly SOURCE_APPROACHING = new Scenario(
     StringManager.getInstance().getScenarioStrings().sourceApproachingStringProperty,
   );
-  
+
   public static readonly SOURCE_RECEDING = new Scenario(
     StringManager.getInstance().getScenarioStrings().sourceRecedingStringProperty,
-   );
-  
+  );
+
   public static readonly OBSERVER_APPROACHING = new Scenario(
     StringManager.getInstance().getScenarioStrings().observerApproachingStringProperty,
-   );
-  
+  );
+
   public static readonly OBSERVER_RECEDING = new Scenario(
     StringManager.getInstance().getScenarioStrings().observerRecedingStringProperty,
   );
-  
+
   public static readonly SAME_DIRECTION = new Scenario(
     StringManager.getInstance().getScenarioStrings().sameDirectionStringProperty,
   );
-  
+
   public static readonly PERPENDICULAR = new Scenario(
     StringManager.getInstance().getScenarioStrings().perpendicularStringProperty,
   );
 
-  // Gets a list of keys, values and mapping between them. For use in EnumerationProperty 
+  // Gets a list of keys, values and mapping between them. For use in EnumerationProperty
   public static readonly enumeration = new Enumeration(Scenario);
 }
 
@@ -465,13 +462,13 @@ export class SimModel {
       // Update observed frequency property
       this.observedFrequencyProperty.value = observedFrequency;
 
-    // Calculate Doppler frequency for stationary observer
-    const stationaryFrequency =
-    this.dopplerCalculator.calculateStationaryFrequency(
-      currentWave,
-      this.observerPositionProperty.value,
-      this.soundSpeedProperty.value,
-    );
+      // Calculate Doppler frequency for stationary observer
+      const stationaryFrequency =
+        this.dopplerCalculator.calculateStationaryFrequency(
+          currentWave,
+          this.observerPositionProperty.value,
+          this.soundSpeedProperty.value,
+        );
 
       // Update observed waveform using stationary frequency since we don't want to overcount the Doppler effect
       // the change in phase is due to the change in position of the observer

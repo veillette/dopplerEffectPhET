@@ -4,7 +4,18 @@
  * Manages the display of a single velocity vector with optional velocity value display.
  */
 
-import { ArrowNode, Vector2, ModelViewTransform2, Node, ProfileColorProperty, NumberDisplay, Range, PhetFont, Property, TReadOnlyProperty } from "scenerystack";
+import {
+  ArrowNode,
+  Vector2,
+  ModelViewTransform2,
+  Node,
+  ProfileColorProperty,
+  NumberDisplay,
+  Range,
+  PhetFont,
+  Property,
+  TReadOnlyProperty,
+} from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 
 /**
@@ -72,7 +83,9 @@ export class VectorDisplay extends Node {
             fill: options.textColorProperty,
           },
           visibleProperty: options.visibleValuesProperty,
-          valuePattern: StringManager.getInstance().getAllStringProperties().units.metersPerSecondStringProperty,
+          valuePattern:
+            StringManager.getInstance().getAllStringProperties().units
+              .metersPerSecondStringProperty,
           backgroundFill: "transparent",
           backgroundStroke: null,
           xMargin: 0,
@@ -97,7 +110,8 @@ export class VectorDisplay extends Node {
     // First scale by the model-view transform to convert m/s to pixels/s
     // Then scale by velocityScale to make it more visible
     const scaledVelocity = velocity.timesScalar(this.velocityScale);
-    const viewVelocity = this.modelViewTransform.modelToViewDelta(scaledVelocity);
+    const viewVelocity =
+      this.modelViewTransform.modelToViewDelta(scaledVelocity);
 
     // Update arrow node
     this.arrowNode.setTailAndTip(
@@ -114,8 +128,8 @@ export class VectorDisplay extends Node {
       this.velocityProperty.value = velocityMagnitude;
 
       // Position the velocity display above the arrow
-      this.velocityDisplay.centerX = viewPosition.x + viewVelocity.x/2;
-      this.velocityDisplay.bottom = viewPosition.y + viewVelocity.y/2 - 15; // Offset above the arrow
+      this.velocityDisplay.centerX = viewPosition.x + viewVelocity.x / 2;
+      this.velocityDisplay.bottom = viewPosition.y + viewVelocity.y / 2 - 15; // Offset above the arrow
     }
   }
 }

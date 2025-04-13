@@ -113,7 +113,7 @@ export class MovableObject {
     this.positionProperty.value = initialPosition.copy(); // in meters (m)
     this.velocityProperty.value = new Vector2(0, 0); // in meters per second (m/s)
     this.movingProperty.value = false;
-    
+
     // Clear position history
     this.positionHistory = [];
     this.lastTrailSampleTime = 0;

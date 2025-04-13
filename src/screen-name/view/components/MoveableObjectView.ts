@@ -78,14 +78,11 @@ export class MoveableObjectView extends Node {
     this.addChild(this.velocityVector);
 
     // Create the trail creator
-    this.trailPath = new TrailPath(
-      this.modelViewTransform,
-      {
-        trailColorProperty: options.trailColorProperty,
-        visibleProperty: options.visibleTrailsProperty,
-        trailWidth: options.trailWidth,
-      },
-    );
+    this.trailPath = new TrailPath(this.modelViewTransform, {
+      trailColorProperty: options.trailColorProperty,
+      visibleProperty: options.visibleTrailsProperty,
+      trailWidth: options.trailWidth,
+    });
     this.addChild(this.trailPath);
   }
 
@@ -97,7 +94,8 @@ export class MoveableObjectView extends Node {
    */
   public update(position: Vector2, velocity: Vector2): void {
     // Update object position
-    this.objectNode.center = this.modelViewTransform.modelToViewPosition(position);
+    this.objectNode.center =
+      this.modelViewTransform.modelToViewPosition(position);
 
     // Update velocity vector
     this.velocityVector.updateVector(position, velocity);
@@ -125,4 +123,4 @@ export class MoveableObjectView extends Node {
   public getObjectNode(): Circle {
     return this.objectNode;
   }
-} 
+}

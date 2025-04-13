@@ -38,20 +38,24 @@ export class DopplerCalculator {
     return observedFrequency; // in Hertz (Hz)
   }
 
-   /**
+  /**
    * Calculate observed frequency for a stationary observer using the Doppler formula
    * @param wave The wave reaching the observer
    * @param observerPosition Current observer position in meters (m)
    * @param soundSpeed Current speed of sound in meters per second (m/s)
    * @returns The observed frequency in Hertz (Hz)
    */
-   public calculateStationaryFrequency(
+  public calculateStationaryFrequency(
     wave: Wave,
     observerPosition: Vector2,
     soundSpeed: number,
   ): number {
-
-    return this.calculateObservedFrequency(wave, observerPosition, new Vector2(0, 0), soundSpeed);
+    return this.calculateObservedFrequency(
+      wave,
+      observerPosition,
+      new Vector2(0, 0),
+      soundSpeed,
+    );
   }
 
   /**

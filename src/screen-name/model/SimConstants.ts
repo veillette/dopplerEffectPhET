@@ -67,16 +67,16 @@ export const SCALE = {
 export const TRAIL = {
   // Maximum number of points in the trail
   MAX_POINTS: 100,
-  
+
   // Maximum age of trail points in seconds
   MAX_AGE: 5,
-  
+
   // Interval between trail samples in seconds
   SAMPLE_INTERVAL: 0.05,
-  
+
   // Default trail width in pixels
   DEFAULT_WIDTH: 2,
-  
+
   // Default trail opacity
-  DEFAULT_OPACITY: 0.7
+  DEFAULT_OPACITY: 0.7,
 };
