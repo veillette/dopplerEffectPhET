@@ -8,14 +8,12 @@ import {
   Circle,
   ModelViewTransform2,
   Node,
-  Path,
   Property,
-  Shape,
   Vector2,
   ProfileColorProperty,
 } from "scenerystack";
 import { VectorDisplay } from "./VectorDisplay";
-import { TrailManager } from "../managers/TrailManager";
+import { TrailNode } from "./TrailNode";
 import { PositionHistoryPoint } from "../../model/SimModel";
 
 /**
@@ -40,9 +38,8 @@ type MoveableObjectViewOptions = {
  */
 export class MoveableObjectView extends Node {
   private readonly objectNode: Circle;
-  private readonly trailPath: Path;
   private readonly velocityVector: VectorDisplay;
-  private readonly trailManager: TrailManager;
+  private readonly trailNode: TrailNode;
 
   /**
    * Constructor for the MoveableObjectView
@@ -80,21 +77,16 @@ export class MoveableObjectView extends Node {
     );
     this.addChild(this.velocityVector);
 
-    // Create the trail path
-    this.trailPath = new Path(new Shape(), {
-      stroke: options.trailColorProperty,
-      lineWidth: options.trailWidth,
-      tagName: null,
-    });
-    this.addChild(this.trailPath);
-
-    // Create the trail manager
-    this.trailManager = new TrailManager(
-      this.trailPath,
+    // Create the trail creator
+    this.trailNode = new TrailNode(
       this.modelViewTransform,
-      options.trailColorProperty,
-      options.visibleTrailsProperty,
+      {
+        trailColorProperty: options.trailColorProperty,
+        visibleProperty: options.visibleTrailsProperty,
+        trailWidth: options.trailWidth,
+      },
     );
+    this.addChild(this.trailNode);
   }
 
   /**
@@ -117,14 +109,14 @@ export class MoveableObjectView extends Node {
    * @param trailPoints - History of position points
    */
   public updateTrail(trailPoints: PositionHistoryPoint[]): void {
-    this.trailManager.updateTrail(trailPoints);
+    this.trailNode.updateTrail(trailPoints);
   }
 
   /**
    * Reset the object's trail
    */
   public resetTrail(): void {
-    this.trailManager.reset();
+    this.trailNode.reset();
   }
 
   /**
