@@ -1,6 +1,5 @@
 import { Vector2 } from "scenerystack";
 import { Wave } from "./SimModel";
-import { PHYSICS } from "./SimConstants";
 
 /**
  * DopplerCalculator handles the physics calculations for the Doppler effect.
@@ -31,16 +30,28 @@ export class DopplerCalculator {
     // f' = f * (v - v_o) / (v - v_s)
     // where f is emitted frequency, v is sound speed,
     // v_o is observer velocity component, v_s is source velocity component
-    const observedFreq =
+    const observedFrequency =
       (wave.sourceFrequency * // in Hertz (Hz)
         (soundSpeed - observerVelocityComponent)) / // in meters per second (m/s)
       (soundSpeed - sourceVelocityComponent); // in meters per second (m/s) // result in Hertz (Hz)
 
-    // Constrain to reasonable limits
-    return Math.max(
-      PHYSICS.FREQ_MIN, // in Hertz (Hz)
-      Math.min(observedFreq, wave.sourceFrequency * PHYSICS.FREQ_MAX_FACTOR), // in Hertz (Hz)
-    );
+    return observedFrequency; // in Hertz (Hz)
+  }
+
+   /**
+   * Calculate observed frequency for a stationary observer using the Doppler formula
+   * @param wave The wave reaching the observer
+   * @param observerPosition Current observer position in meters (m)
+   * @param soundSpeed Current speed of sound in meters per second (m/s)
+   * @returns The observed frequency in Hertz (Hz)
+   */
+   public calculateStationaryFrequency(
+    wave: Wave,
+    observerPosition: Vector2,
+    soundSpeed: number,
+  ): number {
+
+    return this.calculateObservedFrequency(wave, observerPosition, new Vector2(0, 0), soundSpeed);
   }
 
   /**

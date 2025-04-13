@@ -465,9 +465,18 @@ export class SimModel {
       // Update observed frequency property
       this.observedFrequencyProperty.value = observedFrequency;
 
-      // Update observed waveform
+    // Calculate Doppler frequency for stationary observer
+    const stationaryFrequency =
+    this.dopplerCalculator.calculateStationaryFrequency(
+      currentWave,
+      this.observerPositionProperty.value,
+      this.soundSpeedProperty.value,
+    );
+
+      // Update observed waveform using stationary frequency since we don't want to overcount the Doppler effect
+      // the change in phase is due to the change in position of the observer
       this.waveformManager.updateObservedWaveform(
-        observedFrequency,
+        stationaryFrequency,
         phaseAtArrival,
         timeSinceArrival,
         timeSpeedValue,
