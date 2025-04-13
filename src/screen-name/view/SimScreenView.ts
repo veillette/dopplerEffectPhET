@@ -189,34 +189,34 @@ export class SimScreenView extends ScreenView {
     // Add grid to the scene - behind the waves
     this.insertChild(0, this.gridNode);
 
+    // common options for both source and observer
+    const commonMoveableObjectViewOptions = {
+      visibleVelocityArrowProperty: this.visibleVelocityArrowProperty,
+      visibleTrailsProperty: this.visibleTrailsProperty,
+      visibleValuesProperty: this.visibleValuesProperty,
+      textColorProperty: DopplerEffectColors.textColorProperty,
+      velocityScale: SCALE.VELOCITY_VECTOR,
+      trailWidth: this.UI.TRAIL_WIDTH,
+    };
+
     // Create source and observer views
     this.sourceView = new MoveableObjectView(this.modelViewTransform, {
+      ...commonMoveableObjectViewOptions,
       radius: this.UI.SOURCE_RADIUS,
       fillColorProperty: DopplerEffectColors.sourceColorProperty,
       velocityArrowColorProperty:
         DopplerEffectColors.sourceVelocityArrowColorProperty,
       trailColorProperty: DopplerEffectColors.sourceColorProperty,
-      visibleVelocityArrowProperty: this.visibleVelocityArrowProperty,
-      visibleTrailsProperty: this.visibleTrailsProperty,
-      visibleValuesProperty: this.visibleValuesProperty,
-      textColorProperty: DopplerEffectColors.textColorProperty,
-      velocityScale: SCALE.VELOCITY_VECTOR,
-      trailWidth: this.UI.TRAIL_WIDTH,
       accessibleName: "Sound source",
     });
 
     this.observerView = new MoveableObjectView(this.modelViewTransform, {
+      ...commonMoveableObjectViewOptions,
       radius: this.UI.OBSERVER_RADIUS,
       fillColorProperty: DopplerEffectColors.observerColorProperty,
       velocityArrowColorProperty:
         DopplerEffectColors.observerVelocityArrowColorProperty,
       trailColorProperty: DopplerEffectColors.observerColorProperty,
-      visibleVelocityArrowProperty: this.visibleVelocityArrowProperty,
-      visibleTrailsProperty: this.visibleTrailsProperty,
-      visibleValuesProperty: this.visibleValuesProperty,
-      textColorProperty: DopplerEffectColors.textColorProperty,
-      velocityScale: SCALE.VELOCITY_VECTOR,
-      trailWidth: this.UI.TRAIL_WIDTH,
       accessibleName: "Observer",
     });
 
