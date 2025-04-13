@@ -1,8 +1,8 @@
 /**
- * TrailNode.ts
+ * TrailPath.ts
  *
  * Creates and manages motion trails for objects in the Doppler Effect simulation.
- * This class combines the creation of the trail path and its management.
+ * This class extends Path to directly manage the trail visualization.
  */
 
 import {
@@ -13,7 +13,6 @@ import {
   ModelViewTransform2,
   Property,
   ProfileColorProperty,
-  Node,
 } from "scenerystack";
 
 // Import position history point interface from model
@@ -22,7 +21,7 @@ import { PositionHistoryPoint } from "../../model/SimModel";
 /**
  * Configuration options for the trail creator
  */
-type TrailNodeOptions = {
+type TrailPathOptions = {
   trailColorProperty: ProfileColorProperty;
   visibleProperty: Property<boolean>;
   trailWidth: number;
@@ -31,42 +30,37 @@ type TrailNodeOptions = {
 /**
  * Creates and manages motion trails for objects
  */
-export class TrailNode extends Node {
-  private readonly trailPath: Path;
+export class TrailPath extends Path {
   private trailColorValue: Color;
 
   /**
-   * Constructor for the TrailNode
+   * Constructor for the TrailPath
    *
    * @param modelViewTransform - Transform to convert model coordinates to view coordinates
    * @param options - Configuration options for the trail
    */
   constructor(
     private readonly modelViewTransform: ModelViewTransform2,
-    options: TrailNodeOptions,
+    options: TrailPathOptions,
   ) {
-    super();
-
-    // Create the trail path
-    this.trailPath = new Path(new Shape(), {
+    super(new Shape(), {
       stroke: options.trailColorProperty,
       lineWidth: options.trailWidth,
       visibleProperty: options.visibleProperty,
       tagName: null,
     });
-    this.addChild(this.trailPath);
 
-        // Store initial color value and listen for changes
-        this.trailColorValue = options.trailColorProperty.value;
-        options.trailColorProperty.link((newColor) => {
-          // Update the trail with the new color (it will be used next time updateTrail is called)
-          this.trailColorValue = newColor;
-          // If the trail is currently visible, update it immediately
-          if (this.trailPath.visible) {
-            // Force an update of the trail's gradient the next time updateTrail is called
-            this.trailPath.stroke = newColor;
-          }
-        });
+    // Store initial color value and listen for changes
+    this.trailColorValue = options.trailColorProperty.value;
+    options.trailColorProperty.link((newColor) => {
+      // Update the trail with the new color (it will be used next time updateTrail is called)
+      this.trailColorValue = newColor;
+      // If the trail is currently visible, update it immediately
+      if (this.visible) {
+        // Force an update of the trail's gradient the next time updateTrail is called
+        this.stroke = newColor;
+      }
+    });
   }
 
   /**
@@ -76,11 +70,10 @@ export class TrailNode extends Node {
    */
   public updateTrail(trailPoints: PositionHistoryPoint[]): void {
     // Set visibility based on property and points
-    this.trailPath.visible =
-      this.trailPath.visible && trailPoints.length > 0;
+    this.visible = this.visible && trailPoints.length > 0;
 
     // If not visible or no points, return early
-    if (!this.trailPath.visible || trailPoints.length === 0) {
+    if (!this.visible || trailPoints.length === 0) {
       return;
     }
 
@@ -102,7 +95,7 @@ export class TrailNode extends Node {
     }
 
     // Update the path with the new shape
-    this.trailPath.shape = trailShape;
+    this.shape = trailShape;
 
     // Calculate the gradient direction (from oldest to newest point)
     const startPoint = this.modelViewTransform.modelToViewPosition(
@@ -150,7 +143,7 @@ export class TrailNode extends Node {
     );
 
     // Apply the gradient
-    this.trailPath.stroke = gradient;
+    this.stroke = gradient;
   }
 
   /**
@@ -159,9 +152,6 @@ export class TrailNode extends Node {
    */
   public reset(): void {
     // Reset trail to empty shape
-    this.trailPath.shape = new Shape();
-
-    // Hide trail
-    this.trailPath.visible = false;
+    this.shape = new Shape();
   }
 } 

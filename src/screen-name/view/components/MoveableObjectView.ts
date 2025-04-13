@@ -13,7 +13,7 @@ import {
   ProfileColorProperty,
 } from "scenerystack";
 import { VectorDisplay } from "./VectorDisplay";
-import { TrailNode } from "./TrailNode";
+import { TrailPath } from "./TrailPath";
 import { PositionHistoryPoint } from "../../model/SimModel";
 
 /**
@@ -39,7 +39,7 @@ type MoveableObjectViewOptions = {
 export class MoveableObjectView extends Node {
   private readonly objectNode: Circle;
   private readonly velocityVector: VectorDisplay;
-  private readonly trailNode: TrailNode;
+  private readonly trailPath: TrailPath;
 
   /**
    * Constructor for the MoveableObjectView
@@ -78,7 +78,7 @@ export class MoveableObjectView extends Node {
     this.addChild(this.velocityVector);
 
     // Create the trail creator
-    this.trailNode = new TrailNode(
+    this.trailPath = new TrailPath(
       this.modelViewTransform,
       {
         trailColorProperty: options.trailColorProperty,
@@ -86,7 +86,7 @@ export class MoveableObjectView extends Node {
         trailWidth: options.trailWidth,
       },
     );
-    this.addChild(this.trailNode);
+    this.addChild(this.trailPath);
   }
 
   /**
@@ -109,14 +109,14 @@ export class MoveableObjectView extends Node {
    * @param trailPoints - History of position points
    */
   public updateTrail(trailPoints: PositionHistoryPoint[]): void {
-    this.trailNode.updateTrail(trailPoints);
+    this.trailPath.updateTrail(trailPoints);
   }
 
   /**
    * Reset the object's trail
    */
   public resetTrail(): void {
-    this.trailNode.reset();
+    this.trailPath.reset();
   }
 
   /**
