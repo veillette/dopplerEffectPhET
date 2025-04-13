@@ -37,16 +37,8 @@ export class MovableObject {
       if (velocity.magnitude < PHYSICS.MIN_VELOCITY_MAG) {
         // PHYSICS.MIN_VELOCITY_MAG in m/s
         this.movingProperty.value = false;
+        this.velocityProperty.value = new Vector2(0, 0);
       }
-    } else if (
-      !this.movingProperty.value &&
-      this.velocityProperty.value.magnitude > 0
-    ) {
-      // Apply velocity decay when not actively moving
-      const velocity = this.velocityProperty.value; // in meters per second (m/s)
-      this.velocityProperty.value = velocity.timesScalar(
-        PHYSICS.VELOCITY_DECAY,
-      ); // in meters per second (m/s)
     }
   }
 
