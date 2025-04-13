@@ -76,7 +76,8 @@ export class DopplerCalculator {
       if (wave.radius >= distanceToObserver) {
         // both in meters (m)
 
-        //TODO: this will not be correct if the sound speed is changed by the user
+        //TODO: this will not be correct if the sound speed is changed by the user,
+        // this only works for constant sound speed (over the course of the waves), not variable sound speed
         // Calculate arrival time
         const travelTime = distanceToObserver / soundSpeed; // in seconds (s)
         const arrivalTime = wave.birthTime + travelTime; // in seconds (s)
