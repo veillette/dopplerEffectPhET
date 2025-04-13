@@ -154,4 +154,4 @@ export class TrailPath extends Path {
     // Reset trail to empty shape
     this.shape = new Shape();
   }
-} 
+}
