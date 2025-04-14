@@ -576,22 +576,20 @@ export class SimScreenView extends ScreenView {
    * Update the view
    */
   private updateView(): void {
-    // Update object positions and velocities
+    // Update object positions and velocities and trails
     this.sourceView.update(
       this.model.sourcePositionProperty.value,
       this.model.sourceVelocityProperty.value,
+      this.model.sourceTrail
     );
     this.observerView.update(
       this.model.observerPositionProperty.value,
       this.model.observerVelocityProperty.value,
+      this.model.observerTrail
     );
 
     // Update selection highlight
     this.updateSelectionHighlight();
-
-    // Update motion trails
-    this.sourceView.updateTrail(this.model.sourceTrail);
-    this.observerView.updateTrail(this.model.observerTrail);
 
     // Update waves
     this.waveManager.updateWaves(
