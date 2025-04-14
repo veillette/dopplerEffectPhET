@@ -87,29 +87,30 @@ export class MoveableObjectView extends Node {
   }
 
   /**
-   * Update the object's position and velocity
+   * Update the object's position, velocity, and trail
    *
    * @param position - Current position of the object
    * @param velocity - Current velocity of the object
+   * @param trailPoints - History of position points for the trail
    */
-  public update(position: Vector2, velocity: Vector2): void {
+  public update(
+    position: Vector2, 
+    velocity: Vector2, 
+    trailPoints?: PositionHistoryPoint[]
+  ): void {
     // Update object position
     this.objectNode.center =
       this.modelViewTransform.modelToViewPosition(position);
 
     // Update velocity vector
     this.velocityVector.updateVector(position, velocity);
+    
+    // Update trail if trail points are provided
+    if (trailPoints !== undefined) {
+      this.trailPath.updateTrail(trailPoints);
+    }
   }
-
-  /**
-   * Update the object's trail
-   *
-   * @param trailPoints - History of position points
-   */
-  public updateTrail(trailPoints: PositionHistoryPoint[]): void {
-    this.trailPath.updateTrail(trailPoints);
-  }
-
+  
   /**
    * Reset the object's trail
    */
