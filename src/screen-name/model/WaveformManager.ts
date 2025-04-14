@@ -21,10 +21,10 @@ export class WaveformManager {
   // Phase accumulators (in radians)
   private emittedPhase: number = 0; // in radians (rad)
   private observedPhase: number = 0; // in radians (rad)
-  
+
   // Time tracking for history
   private lastUpdateTime: number = 0; // in seconds (s)
-  
+
   // History buffer for time reversal
   private waveformHistory: {
     time: number;
@@ -80,10 +80,10 @@ export class WaveformManager {
   ): void {
     // Store current state in history for time reversal
     this.storeWaveformHistory();
-    
+
     // Calculate emitted waveform phase (in model time)
     this.emittedPhase += emittedFrequency * dt * Math.PI * 2; // in radians (rad)
-    
+
     // Normalize phase to [0, 2π)
     this.emittedPhase = this.emittedPhase % (2 * Math.PI);
     if (this.emittedPhase < 0) {
@@ -97,7 +97,7 @@ export class WaveformManager {
       Math.sin(this.emittedPhase),
       timeSpeedFactor,
     );
-    
+
     // Update last update time
     this.lastUpdateTime += dt;
   }
@@ -117,7 +117,7 @@ export class WaveformManager {
   ): void {
     // Store current state in history for time reversal
     this.storeWaveformHistory();
-    
+
     // Calculate additional phase based on observed frequency
     const additionalPhase = timeSinceArrival * observedFrequency * Math.PI * 2; // in radians (rad)
     this.observedPhase = phaseAtArrival + additionalPhase; // in radians (rad)
@@ -181,7 +181,7 @@ export class WaveformManager {
   public clearObservedWaveform(): void {
     // Store current state in history for time reversal
     this.storeWaveformHistory();
-    
+
     this.observedSoundData.push(0);
     this.observedSoundData.shift();
 
@@ -213,7 +213,7 @@ export class WaveformManager {
     this.waveformHistory = [];
     this.initializeArrays(soundDataSize);
   }
-  
+
   /**
    * Store the current waveform state in history for time reversal
    */
@@ -221,9 +221,13 @@ export class WaveformManager {
     // Create deep copies of the arrays
     const emittedSoundDataCopy = [...this.emittedSoundData];
     const observedSoundDataCopy = [...this.observedSoundData];
-    const emittedWaveformDataCopy = this.emittedWaveformData.map(point => ({ ...point }));
-    const observedWaveformDataCopy = this.observedWaveformData.map(point => ({ ...point }));
-    
+    const emittedWaveformDataCopy = this.emittedWaveformData.map((point) => ({
+      ...point,
+    }));
+    const observedWaveformDataCopy = this.observedWaveformData.map((point) => ({
+      ...point,
+    }));
+
     // Store in history
     this.waveformHistory.push({
       time: this.lastUpdateTime,
@@ -232,15 +236,15 @@ export class WaveformManager {
       emittedWaveformData: emittedWaveformDataCopy,
       observedWaveformData: observedWaveformDataCopy,
       emittedPhase: this.emittedPhase,
-      observedPhase: this.observedPhase
+      observedPhase: this.observedPhase,
     });
-    
+
     // Limit history size
     if (this.waveformHistory.length > WAVEFORM.HISTORY_BUFFER_SIZE) {
       this.waveformHistory.shift();
     }
   }
-  
+
   /**
    * Restore waveform state from history for time reversal
    * @param targetTime The time to restore to
@@ -249,7 +253,7 @@ export class WaveformManager {
     // Find the closest state in history
     let closestState = null;
     let minTimeDiff = Infinity;
-    
+
     for (const state of this.waveformHistory) {
       const timeDiff = Math.abs(state.time - targetTime);
       if (timeDiff < minTimeDiff) {
@@ -257,7 +261,7 @@ export class WaveformManager {
         closestState = state;
       }
     }
-    
+
     if (closestState) {
       // Restore sound data
       for (let i = 0; i < this.emittedSoundData.length; i++) {
@@ -265,35 +269,39 @@ export class WaveformManager {
           this.emittedSoundData[i] = closestState.emittedSoundData[i];
         }
       }
-      
+
       for (let i = 0; i < this.observedSoundData.length; i++) {
         if (i < closestState.observedSoundData.length) {
           this.observedSoundData[i] = closestState.observedSoundData[i];
         }
       }
-      
+
       // Restore waveform data
       for (let i = 0; i < this.emittedWaveformData.length; i++) {
         if (i < closestState.emittedWaveformData.length) {
-          this.emittedWaveformData[i] = { ...closestState.emittedWaveformData[i] };
+          this.emittedWaveformData[i] = {
+            ...closestState.emittedWaveformData[i],
+          };
         }
       }
-      
+
       for (let i = 0; i < this.observedWaveformData.length; i++) {
         if (i < closestState.observedWaveformData.length) {
-          this.observedWaveformData[i] = { ...closestState.observedWaveformData[i] };
+          this.observedWaveformData[i] = {
+            ...closestState.observedWaveformData[i],
+          };
         }
       }
-      
+
       // Restore phase
       this.emittedPhase = closestState.emittedPhase;
       this.observedPhase = closestState.observedPhase;
-      
+
       // Restore time tracking
       this.lastUpdateTime = closestState.time;
     }
   }
-  
+
   /**
    * Update waveform data with time reversal support
    * This method should be called from the SimModel when time is reversed
@@ -305,10 +313,10 @@ export class WaveformManager {
     if (dt < 0) {
       // Calculate target time
       const targetTime = this.lastUpdateTime + dt;
-      
+
       // Find and restore the closest state in history
       this.restoreFromHistory(targetTime);
-      
+
       // Update the waveform display with the correct time direction
       this.updateWaveformDisplay(timeSpeedFactor);
     } else {
@@ -317,7 +325,7 @@ export class WaveformManager {
       this.updateWaveformDisplay(timeSpeedFactor);
     }
   }
-  
+
   /**
    * Update the waveform display with the correct time direction
    * @param timeSpeedFactor Time speed factor (can be negative for time reversal)
@@ -327,15 +335,15 @@ export class WaveformManager {
     for (let i = 0; i < this.emittedSoundData.length; i++) {
       this.emittedWaveformData[i] = {
         t: (i / this.emittedSoundData.length) * timeSpeedFactor,
-        y: this.emittedSoundData[i]
+        y: this.emittedSoundData[i],
       };
     }
-    
+
     // Update observed waveform display
     for (let i = 0; i < this.observedSoundData.length; i++) {
       this.observedWaveformData[i] = {
         t: (i / this.observedSoundData.length) * timeSpeedFactor,
-        y: this.observedSoundData[i]
+        y: this.observedSoundData[i],
       };
     }
   }

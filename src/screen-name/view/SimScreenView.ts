@@ -580,12 +580,12 @@ export class SimScreenView extends ScreenView {
     this.sourceView.update(
       this.model.sourcePositionProperty.value,
       this.model.sourceVelocityProperty.value,
-      this.model.sourceTrail
+      this.model.sourceTrail,
     );
     this.observerView.update(
       this.model.observerPositionProperty.value,
       this.model.observerVelocityProperty.value,
-      this.model.observerTrail
+      this.model.observerTrail,
     );
 
     // Update selection highlight
