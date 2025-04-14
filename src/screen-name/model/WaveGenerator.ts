@@ -8,6 +8,7 @@ import { WAVE } from "./SimConstants";
 export class WaveGenerator {
   // Time tracking (in seconds)
   private lastWaveTime: number = 0; // in seconds (s)
+  private waveHistory: Wave[] = []; // History of waves for time reversal
 
   /**
    * Create a new WaveGenerator
@@ -32,14 +33,20 @@ export class WaveGenerator {
     // Check if it's time to emit a new wave
     if (simulationTime - this.lastWaveTime > waveInterval) {
       // Create a new wave
-      this.waves.add({
+      const newWave = {
         position: this.getSourcePosition().copy(), // in meters (m)
         radius: 0, // in meters (m)
         birthTime: simulationTime, // in seconds (s)
         sourceVelocity: this.getSourceVelocity().copy(), // in meters/second (m/s)
         sourceFrequency: this.getEmittedFrequency(), // in Hertz (Hz)
         phaseAtEmission: this.getEmittedPhase(), // in radians (rad)
-      });
+      };
+      
+      // Add to active waves
+      this.waves.add(newWave);
+      
+      // Store in history for time reversal
+      this.waveHistory.push(newWave);
 
       // Update last wave time (in seconds)
       this.lastWaveTime = simulationTime; // in seconds (s)
@@ -62,8 +69,8 @@ export class WaveGenerator {
       // Calculate age in seconds (s)
       const age = simulationTime - wave.birthTime; // in seconds (s)
 
-      // Remove waves that are too old
-      if (age > WAVE.MAX_AGE) {
+      // Remove waves that are too old or have a negative radius (due to time reversal)
+      if (age > WAVE.MAX_AGE  || wave.radius < 0) {
         // WAVE.MAX_AGE in seconds (s)
         this.waves.remove(wave);
       }
@@ -76,5 +83,40 @@ export class WaveGenerator {
   public reset(): void {
     this.lastWaveTime = 0;
     this.waves.clear();
+    this.waveHistory = [];
+  }
+  
+  /**
+   * Restore waves from history for a specific time
+   * @param targetTime The time to restore waves to
+   */
+  public restoreWavesFromHistory(targetTime: number): void {
+    // Clear current waves
+    this.waves.clear();
+    
+    // Find waves that should exist at the target time
+    for (const wave of this.waveHistory) {
+      // Only include waves that were born before the target time
+      // and haven't exceeded their maximum age
+      if (wave.birthTime <= targetTime && 
+          targetTime - wave.birthTime <= WAVE.MAX_AGE) {
+        
+        // Create a copy of the wave with the correct radius for the target time
+        const age = targetTime - wave.birthTime;
+        const radius = age * this.getSoundSpeed();
+        
+        const restoredWave = {
+          position: wave.position.copy(),
+          radius: radius,
+          birthTime: wave.birthTime,
+          sourceVelocity: wave.sourceVelocity.copy(),
+          sourceFrequency: wave.sourceFrequency,
+          phaseAtEmission: wave.phaseAtEmission
+        };
+        
+        // Add to active waves
+        this.waves.add(restoredWave);
+      }
+    }
   }
 }

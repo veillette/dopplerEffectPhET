@@ -46,6 +46,8 @@ export const SOUND_DATA = {
 export const TIME_SPEED = {
   SLOW: 0.25, // Slow simulation speed (dimensionless)
   NORMAL: 1.0, // Normal simulation speed (dimensionless)
+  REVERSE: -1.0, // Reverse simulation speed (dimensionless)
+  HISTORY_BUFFER_SIZE: 1000, // Number of simulation steps to store for time reversal
 } as const;
 
 // Scale factors for converting between model and view coordinates

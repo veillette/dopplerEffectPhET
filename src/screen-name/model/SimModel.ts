@@ -49,6 +49,16 @@ export type PositionHistoryPoint = {
   timestamp: number;
 };
 
+// Simulation state history type for time reversal
+export type SimulationState = {
+  time: number;
+  sourcePosition: Vector2;
+  observerPosition: Vector2;
+  sourceVelocity: Vector2;
+  observerVelocity: Vector2;
+  waves: Wave[];
+};
+
 export class Scenario extends EnumerationValue {
   // String property for display name
   public readonly displayNameProperty: TReadOnlyProperty<string>;
@@ -146,6 +156,10 @@ export class SimModel {
   public readonly simulationTimeProperty: NumberProperty; // in seconds (s)
   public readonly observedFrequencyProperty: NumberProperty; // in Hertz (Hz)
   public readonly playProperty: BooleanProperty;
+  
+  // Time reversal properties
+  private simulationStateHistory: SimulationState[] = [];
+  private isReversing: boolean = false;
 
   // Wave collection
   public readonly waves: ObservableArray<Wave>; // radius in meters (m)
@@ -295,6 +309,10 @@ export class SimModel {
     this.observerPositionHistory = [];
     this.lastTrailSampleTime = 0;
     this.waveformUpdateCounter = 0;
+    
+    // Clear simulation state history
+    this.simulationStateHistory = [];
+    this.isReversing = false;
 
     // Reset components
     this.waveGenerator.reset();
@@ -311,6 +329,8 @@ export class SimModel {
       case TimeSpeed.NORMAL:
       default:
         return TIME_SPEED.NORMAL;
+      case TimeSpeed.REVERSE:
+        return TIME_SPEED.REVERSE;
     }
   }
 
@@ -323,10 +343,20 @@ export class SimModel {
     if (!this.playProperty.value && !force) return;
 
     // Apply time scaling
-    const modelDt = dt * SCALE.TIME * this.getTimeSpeedValue(); // in seconds (s)
+    const timeSpeedValue = this.getTimeSpeedValue();
+    const modelDt = dt * SCALE.TIME * timeSpeedValue; // in seconds (s)
+    
+    // Check if we're reversing time
+    if (timeSpeedValue < 0) {
+      this.handleTimeReversal(modelDt);
+      return;
+    }
 
     // Update simulation time
     this.simulationTimeProperty.value += modelDt; // in seconds (s)
+
+    // Store simulation state for time reversal
+    this.storeSimulationState();
 
     // Update positions
     this.source.updatePosition(modelDt);
@@ -346,6 +376,104 @@ export class SimModel {
 
     // Calculate Doppler effect and update waveforms
     this.updateWaveforms(modelDt);
+  }
+  
+  /**
+   * Handle time reversal by restoring previous simulation states
+   * @param modelDt - elapsed time in seconds (model time) (s)
+   */
+  private handleTimeReversal(modelDt: number): void {
+    // Calculate target time (negative dt means going backward)
+    const targetTime = this.simulationTimeProperty.value + modelDt;
+    
+    // Find the closest state in history
+    const closestState = this.findClosestState(targetTime);
+    
+    if (closestState) {
+      // Restore the simulation to this state
+      this.restoreSimulationState(closestState);
+      
+      // Update simulation time
+      this.simulationTimeProperty.value = targetTime;
+      
+      // Update waveforms
+      this.updateWaveforms(modelDt);
+    } else {
+      // No history available, just update time
+      this.simulationTimeProperty.value = targetTime;
+    }
+  }
+  
+  /**
+   * Store the current simulation state for time reversal
+   */
+  private storeSimulationState(): void {
+    // Create a deep copy of the current state
+    const currentState: SimulationState = {
+      time: this.simulationTimeProperty.value,
+      sourcePosition: this.sourcePositionProperty.value.copy(),
+      observerPosition: this.observerPositionProperty.value.copy(),
+      sourceVelocity: this.sourceVelocityProperty.value.copy(),
+      observerVelocity: this.observerVelocityProperty.value.copy(),
+      waves: this.waves.map(wave => ({
+        position: wave.position.copy(),
+        radius: wave.radius,
+        birthTime: wave.birthTime,
+        sourceVelocity: wave.sourceVelocity.copy(),
+        sourceFrequency: wave.sourceFrequency,
+        phaseAtEmission: wave.phaseAtEmission
+      }))
+    };
+    
+    // Add to history
+    this.simulationStateHistory.push(currentState);
+    
+    // Limit history size
+    if (this.simulationStateHistory.length > TIME_SPEED.HISTORY_BUFFER_SIZE) {
+      this.simulationStateHistory.shift();
+    }
+  }
+  
+  /**
+   * Find the closest simulation state to a target time
+   * @param targetTime - The time to find the closest state for
+   * @returns The closest simulation state or null if none found
+   */
+  private findClosestState(targetTime: number): SimulationState | null {
+    if (this.simulationStateHistory.length === 0) {
+      return null;
+    }
+    
+    // Find the closest state by time
+    let closestState = this.simulationStateHistory[0];
+    let minTimeDiff = Math.abs(closestState.time - targetTime);
+    
+    for (let i = 1; i < this.simulationStateHistory.length; i++) {
+      const state = this.simulationStateHistory[i];
+      const timeDiff = Math.abs(state.time - targetTime);
+      
+      if (timeDiff < minTimeDiff) {
+        minTimeDiff = timeDiff;
+        closestState = state;
+      }
+    }
+    
+    return closestState;
+  }
+  
+  /**
+   * Restore the simulation to a previous state
+   * @param state - The simulation state to restore
+   */
+  private restoreSimulationState(state: SimulationState): void {
+    // Restore positions and velocities
+    this.sourcePositionProperty.value = state.sourcePosition.copy();
+    this.observerPositionProperty.value = state.observerPosition.copy();
+    this.sourceVelocityProperty.value = state.sourceVelocity.copy();
+    this.observerVelocityProperty.value = state.observerVelocity.copy();
+    
+    // Restore waves
+    this.waveGenerator.restoreWavesFromHistory(state.time);
   }
 
   /**
@@ -417,7 +545,7 @@ export class SimModel {
     // Calculate update interval as reciprocal of time speed factor
     // When time speed is low (0.25), update every 4 frames
     // When time speed is normal (1.0), update every frame
-    const updateInterval = Math.round(TIME_SPEED.NORMAL / timeSpeedValue);
+    const updateInterval = Math.round(TIME_SPEED.NORMAL / Math.abs(timeSpeedValue));
 
     if (this.waveformUpdateCounter % updateInterval === 0) {
       // Update emitted waveform
