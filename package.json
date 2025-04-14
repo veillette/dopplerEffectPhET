@@ -1,6 +1,6 @@
 {
   "name": "doppler-effect",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An interactive simulation of the Doppler Effect using SceneryStack.",
   "repository": {
     "type": "git",
