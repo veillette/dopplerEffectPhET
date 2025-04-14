@@ -61,6 +61,10 @@ export const SCALE = {
   MODEL_VIEW: 0.1, // Pixels per meter (pixels/m)
 } as const;
 
+export const WAVEFORM = {
+  HISTORY_BUFFER_SIZE: 100, // Number of points in waveform history buffer (dimensionless)
+} as const;
+
 /**
  * Trail-related constants
  */
