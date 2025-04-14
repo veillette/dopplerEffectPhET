@@ -106,7 +106,7 @@ export class MoveableObjectView extends Node {
     this.velocityVector.updateVector(position, velocity);
     
     // Update trail if trail points are provided
-    if (trailPoints) {
+    if (trailPoints !== undefined) {
       this.trailPath.updateTrail(trailPoints);
     }
   }
