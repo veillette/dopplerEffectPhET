@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
 export default defineConfig({
   // Set the base URL to the repository name for GitHub Pages
@@ -6,4 +7,5 @@ export default defineConfig({
   build: {
     sourcemap: false,
   },
+  plugins: [viteSingleFile()],
 });
