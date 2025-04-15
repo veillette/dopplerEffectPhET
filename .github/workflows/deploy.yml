@@ -69,11 +69,6 @@ jobs:
           name: dist-files
           path: dist
 
-      - name: Create ZIP package
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          zip -r doppler-effect-v${VERSION}.zip dist
-
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -82,7 +77,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            doppler-effect-v*.zip
+            dist/*
           body: |
             # Release ${{ github.ref_name }}
 
