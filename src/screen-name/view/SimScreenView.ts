@@ -37,6 +37,17 @@ import { DragHandlerManager } from "./managers/DragHandlerManager";
 import { KeyboardHandlerManager } from "./managers/KeyboardHandlerManager";
 import { WaveManager } from "./managers/WaveManager";
 
+// UI constants
+const UI = {
+  SOURCE_RADIUS: 10,
+  OBSERVER_RADIUS: 10,
+  GRAPH_HEIGHT: 60,
+  GRAPH_WIDTH: 210,
+  GRAPH_MARGIN: 20,
+  GRAPH_SPACING: 10,
+  TRAIL_WIDTH: 2,
+} as const;
+
 /**
  * View for the Doppler Effect simulation
  *
@@ -94,17 +105,6 @@ export class SimScreenView extends ScreenView {
   // Selection tracking
   private readonly selectedObjectProperty: Property<"source" | "observer"> =
     new Property<"source" | "observer">("source");
-
-  // UI constants
-  private readonly UI = {
-    SOURCE_RADIUS: 10,
-    OBSERVER_RADIUS: 10,
-    GRAPH_HEIGHT: 60,
-    GRAPH_WIDTH: 210,
-    GRAPH_MARGIN: 20,
-    GRAPH_SPACING: 10,
-    TRAIL_WIDTH: 2,
-  };
 
   // Sound elements
   private readonly clickSound: Sound;
@@ -196,13 +196,13 @@ export class SimScreenView extends ScreenView {
       visibleValuesProperty: this.visibleValuesProperty,
       textColorProperty: DopplerEffectColors.textColorProperty,
       velocityScale: SCALE.VELOCITY_VECTOR,
-      trailWidth: this.UI.TRAIL_WIDTH,
+      trailWidth: UI.TRAIL_WIDTH,
     };
 
     // Create source and observer views
     this.sourceView = new MoveableObjectView(this.modelViewTransform, {
       ...commonMoveableObjectViewOptions,
-      radius: this.UI.SOURCE_RADIUS,
+      radius: UI.SOURCE_RADIUS,
       fillColorProperty: DopplerEffectColors.sourceColorProperty,
       velocityArrowColorProperty:
         DopplerEffectColors.sourceVelocityArrowColorProperty,
@@ -212,7 +212,7 @@ export class SimScreenView extends ScreenView {
 
     this.observerView = new MoveableObjectView(this.modelViewTransform, {
       ...commonMoveableObjectViewOptions,
-      radius: this.UI.OBSERVER_RADIUS,
+      radius: UI.OBSERVER_RADIUS,
       fillColorProperty: DopplerEffectColors.observerColorProperty,
       velocityArrowColorProperty:
         DopplerEffectColors.observerVelocityArrowColorProperty,
@@ -231,7 +231,7 @@ export class SimScreenView extends ScreenView {
     );
 
     // Create selection highlight
-    this.selectionHighlightCircle = new Circle(this.UI.SOURCE_RADIUS + 5, {
+    this.selectionHighlightCircle = new Circle(UI.SOURCE_RADIUS + 5, {
       stroke: DopplerEffectColors.selectionColorProperty,
       lineWidth: 2,
       // Make purely visual elements non-accessible
@@ -277,10 +277,10 @@ export class SimScreenView extends ScreenView {
     // Create graph display component
     this.graphDisplayNode = new GraphDisplayNode({
       layoutBounds: this.layoutBounds,
-      graphHeight: this.UI.GRAPH_HEIGHT,
-      graphWidth: this.UI.GRAPH_WIDTH,
-      graphMargin: this.UI.GRAPH_MARGIN,
-      graphSpacing: this.UI.GRAPH_SPACING,
+      graphHeight: UI.GRAPH_HEIGHT,
+      graphWidth: UI.GRAPH_WIDTH,
+      graphMargin: UI.GRAPH_MARGIN,
+      graphSpacing: UI.GRAPH_SPACING,
     });
     this.graphDisplayNode.setAccessibleName("Frequency graphs");
     this.graphLayer.addChild(this.graphDisplayNode);
@@ -295,10 +295,10 @@ export class SimScreenView extends ScreenView {
         textColorProperty: DopplerEffectColors.textColorProperty,
         blueshiftColorProperty: DopplerEffectColors.blueshiftColorProperty,
         redshiftColorProperty: DopplerEffectColors.redshiftColorProperty,
-        graphWidth: this.UI.GRAPH_WIDTH,
-        graphHeight: this.UI.GRAPH_HEIGHT,
-        graphMargin: this.UI.GRAPH_MARGIN,
-        graphSpacing: this.UI.GRAPH_SPACING,
+        graphWidth: UI.GRAPH_WIDTH,
+        graphHeight: UI.GRAPH_HEIGHT,
+        graphMargin: UI.GRAPH_MARGIN,
+        graphSpacing: UI.GRAPH_SPACING,
       },
     );
     this.statusDisplayNode.setAccessibleName("Status information");
@@ -603,13 +603,13 @@ export class SimScreenView extends ScreenView {
    */
   private updateSelectionHighlight(): void {
     if (this.selectedObjectProperty.value === "source") {
-      this.selectionHighlightCircle.radius = this.UI.SOURCE_RADIUS + 5;
+      this.selectionHighlightCircle.radius = UI.SOURCE_RADIUS + 5;
       this.selectionHighlightCircle.center =
         this.modelViewTransform.modelToViewPosition(
           this.model.sourcePositionProperty.value,
         );
     } else {
-      this.selectionHighlightCircle.radius = this.UI.OBSERVER_RADIUS + 5;
+      this.selectionHighlightCircle.radius = UI.OBSERVER_RADIUS + 5;
       this.selectionHighlightCircle.center =
         this.modelViewTransform.modelToViewPosition(
           this.model.observerPositionProperty.value,

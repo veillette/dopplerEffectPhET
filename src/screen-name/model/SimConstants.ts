@@ -76,11 +76,11 @@ export const TRAIL = {
   MAX_AGE: 5,
 
   // Interval between trail samples in seconds
-  SAMPLE_INTERVAL: 0.05,
+  SAMPLE_INTERVAL: 0.1,
 
   // Default trail width in pixels
   DEFAULT_WIDTH: 2,
 
   // Default trail opacity
   DEFAULT_OPACITY: 0.7,
-};
+} as const;

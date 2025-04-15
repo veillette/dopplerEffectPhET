@@ -19,6 +19,7 @@ import {
   SCALE,
   SOUND_DATA,
   TIME_SPEED,
+  TRAIL,
   WaveformPoint,
 } from "./SimConstants";
 import { WaveGenerator } from "./WaveGenerator";
@@ -92,13 +93,6 @@ export class Scenario extends EnumerationValue {
   // Gets a list of keys, values and mapping between them. For use in EnumerationProperty
   public static readonly enumeration = new Enumeration(Scenario);
 }
-
-// Trail constants
-export const TRAIL = {
-  MAX_POINTS: 200, // Maximum number of points to store in position history
-  MAX_AGE: 20.0, // Maximum age of trail points in seconds
-  SAMPLE_INTERVAL: 0.1, // Time interval between trail points in seconds
-};
 
 /**
  * Model for the Doppler Effect simulation
