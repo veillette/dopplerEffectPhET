@@ -8,12 +8,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Changed to write to allow creating releases
+  contents: write
   pages: write
   id-token: write
 
+env:
+  NODE_VERSION: "20"
+
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +24,28 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run check
+
+      - name: Lint
+        run: npm run lint
+
+  build:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
 
       - name: Install dependencies
@@ -30,7 +54,13 @@ jobs:
       - name: Build
         env:
           GITHUB_PAGES: true
-        run: npx tsc && npx vite build
+        run: npm run build
+
+      - name: Cache build output
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -45,6 +75,7 @@ jobs:
         with:
           name: dist-files
           path: ./dist
+          retention-days: 5
 
   deploy:
     environment:
@@ -69,6 +100,22 @@ jobs:
           name: dist-files
           path: dist
 
+      - name: Generate changelog
+        id: changelog
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: commits } = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: 'main',
+              head: context.sha
+            });
+            const changelog = commits.commits
+              .map(commit => `- ${commit.commit.message}`)
+              .join('\n');
+            return changelog;
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -81,4 +128,8 @@ jobs:
           body: |
             # Release ${{ github.ref_name }}
 
-            Doppler Effect Simulation.
+            ## Changes
+            ${{ steps.changelog.outputs.result }}
+
+            ## Doppler Effect Simulation
+            An interactive simulation of the Doppler Effect using SceneryStack.
