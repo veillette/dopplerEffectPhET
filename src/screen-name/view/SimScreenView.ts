@@ -16,7 +16,7 @@ import {
 } from "scenerystack";
 import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
 import { Scenario, SimModel } from "../model/SimModel";
-import { PHYSICS, SCALE } from "../model/SimConstants";
+import { SCALE } from "../model/SimConstants";
 import { StringManager } from "../../i18n/StringManager";
 import { Sound } from "./utils/Sound";
 import { MicrophoneNode } from "./components/MicrophoneNode";

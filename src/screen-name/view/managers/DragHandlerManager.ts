@@ -43,7 +43,7 @@ export class DragHandlerManager {
     // Create derived property for max speed based on sound speed
     this.maxSpeedProperty = new DerivedProperty(
       [soundSpeedProperty],
-      (soundSpeed) => soundSpeed * PHYSICS.MAX_SPEED_FACTOR
+      (soundSpeed) => soundSpeed * PHYSICS.MAX_SPEED_FACTOR,
     );
   }
 
