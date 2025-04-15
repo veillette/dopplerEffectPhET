@@ -266,10 +266,12 @@ export class SimScreenView extends ScreenView {
     this.sourceDragManager = new DragHandlerManager(
       this.modelViewTransform,
       this.layoutBounds,
+      this.model.soundSpeedProperty,
     );
     this.observerDragManager = new DragHandlerManager(
       this.modelViewTransform,
       this.layoutBounds,
+      this.model.soundSpeedProperty,
     );
 
     this.keyboardManager = new KeyboardHandlerManager();
@@ -449,7 +451,6 @@ export class SimScreenView extends ScreenView {
         this.selectedObjectProperty.value = "source";
         this.updateSelectionHighlight();
       },
-      PHYSICS.MAX_SPEED,
     );
 
     this.observerDragManager.attachDragHandler(
@@ -461,7 +462,6 @@ export class SimScreenView extends ScreenView {
         this.selectedObjectProperty.value = "observer";
         this.updateSelectionHighlight();
       },
-      PHYSICS.MAX_SPEED,
     );
 
     // Create and load click sound

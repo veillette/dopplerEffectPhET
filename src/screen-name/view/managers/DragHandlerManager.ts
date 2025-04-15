@@ -11,6 +11,8 @@ import {
   Node,
   Property,
   Bounds2,
+  ReadOnlyProperty,
+  DerivedProperty,
 } from "scenerystack";
 import { PHYSICS } from "../../../screen-name/model/SimConstants";
 
@@ -21,19 +23,28 @@ export class DragHandlerManager {
   private readonly dragBounds: Bounds2;
   private dragListener: DragListener | null = null;
   private dragOffset: Vector2 = new Vector2(0, 0);
+  private readonly maxSpeedProperty: ReadOnlyProperty<number>;
 
   /**
    * Constructor for the DragHandlerManager
    *
    * @param modelViewTransform - Transform between model and view coordinates
    * @param layoutBounds - View bounds for constraining drag
+   * @param soundSpeedProperty - Property containing the current sound speed
    */
   constructor(
     private readonly modelViewTransform: ModelViewTransform2,
     layoutBounds: Bounds2,
+    soundSpeedProperty: Property<number>,
   ) {
     // drag bounds are the same as the layout bounds
     this.dragBounds = layoutBounds;
+
+    // Create derived property for max speed based on sound speed
+    this.maxSpeedProperty = new DerivedProperty(
+      [soundSpeedProperty],
+      (soundSpeed) => soundSpeed * PHYSICS.MAX_SPEED_FACTOR
+    );
   }
 
   /**
@@ -44,7 +55,6 @@ export class DragHandlerManager {
    * @param velocityProperty - Model property for object velocity
    * @param movingProperty - Model property for object moving state
    * @param onSelected - Callback for when object is selected
-   * @param maxSpeed - Maximum speed limit for the object
    */
   public attachDragHandler(
     targetNode: Node,
@@ -52,7 +62,6 @@ export class DragHandlerManager {
     velocityProperty: Property<Vector2>,
     movingProperty: Property<boolean>,
     onSelected: () => void,
-    maxSpeed: number,
   ): void {
     // Create the drag listener
     this.dragListener = new DragListener({
@@ -84,8 +93,8 @@ export class DragHandlerManager {
         );
 
         // Limit velocity to maximum speed
-        if (desiredVelocity.magnitude > maxSpeed) {
-          desiredVelocity.normalize().timesScalar(maxSpeed);
+        if (desiredVelocity.magnitude > this.maxSpeedProperty.value) {
+          desiredVelocity.normalize().timesScalar(this.maxSpeedProperty.value);
         }
 
         // Apply velocity

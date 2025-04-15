@@ -21,9 +21,9 @@ export type WaveformPoint = {
 export const PHYSICS = {
   SOUND_SPEED: 343.0, // Speed of sound in air (m/s) at room temperature
   EMITTED_FREQ: 4, // Base frequency of emitted sound (Hz)
-  MAX_SPEED: 150.0, // Maximum speed for source and observer (m/s)
   MIN_VELOCITY_MAG: 0.1, // Minimum velocity magnitude (m/s)
   POSITION_TO_VELOCITY_FACTOR: 0.1, // Factor to convert position difference to velocity (1/time)
+  MAX_SPEED_FACTOR: 0.90, // Factor to limit maximum speed relative to sound speed
 } as const;
 
 // Wave properties
