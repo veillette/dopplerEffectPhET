@@ -2,20 +2,28 @@
   "name": "doppler-effect",
   "version": "0.0.7",
   "description": "An interactive simulation of the Doppler Effect using SceneryStack.",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/veillette/dopplerEffectPhET.git"
   },
+  "bugs": {
+    "url": "https://github.com/veillette/dopplerEffectPhET/issues"
+  },
+  "homepage": "https://github.com/veillette/dopplerEffectPhET#readme",
   "type": "module",
   "keywords": [
     "Doppler Effect",
     "simulation",
     "SceneryStack",
-    "interactive"
+    "interactive",
+    "physics",
+    "education"
   ],
   "scripts": {
     "start": "npx vite",
     "build": "npx tsc && npx vite build",
+    "preview": "npx vite preview",
     "lint": "npx eslint .",
     "format": "npx prettier --write .",
     "fix": "npx eslint --fix . && npx prettier --write .",
@@ -38,5 +46,8 @@
     "typescript-eslint": "^8.18.2",
     "vite": "^6.2.5",
     "vite-plugin-singlefile": "^2.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
