@@ -22,8 +22,7 @@
     "release": "npm version patch && git push && git push --tags",
     "check": "npx tsc --noEmit",
     "serve": "npx serve -s dist",
-    "dev": "npx run vite",
-    "watch": "npx run tsc --watch",
+    "watch": "npx tsc --watch",
     "clean": "rm -rf dist"
   },
   "dependencies": {
