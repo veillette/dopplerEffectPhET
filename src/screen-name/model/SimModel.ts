@@ -150,10 +150,9 @@ export class SimModel {
   public readonly simulationTimeProperty: NumberProperty; // in seconds (s)
   public readonly observedFrequencyProperty: NumberProperty; // in Hertz (Hz)
   public readonly playProperty: BooleanProperty;
-  
+
   // Time reversal properties
   private simulationStateHistory: SimulationState[] = [];
-  private isReversing: boolean = false;
 
   // Wave collection
   public readonly waves: ObservableArray<Wave>; // radius in meters (m)
@@ -303,10 +302,10 @@ export class SimModel {
     this.observerPositionHistory = [];
     this.lastTrailSampleTime = 0;
     this.waveformUpdateCounter = 0;
-    
+
     // Clear simulation state history
     this.simulationStateHistory = [];
-    this.isReversing = false;
+
 
     // Reset components
     this.waveGenerator.reset();
@@ -323,8 +322,6 @@ export class SimModel {
       case TimeSpeed.NORMAL:
       default:
         return TIME_SPEED.NORMAL;
-      case TimeSpeed.REVERSE:
-        return TIME_SPEED.REVERSE;
     }
   }
 
@@ -339,7 +336,7 @@ export class SimModel {
     // Apply time scaling
     const timeSpeedValue = this.getTimeSpeedValue();
     const modelDt = dt * SCALE.TIME * timeSpeedValue; // in seconds (s)
-    
+
     // Check if we're reversing time
     if (timeSpeedValue < 0) {
       this.handleTimeReversal(modelDt);
@@ -371,7 +368,7 @@ export class SimModel {
     // Calculate Doppler effect and update waveforms
     this.updateWaveforms(modelDt);
   }
-  
+
   /**
    * Handle time reversal by restoring previous simulation states
    * @param modelDt - elapsed time in seconds (model time) (s)
@@ -379,17 +376,17 @@ export class SimModel {
   private handleTimeReversal(modelDt: number): void {
     // Calculate target time (negative dt means going backward)
     const targetTime = this.simulationTimeProperty.value + modelDt;
-    
+
     // Find the closest state in history
     const closestState = this.findClosestState(targetTime);
-    
+
     if (closestState) {
       // Restore the simulation to this state
       this.restoreSimulationState(closestState);
-      
+
       // Update simulation time
       this.simulationTimeProperty.value = targetTime;
-      
+
       // Update waveforms
       this.updateWaveforms(modelDt);
     } else {
@@ -397,7 +394,7 @@ export class SimModel {
       this.simulationTimeProperty.value = targetTime;
     }
   }
-  
+
   /**
    * Store the current simulation state for time reversal
    */
@@ -418,16 +415,16 @@ export class SimModel {
         phaseAtEmission: wave.phaseAtEmission
       }))
     };
-    
+
     // Add to history
     this.simulationStateHistory.push(currentState);
-    
+
     // Limit history size
     if (this.simulationStateHistory.length > TIME_SPEED.HISTORY_BUFFER_SIZE) {
       this.simulationStateHistory.shift();
     }
   }
-  
+
   /**
    * Find the closest simulation state to a target time
    * @param targetTime - The time to find the closest state for
@@ -437,24 +434,24 @@ export class SimModel {
     if (this.simulationStateHistory.length === 0) {
       return null;
     }
-    
+
     // Find the closest state by time
     let closestState = this.simulationStateHistory[0];
     let minTimeDiff = Math.abs(closestState.time - targetTime);
-    
+
     for (let i = 1; i < this.simulationStateHistory.length; i++) {
       const state = this.simulationStateHistory[i];
       const timeDiff = Math.abs(state.time - targetTime);
-      
+
       if (timeDiff < minTimeDiff) {
         minTimeDiff = timeDiff;
         closestState = state;
       }
     }
-    
+
     return closestState;
   }
-  
+
   /**
    * Restore the simulation to a previous state
    * @param state - The simulation state to restore
@@ -465,7 +462,7 @@ export class SimModel {
     this.observerPositionProperty.value = state.observerPosition.copy();
     this.sourceVelocityProperty.value = state.sourceVelocity.copy();
     this.observerVelocityProperty.value = state.observerVelocity.copy();
-    
+
     // Restore waves
     this.waveGenerator.restoreWavesFromHistory(state.time);
   }
