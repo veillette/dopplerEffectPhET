@@ -118,4 +118,40 @@ export class MovableObject {
     this.positionHistory = [];
     this.lastTrailSampleTime = 0;
   }
+
+  /**
+   * Restore a previous state from history
+   * @param historyPoint The position history point to restore
+   */
+  public restoreFromHistory(historyPoint: PositionHistoryPoint): void {
+    this.positionProperty.value = historyPoint.position.copy();
+    this.lastTrailSampleTime = historyPoint.timestamp;
+  }
+
+  /**
+   * Find the closest position history point to a given time
+   * @param targetTime The time to find the closest history point for
+   * @returns The closest position history point or null if none found
+   */
+  public findClosestHistoryPoint(targetTime: number): PositionHistoryPoint | null {
+    if (this.positionHistory.length === 0) {
+      return null;
+    }
+
+    // Find the closest point by timestamp
+    let closestPoint = this.positionHistory[0];
+    let minTimeDiff = Math.abs(closestPoint.timestamp - targetTime);
+
+    for (let i = 1; i < this.positionHistory.length; i++) {
+      const point = this.positionHistory[i];
+      const timeDiff = Math.abs(point.timestamp - targetTime);
+      
+      if (timeDiff < minTimeDiff) {
+        minTimeDiff = timeDiff;
+        closestPoint = point;
+      }
+    }
+
+    return closestPoint;
+  }
 }
