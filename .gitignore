@@ -21,6 +21,7 @@ tsconfig.tsbuildinfo
 *.njsproj
 *.sln
 *.sw?
+.idx/*
 /dopplerEffectPhET.code-workspace
 /CLAUDE.md
 /.cursorrules
