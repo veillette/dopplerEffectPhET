@@ -21,9 +21,9 @@ export type WaveformPoint = {
 export const PHYSICS = {
   SOUND_SPEED: 343.0, // Speed of sound in air (m/s) at room temperature
   EMITTED_FREQ: 4, // Base frequency of emitted sound (Hz)
-  MAX_SPEED: 150.0, // Maximum speed for source and observer (m/s)
   MIN_VELOCITY_MAG: 0.1, // Minimum velocity magnitude (m/s)
   POSITION_TO_VELOCITY_FACTOR: 0.1, // Factor to convert position difference to velocity (1/time)
+  MAX_SPEED_FACTOR: 0.9, // Factor to limit maximum speed relative to sound speed
 } as const;
 
 // Wave properties
@@ -63,6 +63,10 @@ export const SCALE = {
   MODEL_VIEW: 0.1, // Pixels per meter (pixels/m)
 } as const;
 
+export const WAVEFORM = {
+  HISTORY_BUFFER_SIZE: 100, // Number of points in waveform history buffer (dimensionless)
+} as const;
+
 /**
  * Trail-related constants
  */
@@ -74,11 +78,11 @@ export const TRAIL = {
   MAX_AGE: 5,
 
   // Interval between trail samples in seconds
-  SAMPLE_INTERVAL: 0.05,
+  SAMPLE_INTERVAL: 0.1,
 
   // Default trail width in pixels
   DEFAULT_WIDTH: 2,
 
   // Default trail opacity
   DEFAULT_OPACITY: 0.7,
-};
+} as const;

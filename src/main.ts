@@ -1,3 +1,4 @@
+import "./brand.js";
 import { onReadyToLaunch, Sim } from "scenerystack/sim";
 import { Tandem, Property, Bounds2 } from "scenerystack";
 import { SimScreen } from "./screen-name/SimScreen.js";

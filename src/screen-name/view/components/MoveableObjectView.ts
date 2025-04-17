@@ -94,9 +94,9 @@ export class MoveableObjectView extends Node {
    * @param trailPoints - History of position points for the trail
    */
   public update(
-    position: Vector2, 
-    velocity: Vector2, 
-    trailPoints?: PositionHistoryPoint[]
+    position: Vector2,
+    velocity: Vector2,
+    trailPoints?: PositionHistoryPoint[],
   ): void {
     // Update object position
     this.objectNode.center =
@@ -104,13 +104,13 @@ export class MoveableObjectView extends Node {
 
     // Update velocity vector
     this.velocityVector.updateVector(position, velocity);
-    
+
     // Update trail if trail points are provided
     if (trailPoints !== undefined) {
       this.trailPath.updateTrail(trailPoints);
     }
   }
-  
+
   /**
    * Reset the object's trail
    */

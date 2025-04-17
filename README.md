@@ -15,10 +15,56 @@ An interactive simulation of the Doppler Effect, built with [SceneryStack](https
 - Velocity vector visualization
 - Multiple preset scenarios
 - Adjustable sound speed and frequency
+- Numerical values for frequency, speed, and distance
 - Pause/Resume functionality
 - Keyboard controls
 - Projector mode
 - Extendable language support
+- Produce a single HTML file for easy distribution
+
+## Controls
+
+### Mouse Controls
+
+- Click and drag the green source or purple observer to move them and control their velocity
+- Drag the microphone icon to listen to the sound
+
+### Keyboard Controls
+
+- `S`: Select source
+- `O`: Select observer
+- Arrow keys: Move selected object
+- Space: Pause/Resume simulation
+- `R`: Reset simulation
+- `T`: Toggle motion trails
+- `M`: Toggle microphone
+- `H`: Toggle help display
+- `+/-`: Adjust emitted frequency
+- `,/.`: Adjust sound speed
+- `0-6`: Load preset scenarios
+  - `0`: Free Play
+  - `1`: Source approaching observer
+  - `2`: Source receding from observer
+  - `3`: Observer approaching source
+  - `4`: Observer receding from source
+  - `5`: Same direction motion
+  - `6`: Perpendicular motion
+
+## Physics Model
+
+The simulation uses the Doppler Effect formula:
+
+```
+f' = f * (v - vₒ) / (v - vₛ)
+```
+
+where:
+
+- f' is the observed frequency
+- f is the emitted frequency
+- v is the speed of sound
+- vₒ is the observer's velocity component along the line of sight
+- vₛ is the source's velocity component along the line of sight
 
 ## Getting Started
 
@@ -54,46 +100,18 @@ npm start
 npm run build
 ```
 
-## Controls
+### Development Scripts
 
-### Mouse Controls
-
-- Click and drag the green source or purple observer to move them
-- The connecting line shows the distance between source and observer
-
-### Keyboard Controls
-
-- `S`: Select source
-- `O`: Select observer
-- Arrow keys: Move selected object
-- Space: Pause/Resume simulation
-- `R`: Reset simulation
-- `H`: Toggle help display
-- `+/-`: Adjust emitted frequency
-- `,/.`: Adjust sound speed
-- `1-6`: Load preset scenarios
-  - `1`: Source approaching observer
-  - `2`: Source receding from observer
-  - `3`: Observer approaching source
-  - `4`: Observer receding from source
-  - `5`: Same direction motion
-  - `6`: Perpendicular motion
-
-## Physics Model
-
-The simulation uses the Doppler Effect formula:
-
-```
-f' = f * (v - vₒ) / (v - vₛ)
-```
-
-where:
-
-- f' is the observed frequency
-- f is the emitted frequency
-- v is the speed of sound
-- vₒ is the observer's velocity component along the line of sight
-- vₛ is the source's velocity component along the line of sight
+- `npm start`: Start development server
+- `npm run build`: Build for production
+- `npm run preview`: Preview production build
+- `npm run lint`: Run ESLint
+- `npm run format`: Format code with Prettier
+- `npm run fix`: Fix linting and formatting issues
+- `npm run check`: Type-check TypeScript code
+- `npm run serve`: Serve production build
+- `npm run watch`: Watch TypeScript files
+- `npm run clean`: Clean build directory
 
 ## Contributing
 
