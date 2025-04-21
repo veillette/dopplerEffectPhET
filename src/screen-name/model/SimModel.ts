@@ -338,7 +338,7 @@ export class SimModel {
     const modelDt = dt * SCALE.TIME * timeSpeedValue; // in seconds (s)
 
     // Check if we're reversing time
-    if (timeSpeedValue < 0) {
+    if (modelDt < 0) {
       this.handleTimeReversal(modelDt);
       return;
     }
