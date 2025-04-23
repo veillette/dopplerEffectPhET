@@ -596,6 +596,7 @@ export class SimModel {
         phaseAtArrival,
         timeSinceArrival,
         timeSpeedValue,
+        dt
       );
     }
   }

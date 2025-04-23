@@ -1,4 +1,4 @@
-import { WAVEFORM, WaveformPoint } from "./SimConstants";
+import { WaveformPoint } from "./SimConstants";
 
 /**
  * WaveformManager handles the generation and updating of waveform data
@@ -25,16 +25,6 @@ export class WaveformManager {
   // Time tracking for history
   private lastUpdateTime: number = 0; // in seconds (s)
 
-  // History buffer for time reversal
-  private waveformHistory: {
-    time: number;
-    emittedSoundData: number[];
-    observedSoundData: number[];
-    emittedWaveformData: WaveformPoint[];
-    observedWaveformData: WaveformPoint[];
-    emittedPhase: number;
-    observedPhase: number;
-  }[] = [];
 
   /**
    * Create a new WaveformManager
@@ -78,17 +68,9 @@ export class WaveformManager {
     dt: number,
     timeSpeedFactor: number,
   ): void {
-    // Store current state in history for time reversal
-    this.storeWaveformHistory();
 
     // Calculate emitted waveform phase (in model time)
     this.emittedPhase += emittedFrequency * dt * Math.PI * 2; // in radians (rad)
-
-    // Normalize phase to [0, 2π)
-    this.emittedPhase = this.emittedPhase % (2 * Math.PI);
-    if (this.emittedPhase < 0) {
-      this.emittedPhase += 2 * Math.PI;
-    }
 
     // Update sound data and apply time speed factor using encapsulated methods
     this.updateSoundData(
@@ -96,6 +78,7 @@ export class WaveformManager {
       this.emittedWaveformData,
       Math.sin(this.emittedPhase),
       timeSpeedFactor,
+      dt,
     );
 
     // Update last update time
@@ -114,9 +97,8 @@ export class WaveformManager {
     phaseAtArrival: number,
     timeSinceArrival: number,
     timeSpeedFactor: number,
+    dt: number,
   ): void {
-    // Store current state in history for time reversal
-    this.storeWaveformHistory();
 
     // Calculate additional phase based on observed frequency
     const additionalPhase = timeSinceArrival * observedFrequency * Math.PI * 2; // in radians (rad)
@@ -128,6 +110,7 @@ export class WaveformManager {
       this.observedWaveformData,
       Math.sin(this.observedPhase),
       timeSpeedFactor,
+      dt,
     );
   }
 
@@ -138,17 +121,25 @@ export class WaveformManager {
    * @param waveformData Waveform data array to update
    * @param newValue New value to add to the sound data
    * @param timeSpeedFactor Time speed factor to apply to waveform data
+   * @param dt Elapsed time in seconds (s)
    */
   private updateSoundData(
     soundData: number[],
     waveformData: WaveformPoint[],
     newValue: number,
     timeSpeedFactor: number,
+    dt: number,
   ): void {
-    // Update sound data with new value (shift off oldest value)
-    soundData.push(newValue);
-    soundData.shift();
-
+    if (dt > 0) {
+      // Update sound data with new value (shift off oldest value)
+      soundData.push(newValue);
+      soundData.shift();
+    } else {
+      // For time reversal, move data from end to beginning
+      const lastValue = soundData[soundData.length - 1];
+      soundData.pop();
+      soundData.unshift(lastValue);
+    }
     // Apply time speed factor to the waveform display
     this.updateWaveformData(soundData, waveformData, timeSpeedFactor);
   }
@@ -179,8 +170,6 @@ export class WaveformManager {
    * Sets observed waveform data to zeroes
    */
   public clearObservedWaveform(): void {
-    // Store current state in history for time reversal
-    this.storeWaveformHistory();
 
     this.observedSoundData.push(0);
     this.observedSoundData.shift();
@@ -210,141 +199,7 @@ export class WaveformManager {
     this.emittedPhase = 0;
     this.observedPhase = 0;
     this.lastUpdateTime = 0;
-    this.waveformHistory = [];
     this.initializeArrays(soundDataSize);
   }
 
-  /**
-   * Store the current waveform state in history for time reversal
-   */
-  private storeWaveformHistory(): void {
-    // Create deep copies of the arrays
-    const emittedSoundDataCopy = [...this.emittedSoundData];
-    const observedSoundDataCopy = [...this.observedSoundData];
-    const emittedWaveformDataCopy = this.emittedWaveformData.map((point) => ({
-      ...point,
-    }));
-    const observedWaveformDataCopy = this.observedWaveformData.map((point) => ({
-      ...point,
-    }));
-
-    // Store in history
-    this.waveformHistory.push({
-      time: this.lastUpdateTime,
-      emittedSoundData: emittedSoundDataCopy,
-      observedSoundData: observedSoundDataCopy,
-      emittedWaveformData: emittedWaveformDataCopy,
-      observedWaveformData: observedWaveformDataCopy,
-      emittedPhase: this.emittedPhase,
-      observedPhase: this.observedPhase,
-    });
-
-    // Limit history size
-    if (this.waveformHistory.length > WAVEFORM.HISTORY_BUFFER_SIZE) {
-      this.waveformHistory.shift();
-    }
-  }
-
-  /**
-   * Restore waveform state from history for time reversal
-   * @param targetTime The time to restore to
-   */
-  public restoreFromHistory(targetTime: number): void {
-    // Find the closest state in history
-    let closestState = null;
-    let minTimeDiff = Infinity;
-
-    for (const state of this.waveformHistory) {
-      const timeDiff = Math.abs(state.time - targetTime);
-      if (timeDiff < minTimeDiff) {
-        minTimeDiff = timeDiff;
-        closestState = state;
-      }
-    }
-
-    if (closestState) {
-      // Restore sound data
-      for (let i = 0; i < this.emittedSoundData.length; i++) {
-        if (i < closestState.emittedSoundData.length) {
-          this.emittedSoundData[i] = closestState.emittedSoundData[i];
-        }
-      }
-
-      for (let i = 0; i < this.observedSoundData.length; i++) {
-        if (i < closestState.observedSoundData.length) {
-          this.observedSoundData[i] = closestState.observedSoundData[i];
-        }
-      }
-
-      // Restore waveform data
-      for (let i = 0; i < this.emittedWaveformData.length; i++) {
-        if (i < closestState.emittedWaveformData.length) {
-          this.emittedWaveformData[i] = {
-            ...closestState.emittedWaveformData[i],
-          };
-        }
-      }
-
-      for (let i = 0; i < this.observedWaveformData.length; i++) {
-        if (i < closestState.observedWaveformData.length) {
-          this.observedWaveformData[i] = {
-            ...closestState.observedWaveformData[i],
-          };
-        }
-      }
-
-      // Restore phase
-      this.emittedPhase = closestState.emittedPhase;
-      this.observedPhase = closestState.observedPhase;
-
-      // Restore time tracking
-      this.lastUpdateTime = closestState.time;
-    }
-  }
-
-  /**
-   * Update waveform data with time reversal support
-   * This method should be called from the SimModel when time is reversed
-   * @param dt Time step (can be negative for time reversal)
-   * @param timeSpeedFactor Time speed factor (can be negative for time reversal)
-   */
-  public updateWithTimeReversal(dt: number, timeSpeedFactor: number): void {
-    // If time is moving backward, restore from history
-    if (dt < 0) {
-      // Calculate target time
-      const targetTime = this.lastUpdateTime + dt;
-
-      // Find and restore the closest state in history
-      this.restoreFromHistory(targetTime);
-
-      // Update the waveform display with the correct time direction
-      this.updateWaveformDisplay(timeSpeedFactor);
-    } else {
-      // Normal forward time update
-      this.lastUpdateTime += dt;
-      this.updateWaveformDisplay(timeSpeedFactor);
-    }
-  }
-
-  /**
-   * Update the waveform display with the correct time direction
-   * @param timeSpeedFactor Time speed factor (can be negative for time reversal)
-   */
-  private updateWaveformDisplay(timeSpeedFactor: number): void {
-    // Update emitted waveform display
-    for (let i = 0; i < this.emittedSoundData.length; i++) {
-      this.emittedWaveformData[i] = {
-        t: (i / this.emittedSoundData.length) * timeSpeedFactor,
-        y: this.emittedSoundData[i],
-      };
-    }
-
-    // Update observed waveform display
-    for (let i = 0; i < this.observedSoundData.length; i++) {
-      this.observedWaveformData[i] = {
-        t: (i / this.observedSoundData.length) * timeSpeedFactor,
-        y: this.observedSoundData[i],
-      };
-    }
-  }
 }
