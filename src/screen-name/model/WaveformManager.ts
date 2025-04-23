@@ -1,4 +1,4 @@
-import { WaveformPoint } from "./SimConstants";
+import { WaveformPoint, WAVEFORM } from "./SimConstants";
 
 /**
  * WaveformManager handles the generation and updating of waveform data
@@ -13,6 +13,10 @@ export class WaveformManager {
   public readonly emittedSoundData: number[] = []; // raw amplitude values (dimensionless)
   public readonly observedSoundData: number[] = []; // raw amplitude values (dimensionless)
 
+  // History buffers for sound data
+  private readonly emittedSoundHistory: number[] = []; // historical raw amplitude values (dimensionless)
+  private readonly observedSoundHistory: number[] = []; // historical raw amplitude values (dimensionless)
+
   // Waveforms data for view visualization
   // These are the processed arrays used by the GraphDisplayNode
   public readonly emittedWaveformData: WaveformPoint[] = []; // t in seconds (s), y is dimensionless
@@ -24,7 +28,6 @@ export class WaveformManager {
 
   // Time tracking for history
   private lastUpdateTime: number = 0; // in seconds (s)
-
 
   /**
    * Create a new WaveformManager
@@ -45,6 +48,8 @@ export class WaveformManager {
     this.observedSoundData.length = 0;
     this.emittedWaveformData.length = 0;
     this.observedWaveformData.length = 0;
+    this.emittedSoundHistory.length = 0;
+    this.observedSoundHistory.length = 0;
 
     // Initialize arrays with default values
     for (let i = 0; i < size; i++) {
@@ -68,13 +73,13 @@ export class WaveformManager {
     dt: number,
     timeSpeedFactor: number,
   ): void {
-
     // Calculate emitted waveform phase (in model time)
     this.emittedPhase += emittedFrequency * dt * Math.PI * 2; // in radians (rad)
 
     // Update sound data and apply time speed factor using encapsulated methods
     this.updateSoundData(
       this.emittedSoundData,
+      this.emittedSoundHistory,
       this.emittedWaveformData,
       Math.sin(this.emittedPhase),
       timeSpeedFactor,
@@ -99,7 +104,6 @@ export class WaveformManager {
     timeSpeedFactor: number,
     dt: number,
   ): void {
-
     // Calculate additional phase based on observed frequency
     const additionalPhase = timeSinceArrival * observedFrequency * Math.PI * 2; // in radians (rad)
     this.observedPhase = phaseAtArrival + additionalPhase; // in radians (rad)
@@ -107,6 +111,7 @@ export class WaveformManager {
     // Update sound data and apply time speed factor using encapsulated methods
     this.updateSoundData(
       this.observedSoundData,
+      this.observedSoundHistory,
       this.observedWaveformData,
       Math.sin(this.observedPhase),
       timeSpeedFactor,
@@ -118,6 +123,7 @@ export class WaveformManager {
    * Update sound data arrays and waveform data
    * Encapsulates the common pattern of updating sound data and applying time speed factor
    * @param soundData Sound data array to update
+   * @param soundHistory History buffer for sound data
    * @param waveformData Waveform data array to update
    * @param newValue New value to add to the sound data
    * @param timeSpeedFactor Time speed factor to apply to waveform data
@@ -125,20 +131,38 @@ export class WaveformManager {
    */
   private updateSoundData(
     soundData: number[],
+    soundHistory: number[],
     waveformData: WaveformPoint[],
     newValue: number,
     timeSpeedFactor: number,
     dt: number,
   ): void {
     if (dt > 0) {
+      // Store shifted value in history buffer
+      const shiftedValue = soundData[0];
+      soundHistory.push(shiftedValue);
+
+      // Maintain history buffer size
+      if (soundHistory.length > WAVEFORM.HISTORY_BUFFER_SIZE) {
+        soundHistory.shift();
+      }
+
       // Update sound data with new value (shift off oldest value)
       soundData.push(newValue);
       soundData.shift();
     } else {
-      // For time reversal, move data from end to beginning
-      const lastValue = soundData[soundData.length - 1];
-      soundData.pop();
-      soundData.unshift(lastValue);
+      // For time reversal, get value from history if available
+      if (soundHistory.length > 0) {
+        const historicalValue = soundHistory[soundHistory.length - 1];
+        soundHistory.pop();
+        soundData.pop();
+        soundData.unshift(historicalValue);
+      } else {
+        // If no history available, just move data as before
+        const lastValue = 0;
+        soundData.pop();
+        soundData.unshift(lastValue);
+      }
     }
     // Apply time speed factor to the waveform display
     this.updateWaveformData(soundData, waveformData, timeSpeedFactor);
@@ -170,7 +194,6 @@ export class WaveformManager {
    * Sets observed waveform data to zeroes
    */
   public clearObservedWaveform(): void {
-
     this.observedSoundData.push(0);
     this.observedSoundData.shift();
 
@@ -201,5 +224,4 @@ export class WaveformManager {
     this.lastUpdateTime = 0;
     this.initializeArrays(soundDataSize);
   }
-
 }

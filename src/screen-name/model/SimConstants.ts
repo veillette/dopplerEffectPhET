@@ -64,7 +64,7 @@ export const SCALE = {
 } as const;
 
 export const WAVEFORM = {
-  HISTORY_BUFFER_SIZE: 100, // Number of points in waveform history buffer (dimensionless)
+  HISTORY_BUFFER_SIZE: 1000, // Number of points in waveform history buffer (dimensionless)
 } as const;
 
 /**
