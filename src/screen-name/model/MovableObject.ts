@@ -133,7 +133,9 @@ export class MovableObject {
    * @param targetTime The time to find the closest history point for
    * @returns The closest position history point or null if none found
    */
-  public findClosestHistoryPoint(targetTime: number): PositionHistoryPoint | null {
+  public findClosestHistoryPoint(
+    targetTime: number,
+  ): PositionHistoryPoint | null {
     if (this.positionHistory.length === 0) {
       return null;
     }
@@ -145,7 +147,7 @@ export class MovableObject {
     for (let i = 1; i < this.positionHistory.length; i++) {
       const point = this.positionHistory[i];
       const timeDiff = Math.abs(point.timestamp - targetTime);
-      
+
       if (timeDiff < minTimeDiff) {
         minTimeDiff = timeDiff;
         closestPoint = point;

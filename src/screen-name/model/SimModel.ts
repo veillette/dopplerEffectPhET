@@ -306,7 +306,6 @@ export class SimModel {
     // Clear simulation state history
     this.simulationStateHistory = [];
 
-
     // Reset components
     this.waveGenerator.reset();
     this.waveformManager.reset(SOUND_DATA.ARRAY_SIZE);
@@ -406,14 +405,14 @@ export class SimModel {
       observerPosition: this.observerPositionProperty.value.copy(),
       sourceVelocity: this.sourceVelocityProperty.value.copy(),
       observerVelocity: this.observerVelocityProperty.value.copy(),
-      waves: this.waves.map(wave => ({
+      waves: this.waves.map((wave) => ({
         position: wave.position.copy(),
         radius: wave.radius,
         birthTime: wave.birthTime,
         sourceVelocity: wave.sourceVelocity.copy(),
         sourceFrequency: wave.sourceFrequency,
-        phaseAtEmission: wave.phaseAtEmission
-      }))
+        phaseAtEmission: wave.phaseAtEmission,
+      })),
     };
 
     // Add to history
@@ -536,7 +535,9 @@ export class SimModel {
     // Calculate update interval as reciprocal of time speed factor
     // When time speed is low (0.25), update every 4 frames
     // When time speed is normal (1.0), update every frame
-    const updateInterval = Math.round(TIME_SPEED.NORMAL / Math.abs(timeSpeedValue));
+    const updateInterval = Math.round(
+      TIME_SPEED.NORMAL / Math.abs(timeSpeedValue),
+    );
 
     if (this.waveformUpdateCounter % updateInterval === 0) {
       // Update emitted waveform
@@ -596,7 +597,7 @@ export class SimModel {
         phaseAtArrival,
         timeSinceArrival,
         timeSpeedValue,
-        dt
+        dt,
       );
     }
   }

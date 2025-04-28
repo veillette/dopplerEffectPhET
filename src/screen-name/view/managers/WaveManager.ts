@@ -131,19 +131,19 @@ export class WaveManager {
       this.updateWaveNode(wave, simulationTime);
     });
   }
-  
+
   /**
    * Synchronize wave nodes with the current set of waves
    * This is used when restoring from history during time reversal
-   * 
+   *
    * @param waves - Collection of wave objects
    */
-  public synchronizeWaveNodes(
-    waves: { forEach: (callback: (wave: Wave) => void) => void },
-  ): void {
+  public synchronizeWaveNodes(waves: {
+    forEach: (callback: (wave: Wave) => void) => void;
+  }): void {
     // Create a set of waves to track which ones we've processed
     const processedWaves = new Set<Wave>();
-    
+
     // Update existing nodes and track which waves we've processed
     waves.forEach((wave) => {
       if (this.waveNodesMap.has(wave)) {
@@ -156,7 +156,7 @@ export class WaveManager {
         processedWaves.add(wave);
       }
     });
-    
+
     // Remove nodes for waves that no longer exist
     for (const [wave, node] of this.waveNodesMap.entries()) {
       if (!processedWaves.has(wave)) {

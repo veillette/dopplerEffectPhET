@@ -41,10 +41,10 @@ export class WaveGenerator {
         sourceFrequency: this.getEmittedFrequency(), // in Hertz (Hz)
         phaseAtEmission: this.getEmittedPhase(), // in radians (rad)
       };
-      
+
       // Add to active waves
       this.waves.add(newWave);
-      
+
       // Store in history for time reversal
       this.waveHistory.push(newWave);
 
@@ -70,7 +70,7 @@ export class WaveGenerator {
       const age = simulationTime - wave.birthTime; // in seconds (s)
 
       // Remove waves that are too old or have a negative radius (due to time reversal)
-      if (age > WAVE.MAX_AGE  || wave.radius < 0) {
+      if (age > WAVE.MAX_AGE || wave.radius < 0) {
         // WAVE.MAX_AGE in seconds (s)
         this.waves.remove(wave);
       }
@@ -85,7 +85,7 @@ export class WaveGenerator {
     this.waves.clear();
     this.waveHistory = [];
   }
-  
+
   /**
    * Restore waves from history for a specific time
    * @param targetTime The time to restore waves to
@@ -93,27 +93,28 @@ export class WaveGenerator {
   public restoreWavesFromHistory(targetTime: number): void {
     // Clear current waves
     this.waves.clear();
-    
+
     // Find waves that should exist at the target time
     for (const wave of this.waveHistory) {
       // Only include waves that were born before the target time
       // and haven't exceeded their maximum age
-      if (wave.birthTime <= targetTime && 
-          targetTime - wave.birthTime <= WAVE.MAX_AGE) {
-        
+      if (
+        wave.birthTime <= targetTime &&
+        targetTime - wave.birthTime <= WAVE.MAX_AGE
+      ) {
         // Create a copy of the wave with the correct radius for the target time
         const age = targetTime - wave.birthTime;
         const radius = age * this.getSoundSpeed();
-        
+
         const restoredWave = {
           position: wave.position.copy(),
           radius: radius,
           birthTime: wave.birthTime,
           sourceVelocity: wave.sourceVelocity.copy(),
           sourceFrequency: wave.sourceFrequency,
-          phaseAtEmission: wave.phaseAtEmission
+          phaseAtEmission: wave.phaseAtEmission,
         };
-        
+
         // Add to active waves
         this.waves.add(restoredWave);
       }
