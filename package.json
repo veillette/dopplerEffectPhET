@@ -34,7 +34,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "scenerystack": "~1.0.0"
+    "scenerystack": "~3.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
