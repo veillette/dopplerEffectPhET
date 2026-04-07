@@ -379,6 +379,7 @@ export class SimScreenView extends ScreenView {
 
     // Add time control node
     const timeControlNode = new TimeControlNode(this.model.playProperty, {
+      tagName: 'div',
       timeSpeedProperty: this.model.timeSpeedProperty,
       playPauseStepButtonOptions: {
         includeStepBackwardButton: true,
