@@ -11,20 +11,20 @@
  */
 
 import {
+  type Bounds2,
   Line,
   Node,
   Path,
   PhetFont,
-  ReadOnlyProperty,
+  type ProfileColorProperty,
+  type ReadOnlyProperty,
   Rectangle,
   Shape,
   Text,
   Vector2,
-  ProfileColorProperty,
-  Bounds2,
 } from "scenerystack";
-import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
+import { StringManager } from "../../../i18n/StringManager";
 
 // Constants for layout positioning and styling
 const GRAPH_TITLE_OFFSET_X = 5;
@@ -85,8 +85,7 @@ export class GraphDisplayNode extends Node {
 
     const graphY1 = GRAPH_INITIAL_Y;
     const graphY2 = graphY1 + options.graphHeight + options.graphSpacing;
-    const graphX =
-      options.layoutBounds.maxX - options.graphWidth - options.graphMargin;
+    const graphX = options.layoutBounds.maxX - options.graphWidth - options.graphMargin;
 
     // Create emitted sound graph elements
     const emittedGraphConfig = this.createGraphElements(
@@ -159,15 +158,9 @@ export class GraphDisplayNode extends Node {
     });
 
     // Create center line
-    const centerLine = new Line(
-      graphX,
-      graphY + height / 2,
-      graphX + width,
-      graphY + height / 2,
-      {
-        stroke: gridColorProperty,
-      },
-    );
+    const centerLine = new Line(graphX, graphY + height / 2, graphX + width, graphY + height / 2, {
+      stroke: gridColorProperty,
+    });
 
     // Create waveform path
     const waveform = new Path(new Shape(), {
@@ -218,10 +211,7 @@ export class GraphDisplayNode extends Node {
    * @param emittedWaveformData - Data for the emitted waveform
    * @param observedWaveformData - Data for the observed waveform
    */
-  public updateWaveforms(
-    emittedWaveformData: WaveformPoint[],
-    observedWaveformData: WaveformPoint[],
-  ): void {
+  public updateWaveforms(emittedWaveformData: WaveformPoint[], observedWaveformData: WaveformPoint[]): void {
     // Update emitted sound waveform
     this.emittedWaveform.shape = this.createWaveformShape(
       this.emittedGraph.left,
@@ -248,8 +238,8 @@ export class GraphDisplayNode extends Node {
    */
   private findMaxT(waveformData: WaveformPoint[]): number {
     let maxT = 0;
-    for (let i = 0; i < waveformData.length; i++) {
-      maxT = Math.max(maxT, waveformData[i].t);
+    for (const point of waveformData) {
+      maxT = Math.max(maxT, point.t);
     }
     return maxT;
   }
@@ -281,15 +271,15 @@ export class GraphDisplayNode extends Node {
 
     let firstValidPointFound = false;
 
-    for (let i = 0; i < waveformData.length; i++) {
+    for (const point of waveformData) {
       // Right-align the waveform by scaling the t values relative to maxT
       // This ensures the current time (latest point) is always at the right edge
-      const normalizedT = maxT > 0 ? waveformData[i].t / maxT : 0;
+      const normalizedT = maxT > 0 ? point.t / maxT : 0;
       const tRatio = Math.max(0, Math.min(1, normalizedT));
       const x = graphX + tRatio * graphWidth;
 
       // Apply Y-scaling factor to amplify the waveform amplitude
-      const y = graphY - waveformData[i].y * WAVEFORM_Y_SCALING;
+      const y = graphY - point.y * WAVEFORM_Y_SCALING;
 
       if (!firstValidPointFound) {
         shape.moveToPoint(new Vector2(x, y));

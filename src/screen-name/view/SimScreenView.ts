@@ -1,41 +1,39 @@
 import {
+  type Bounds2,
   Circle,
   ComboBox,
   DerivedProperty,
   ModelViewTransform2,
   Node,
   PhetFont,
+  type ProfileColorProperty,
   Property,
   ResetAllButton,
   Text,
   TimeControlNode,
+  type TReadOnlyProperty,
   Vector2,
-  ProfileColorProperty,
-  Bounds2,
-  TReadOnlyProperty,
 } from "scenerystack";
-import { ScreenView, ScreenViewOptions } from "scenerystack/sim";
-import { Scenario, SimModel } from "../model/SimModel";
-import { SCALE } from "../model/SimConstants";
-import { StringManager } from "../../i18n/StringManager";
-import { Sound } from "./utils/Sound";
-import { MicrophoneNode } from "./components/MicrophoneNode";
+import { ScreenView, type ScreenViewOptions } from "scenerystack/sim";
 import DopplerEffectColors from "../../DopplerEffectColors";
-
+import { StringManager } from "../../i18n/StringManager";
+import { SCALE } from "../model/SimConstants";
+import { Scenario, type SimModel } from "../model/SimModel";
+import { ConnectingLineNode } from "./components/ConnectingLineNode";
 // Import components directly
 import { ControlPanelNode } from "./components/ControlPanelNode";
 import { GraphDisplayNode } from "./components/GraphDisplayNode";
-import { StatusTextNode } from "./components/StatusTextNode";
-import { ScaleMarkNode } from "./components/ScaleMarkNode";
 import { GridNode } from "./components/GridNode";
-import { ConnectingLineNode } from "./components/ConnectingLineNode";
 import { KeyboardShorcutsNode } from "./components/KeyboardShorcutsNode";
+import { MicrophoneNode } from "./components/MicrophoneNode";
 import { MoveableObjectView } from "./components/MoveableObjectView";
-
+import { ScaleMarkNode } from "./components/ScaleMarkNode";
+import { StatusTextNode } from "./components/StatusTextNode";
 // Import managers directly
 import { DragHandlerManager } from "./managers/DragHandlerManager";
 import { KeyboardHandlerManager } from "./managers/KeyboardHandlerManager";
 import { WaveManager } from "./managers/WaveManager";
+import { Sound } from "./utils/Sound";
 
 // UI constants
 const UI = {
@@ -103,8 +101,9 @@ export class SimScreenView extends ScreenView {
   private readonly keyboardHelpVisibleProperty: Property<boolean>;
 
   // Selection tracking
-  private readonly selectedObjectProperty: Property<"source" | "observer"> =
-    new Property<"source" | "observer">("source");
+  private readonly selectedObjectProperty: Property<"source" | "observer"> = new Property<"source" | "observer">(
+    "source",
+  );
 
   // Sound elements
   private readonly clickSound: Sound;
@@ -130,12 +129,11 @@ export class SimScreenView extends ScreenView {
     this.model = model;
 
     // Create model-view transform - y-axis is inverted and centered on the screen
-    this.modelViewTransform =
-      ModelViewTransform2.createSinglePointScaleInvertedYMapping(
-        new Vector2(0, 0),
-        this.layoutBounds.center,
-        SCALE.MODEL_VIEW,
-      );
+    this.modelViewTransform = ModelViewTransform2.createSinglePointScaleInvertedYMapping(
+      new Vector2(0, 0),
+      this.layoutBounds.center,
+      SCALE.MODEL_VIEW,
+    );
 
     // Create property values
     this.visibleValuesProperty = new Property<boolean>(false);
@@ -146,12 +144,8 @@ export class SimScreenView extends ScreenView {
     this.keyboardHelpVisibleProperty = new Property<boolean>(false);
 
     // Matches visibleBounds horizontally, layoutBounds vertically
-    this.interfaceBoundsProperty = new DerivedProperty(
-      [this.visibleBoundsProperty],
-      (visibleBounds) =>
-        visibleBounds
-          .withMinY(this.layoutBounds.minY)
-          .withMaxY(this.layoutBounds.maxY),
+    this.interfaceBoundsProperty = new DerivedProperty([this.visibleBoundsProperty], (visibleBounds) =>
+      visibleBounds.withMinY(this.layoutBounds.minY).withMaxY(this.layoutBounds.maxY),
     );
 
     // Create display layers and add to the view in correct order (waves behind objects)
@@ -160,30 +154,19 @@ export class SimScreenView extends ScreenView {
     this.controlLayer = new Node();
     this.graphLayer = new Node();
 
-    [
-      this.waveLayer,
-      this.objectLayer,
-      this.graphLayer,
-      this.controlLayer,
-    ].forEach((layer) => this.addChild(layer));
+    for (const layer of [this.waveLayer, this.objectLayer, this.graphLayer, this.controlLayer]) {
+      this.addChild(layer);
+    }
 
     // Create grid node
-    const modelBoundsProperty = new DerivedProperty(
-      [this.visibleBoundsProperty],
-      (visibleBounds) => {
-        return this.modelViewTransform.viewToModelBounds(visibleBounds);
-      },
-    );
+    const modelBoundsProperty = new DerivedProperty([this.visibleBoundsProperty], (visibleBounds) => {
+      return this.modelViewTransform.viewToModelBounds(visibleBounds);
+    });
 
-    this.gridNode = new GridNode(
-      this.modelViewTransform,
-      this.visibleGridProperty,
-      modelBoundsProperty,
-      {
-        majorGridSize: 1000, // 1000 meters between major grid lines
-        minorLinesPerMajorLine: 4, // 4 minor lines between each major line
-      },
-    );
+    this.gridNode = new GridNode(this.modelViewTransform, this.visibleGridProperty, modelBoundsProperty, {
+      majorGridSize: 1000, // 1000 meters between major grid lines
+      minorLinesPerMajorLine: 4, // 4 minor lines between each major line
+    });
     this.gridNode.setAccessibleName("Grid lines showing distance scale");
 
     // Add grid to the scene - behind the waves
@@ -204,8 +187,7 @@ export class SimScreenView extends ScreenView {
       ...commonMoveableObjectViewOptions,
       radius: UI.SOURCE_RADIUS,
       fillColorProperty: DopplerEffectColors.sourceColorProperty,
-      velocityArrowColorProperty:
-        DopplerEffectColors.sourceVelocityArrowColorProperty,
+      velocityArrowColorProperty: DopplerEffectColors.sourceVelocityArrowColorProperty,
       trailColorProperty: DopplerEffectColors.sourceColorProperty,
       accessibleName: "Sound source",
     });
@@ -214,8 +196,7 @@ export class SimScreenView extends ScreenView {
       ...commonMoveableObjectViewOptions,
       radius: UI.OBSERVER_RADIUS,
       fillColorProperty: DopplerEffectColors.observerColorProperty,
-      velocityArrowColorProperty:
-        DopplerEffectColors.observerVelocityArrowColorProperty,
+      velocityArrowColorProperty: DopplerEffectColors.observerVelocityArrowColorProperty,
       trailColorProperty: DopplerEffectColors.observerColorProperty,
       accessibleName: "Observer",
     });
@@ -249,19 +230,13 @@ export class SimScreenView extends ScreenView {
       this.modelViewTransform,
       this.model.microphonePositionProperty,
       this.model.waveDetectedProperty,
-      new Property(
-        this.modelViewTransform.viewToModelBounds(this.layoutBounds),
-      ),
+      new Property(this.modelViewTransform.viewToModelBounds(this.layoutBounds)),
     );
     this.microphoneNode.setAccessibleName("Microphone");
     this.objectLayer.addChild(this.microphoneNode);
 
     // Initialize managers
-    this.waveManager = new WaveManager(
-      this.waveLayer,
-      this.modelViewTransform,
-      DopplerEffectColors.waveColorProperty,
-    );
+    this.waveManager = new WaveManager(this.waveLayer, this.modelViewTransform, DopplerEffectColors.waveColorProperty);
 
     this.sourceDragManager = new DragHandlerManager(
       this.modelViewTransform,
@@ -328,25 +303,18 @@ export class SimScreenView extends ScreenView {
     this.controlLayer.addChild(this.controlPanel);
 
     // Create scenario items for the combo box
-    const scenarioItems = this.createScenarioItems(
-      DopplerEffectColors.textColorProperty,
-    );
+    const scenarioItems = this.createScenarioItems(DopplerEffectColors.textColorProperty);
 
     const listParentNode = new Node();
 
     // Create combo box using SceneryStack API
-    const scenarioComboBoxNode = new ComboBox(
-      model.scenarioProperty,
-      scenarioItems,
-      listParentNode,
-      {
-        buttonFill: DopplerEffectColors.backgroundColorProperty,
-        listFill: DopplerEffectColors.backgroundColorProperty,
-        buttonStroke: DopplerEffectColors.textColorProperty,
-        listStroke: DopplerEffectColors.textColorProperty,
-        highlightFill: DopplerEffectColors.highlightColorProperty,
-      },
-    );
+    const scenarioComboBoxNode = new ComboBox(model.scenarioProperty, scenarioItems, listParentNode, {
+      buttonFill: DopplerEffectColors.backgroundColorProperty,
+      listFill: DopplerEffectColors.backgroundColorProperty,
+      buttonStroke: DopplerEffectColors.textColorProperty,
+      listStroke: DopplerEffectColors.textColorProperty,
+      highlightFill: DopplerEffectColors.highlightColorProperty,
+    });
     scenarioComboBoxNode.setAccessibleName("Scenario selector");
 
     // Add to control layer
@@ -364,13 +332,9 @@ export class SimScreenView extends ScreenView {
     this.controlLayer.addChild(resetAllButtonNode);
 
     // Create scale mark node to show model-to-view scale
-    const scaleMarkNode = new ScaleMarkNode(
-      this.modelViewTransform,
-      this.visibleValuesProperty,
-      {
-        scaleModelLength: 1000, // 1000 meters scale for better visibility
-      },
-    );
+    const scaleMarkNode = new ScaleMarkNode(this.modelViewTransform, this.visibleValuesProperty, {
+      scaleModelLength: 1000, // 1000 meters scale for better visibility
+    });
     scaleMarkNode.setAccessibleName("Scale: 1000 meters");
 
     // Position the scale mark
@@ -379,7 +343,7 @@ export class SimScreenView extends ScreenView {
 
     // Add time control node
     const timeControlNode = new TimeControlNode(this.model.playProperty, {
-      tagName: 'div',
+      tagName: "div",
       timeSpeedProperty: this.model.timeSpeedProperty,
       playPauseStepButtonOptions: {
         includeStepBackwardButton: true,
@@ -422,8 +386,7 @@ export class SimScreenView extends ScreenView {
           this.visibleTrailsProperty.value = !this.visibleTrailsProperty.value;
         },
         onToggleHelp: () => {
-          this.keyboardHelpVisibleProperty.value =
-            !this.keyboardHelpVisibleProperty.value;
+          this.keyboardHelpVisibleProperty.value = !this.keyboardHelpVisibleProperty.value;
         },
         onReset: () => {
           this.model.reset();
@@ -519,9 +482,7 @@ export class SimScreenView extends ScreenView {
     this.microphoneNode.visible = this.model.microphoneEnabledProperty.value;
 
     // Update microphone position to match model's reset position
-    const micViewPos = this.modelViewTransform.modelToViewPosition(
-      this.model.microphonePositionProperty.value,
-    );
+    const micViewPos = this.modelViewTransform.modelToViewPosition(this.model.microphonePositionProperty.value);
     this.microphoneNode.center = micViewPos;
 
     // Update view to match model
@@ -559,10 +520,7 @@ export class SimScreenView extends ScreenView {
 
     // Update waveforms when model changes
     this.model.simulationTimeProperty.link(() => {
-      this.graphDisplayNode.updateWaveforms(
-        this.model.emittedWaveformData,
-        this.model.observedWaveformData,
-      );
+      this.graphDisplayNode.updateWaveforms(this.model.emittedWaveformData, this.model.observedWaveformData);
     });
 
     // Listen for wave detection to play click sound
@@ -593,10 +551,7 @@ export class SimScreenView extends ScreenView {
     this.updateSelectionHighlight();
 
     // Update waves
-    this.waveManager.updateWaves(
-      this.model.waves,
-      this.model.simulationTimeProperty.value,
-    );
+    this.waveManager.updateWaves(this.model.waves, this.model.simulationTimeProperty.value);
   }
 
   /**
@@ -605,16 +560,14 @@ export class SimScreenView extends ScreenView {
   private updateSelectionHighlight(): void {
     if (this.selectedObjectProperty.value === "source") {
       this.selectionHighlightCircle.radius = UI.SOURCE_RADIUS + 5;
-      this.selectionHighlightCircle.center =
-        this.modelViewTransform.modelToViewPosition(
-          this.model.sourcePositionProperty.value,
-        );
+      this.selectionHighlightCircle.center = this.modelViewTransform.modelToViewPosition(
+        this.model.sourcePositionProperty.value,
+      );
     } else {
       this.selectionHighlightCircle.radius = UI.OBSERVER_RADIUS + 5;
-      this.selectionHighlightCircle.center =
-        this.modelViewTransform.modelToViewPosition(
-          this.model.observerPositionProperty.value,
-        );
+      this.selectionHighlightCircle.center = this.modelViewTransform.modelToViewPosition(
+        this.model.observerPositionProperty.value,
+      );
     }
   }
 
@@ -623,9 +576,7 @@ export class SimScreenView extends ScreenView {
    * @param textColorProperty - The color property for the scenario text
    * @returns Array of scenario items for the combo box
    */
-  private createScenarioItems(
-    textColorProperty: ProfileColorProperty,
-  ): { value: Scenario; createNode: () => Text }[] {
+  private createScenarioItems(textColorProperty: ProfileColorProperty): { value: Scenario; createNode: () => Text }[] {
     // Generate items by iterating through the scenario enumeration
     // Use the displayNameProperty from each Scenario instance
     return Scenario.enumeration.values.map((scenario) => ({

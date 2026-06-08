@@ -6,21 +6,21 @@
  */
 
 import {
-  Bounds2,
-  Node,
-  Property,
-  Rectangle,
-  KeyboardHelpSectionRow,
+  type Bounds2,
   KeyboardHelpSection,
+  KeyboardHelpSectionRow,
+  Node,
+  type Property,
+  Rectangle,
 } from "scenerystack";
-import { StringManager } from "../../../i18n/StringManager";
 import {
+  BasicActionsKeyboardHelpSection,
   KeyboardHelpIconFactory,
   LetterKeyNode,
-  BasicActionsKeyboardHelpSection,
   TwoColumnKeyboardHelpContent,
 } from "scenerystack/scenery-phet";
 import DopplerEffectColors from "../../../DopplerEffectColors";
+import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the keyboard shortcuts display
 type KeyboardShorcutsOptions = {
@@ -76,8 +76,7 @@ export class KeyboardShorcutsNode extends Node {
           strings.objectSelection.selectSourceStringProperty,
           new LetterKeyNode("S"),
           {
-            labelInnerContent:
-              strings.a11y.objectSelection.selectSourceStringProperty,
+            labelInnerContent: strings.a11y.objectSelection.selectSourceStringProperty,
             labelOptions: {
               fill: DopplerEffectColors.controlPanelTextColorProperty,
             },
@@ -87,8 +86,7 @@ export class KeyboardShorcutsNode extends Node {
           strings.objectSelection.selectObserverStringProperty,
           new LetterKeyNode("O"),
           {
-            labelInnerContent:
-              strings.a11y.objectSelection.selectObserverStringProperty,
+            labelInnerContent: strings.a11y.objectSelection.selectObserverStringProperty,
             labelOptions: {
               fill: DopplerEffectColors.controlPanelTextColorProperty,
             },
@@ -96,30 +94,9 @@ export class KeyboardShorcutsNode extends Node {
         ),
         KeyboardHelpSectionRow.labelWithIcon(
           strings.objectSelection.moveObjectStringProperty,
-          KeyboardHelpIconFactory.arrowKeysRowIcon(),
+          KeyboardHelpIconFactory.arrowOrWasdKeysRowIcon(),
           {
-            labelInnerContent:
-              strings.a11y.objectSelection.moveObjectStringProperty,
-            labelOptions: {
-              fill: DopplerEffectColors.controlPanelTextColorProperty,
-            },
-          },
-        ),
-        KeyboardHelpSectionRow.labelWithIcon(
-          strings.objectSelection.moveObjectStringProperty,
-          KeyboardHelpIconFactory.iconToIcon(
-            new LetterKeyNode("W"),
-            KeyboardHelpIconFactory.iconToIcon(
-              new LetterKeyNode("A"),
-              KeyboardHelpIconFactory.iconToIcon(
-                new LetterKeyNode("S"),
-                new LetterKeyNode("D"),
-              ),
-            ),
-          ),
-          {
-            labelInnerContent:
-              strings.a11y.objectSelection.moveObjectStringProperty,
+            labelInnerContent: strings.a11y.objectSelection.moveObjectStringProperty,
             labelOptions: {
               fill: DopplerEffectColors.controlPanelTextColorProperty,
             },
@@ -135,10 +112,7 @@ export class KeyboardShorcutsNode extends Node {
       [
         KeyboardHelpSectionRow.labelWithIcon(
           strings.adjust.frequencyStringProperty,
-          KeyboardHelpIconFactory.iconToIcon(
-            new LetterKeyNode("+"),
-            new LetterKeyNode("-"),
-          ),
+          KeyboardHelpIconFactory.iconToIcon(new LetterKeyNode("+"), new LetterKeyNode("-")),
           {
             labelInnerContent: strings.a11y.adjust.frequencyStringProperty,
             labelOptions: {
@@ -148,10 +122,7 @@ export class KeyboardShorcutsNode extends Node {
         ),
         KeyboardHelpSectionRow.labelWithIcon(
           strings.adjust.soundSpeedStringProperty,
-          KeyboardHelpIconFactory.iconToIcon(
-            new LetterKeyNode(","),
-            new LetterKeyNode("."),
-          ),
+          KeyboardHelpIconFactory.iconToIcon(new LetterKeyNode(","), new LetterKeyNode(".")),
           {
             labelInnerContent: strings.a11y.adjust.soundSpeedStringProperty,
             labelOptions: {
@@ -169,10 +140,7 @@ export class KeyboardShorcutsNode extends Node {
       [
         KeyboardHelpSectionRow.labelWithIcon(
           strings.scenarioKeys.freePlayStringProperty,
-          KeyboardHelpIconFactory.iconToIcon(
-            new LetterKeyNode("0"),
-            new LetterKeyNode("6"),
-          ),
+          KeyboardHelpIconFactory.iconToIcon(new LetterKeyNode("0"), new LetterKeyNode("6")),
           {
             labelInnerContent: strings.a11y.scenarioKeys.freePlayStringProperty,
             labelOptions: {
@@ -188,36 +156,24 @@ export class KeyboardShorcutsNode extends Node {
     const visibilitySection = new KeyboardHelpSection(
       strings.sections.visibilityOptionsStringProperty,
       [
-        KeyboardHelpSectionRow.labelWithIcon(
-          strings.toggleMotionTrailsStringProperty,
-          new LetterKeyNode("T"),
-          {
-            labelInnerContent: strings.a11y.toggleMotionTrailsStringProperty,
-            labelOptions: {
-              fill: DopplerEffectColors.controlPanelTextColorProperty,
-            },
+        KeyboardHelpSectionRow.labelWithIcon(strings.toggleMotionTrailsStringProperty, new LetterKeyNode("T"), {
+          labelInnerContent: strings.a11y.toggleMotionTrailsStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty,
           },
-        ),
-        KeyboardHelpSectionRow.labelWithIcon(
-          strings.toggleMicrophoneStringProperty,
-          new LetterKeyNode("M"),
-          {
-            labelInnerContent: strings.a11y.toggleMicrophoneStringProperty,
-            labelOptions: {
-              fill: DopplerEffectColors.controlPanelTextColorProperty,
-            },
+        }),
+        KeyboardHelpSectionRow.labelWithIcon(strings.toggleMicrophoneStringProperty, new LetterKeyNode("M"), {
+          labelInnerContent: strings.a11y.toggleMicrophoneStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty,
           },
-        ),
-        KeyboardHelpSectionRow.labelWithIcon(
-          strings.controls.toggleHelpStringProperty,
-          new LetterKeyNode("H"),
-          {
-            labelInnerContent: strings.a11y.controls.toggleHelpStringProperty,
-            labelOptions: {
-              fill: DopplerEffectColors.controlPanelTextColorProperty,
-            },
+        }),
+        KeyboardHelpSectionRow.labelWithIcon(strings.controls.toggleHelpStringProperty, new LetterKeyNode("H"), {
+          labelInnerContent: strings.a11y.controls.toggleHelpStringProperty,
+          labelOptions: {
+            fill: DopplerEffectColors.controlPanelTextColorProperty,
           },
-        ),
+        }),
       ],
       sectionOptions,
     );
@@ -251,11 +207,7 @@ export class KeyboardShorcutsNode extends Node {
     this.center = options.layoutBounds.center;
 
     // Align icons within each group
-    KeyboardHelpSection.alignHelpSectionIcons([
-      navigationSection,
-      adjustmentSection,
-      scenariosSection,
-    ]);
+    KeyboardHelpSection.alignHelpSectionIcons([navigationSection, adjustmentSection, scenariosSection]);
     KeyboardHelpSection.alignHelpSectionIcons([visibilitySection]);
   }
 
@@ -263,7 +215,6 @@ export class KeyboardShorcutsNode extends Node {
    * Toggle visibility of the keyboard shortcuts
    */
   public toggleVisibility(): void {
-    this.visibilityControlProperty.value =
-      !this.visibilityControlProperty.value;
+    this.visibilityControlProperty.value = !this.visibilityControlProperty.value;
   }
 }

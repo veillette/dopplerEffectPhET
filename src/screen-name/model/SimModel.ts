@@ -6,27 +6,19 @@ import {
   EnumerationProperty,
   EnumerationValue,
   NumberProperty,
-  ObservableArray,
+  type ObservableArray,
   Property,
   RangeWithValue,
   TimeSpeed,
-  TReadOnlyProperty,
+  type TReadOnlyProperty,
   Vector2,
 } from "scenerystack";
-import {
-  INITIAL_POSITIONS,
-  PHYSICS,
-  SCALE,
-  SOUND_DATA,
-  TIME_SPEED,
-  TRAIL,
-  WaveformPoint,
-} from "./SimConstants";
-import { WaveGenerator } from "./WaveGenerator";
-import { WaveformManager } from "./WaveformManager";
-import { MovableObject } from "./MovableObject";
-import { DopplerCalculator } from "./DopplerCalculator";
 import { StringManager } from "../../i18n/StringManager";
+import { DopplerCalculator } from "./DopplerCalculator";
+import { MovableObject } from "./MovableObject";
+import { INITIAL_POSITIONS, PHYSICS, SCALE, SOUND_DATA, TIME_SPEED, TRAIL, type WaveformPoint } from "./SimConstants";
+import { WaveformManager } from "./WaveformManager";
+import { WaveGenerator } from "./WaveGenerator";
 
 // Export the Wave type
 export type Wave = {
@@ -199,11 +191,7 @@ export class SimModel {
     // Initialize physics properties
     this.soundSpeedProperty = new NumberProperty(PHYSICS.SOUND_SPEED);
     this.emittedFrequencyProperty = new NumberProperty(PHYSICS.EMITTED_FREQ);
-    this.soundSpeedRange = new RangeWithValue(
-      PHYSICS.SOUND_SPEED * 0.5,
-      PHYSICS.SOUND_SPEED * 2,
-      PHYSICS.SOUND_SPEED,
-    );
+    this.soundSpeedRange = new RangeWithValue(PHYSICS.SOUND_SPEED * 0.5, PHYSICS.SOUND_SPEED * 2, PHYSICS.SOUND_SPEED);
     this.frequencyRange = new RangeWithValue(
       PHYSICS.EMITTED_FREQ * 0.2,
       PHYSICS.EMITTED_FREQ * 2,
@@ -318,7 +306,6 @@ export class SimModel {
     switch (this.timeSpeedProperty.value) {
       case TimeSpeed.SLOW:
         return TIME_SPEED.SLOW;
-      case TimeSpeed.NORMAL:
       default:
         return TIME_SPEED.NORMAL;
     }
@@ -330,7 +317,9 @@ export class SimModel {
    * @param force - optional parameter to force stepping even when paused
    */
   public step(dt: number, force: boolean = false): void {
-    if (!this.playProperty.value && !force) return;
+    if (!(this.playProperty.value || force)) {
+      return;
+    }
 
     // Apply time scaling
     const timeSpeedValue = this.getTimeSpeedValue();
@@ -430,16 +419,18 @@ export class SimModel {
    * @returns The closest simulation state or null if none found
    */
   private findClosestState(targetTime: number): SimulationState | null {
-    if (this.simulationStateHistory.length === 0) {
-      return null;
-    }
-
     // Find the closest state by time
     let closestState = this.simulationStateHistory[0];
+    if (closestState === undefined) {
+      return null;
+    }
     let minTimeDiff = Math.abs(closestState.time - targetTime);
 
     for (let i = 1; i < this.simulationStateHistory.length; i++) {
       const state = this.simulationStateHistory[i];
+      if (state === undefined) {
+        continue;
+      }
       const timeDiff = Math.abs(state.time - targetTime);
 
       if (timeDiff < minTimeDiff) {
@@ -505,8 +496,7 @@ export class SimModel {
     // Prune source trail
     while (
       this.sourcePositionHistory.length > TRAIL.MAX_POINTS ||
-      (this.sourcePositionHistory.length > 0 &&
-        this.sourcePositionHistory[0].timestamp < maxAge)
+      (this.sourcePositionHistory[0] !== undefined && this.sourcePositionHistory[0].timestamp < maxAge)
     ) {
       this.sourcePositionHistory.shift();
     }
@@ -514,8 +504,7 @@ export class SimModel {
     // Prune observer trail
     while (
       this.observerPositionHistory.length > TRAIL.MAX_POINTS ||
-      (this.observerPositionHistory.length > 0 &&
-        this.observerPositionHistory[0].timestamp < maxAge)
+      (this.observerPositionHistory[0] !== undefined && this.observerPositionHistory[0].timestamp < maxAge)
     ) {
       this.observerPositionHistory.shift();
     }
@@ -535,9 +524,7 @@ export class SimModel {
     // Calculate update interval as reciprocal of time speed factor
     // When time speed is low (0.25), update every 4 frames
     // When time speed is normal (1.0), update every frame
-    const updateInterval = Math.round(
-      TIME_SPEED.NORMAL / Math.abs(timeSpeedValue),
-    );
+    const updateInterval = Math.round(TIME_SPEED.NORMAL / Math.abs(timeSpeedValue));
 
     if (this.waveformUpdateCounter % updateInterval === 0) {
       // Update emitted waveform
@@ -555,14 +542,15 @@ export class SimModel {
       );
 
       // If no waves have reached observer yet, clear observed waveform
-      if (wavesAtObserver.length === 0) {
+      const firstWaveAtObserver = wavesAtObserver[0];
+      if (firstWaveAtObserver === undefined) {
         this.waveformManager.clearObservedWaveform();
         return;
       }
 
       // Use most recently arrived wave
-      const currentWave = wavesAtObserver[0].wave;
-      const arrivalTime = wavesAtObserver[0].arrivalTime;
+      const currentWave = firstWaveAtObserver.wave;
+      const arrivalTime = firstWaveAtObserver.arrivalTime;
 
       // Calculate time since wave arrival (in seconds)
       const timeSinceArrival = this.simulationTimeProperty.value - arrivalTime; // in seconds (s)
@@ -571,24 +559,22 @@ export class SimModel {
       const phaseAtArrival = currentWave.phaseAtEmission;
 
       // Calculate Doppler frequency
-      const observedFrequency =
-        this.dopplerCalculator.calculateObservedFrequency(
-          currentWave,
-          this.observerPositionProperty.value,
-          this.observerVelocityProperty.value,
-          this.soundSpeedProperty.value,
-        );
+      const observedFrequency = this.dopplerCalculator.calculateObservedFrequency(
+        currentWave,
+        this.observerPositionProperty.value,
+        this.observerVelocityProperty.value,
+        this.soundSpeedProperty.value,
+      );
 
       // Update observed frequency property
       this.observedFrequencyProperty.value = observedFrequency;
 
       // Calculate Doppler frequency for stationary observer
-      const stationaryFrequency =
-        this.dopplerCalculator.calculateStationaryFrequency(
-          currentWave,
-          this.observerPositionProperty.value,
-          this.soundSpeedProperty.value,
-        );
+      const stationaryFrequency = this.dopplerCalculator.calculateStationaryFrequency(
+        currentWave,
+        this.observerPositionProperty.value,
+        this.soundSpeedProperty.value,
+      );
 
       // Update observed waveform using stationary frequency since we don't want to overcount the Doppler effect
       // the change in phase is due to the change in position of the observer
@@ -657,7 +643,6 @@ export class SimModel {
         this.observerMovingProperty.value = false;
         break;
 
-      case Scenario.FREE_PLAY:
       default:
         // Free play mode - no initial velocities
         this.sourceVelocityProperty.value = new Vector2(0, 0);
@@ -708,9 +693,7 @@ export class SimModel {
       const wave = this.waves.get(i);
 
       // Calculate distance from wave center to microphone
-      const distance = this.microphonePositionProperty.value.distance(
-        wave.position,
-      );
+      const distance = this.microphonePositionProperty.value.distance(wave.position);
 
       // Determine if wave front is crossing the microphone position
       const waveFrontRadius = wave.radius;
@@ -729,8 +712,6 @@ export class SimModel {
    * Get the distance between the source and observer in meters
    */
   public getSourceObserverDistance(): number {
-    return this.sourcePositionProperty.value.distance(
-      this.observerPositionProperty.value,
-    );
+    return this.sourcePositionProperty.value.distance(this.observerPositionProperty.value);
   }
 }

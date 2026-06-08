@@ -17,10 +17,10 @@ An interactive simulation of the Doppler Effect, built with [SceneryStack](https
 - Adjustable sound speed and frequency
 - Numerical values for frequency, speed, and distance
 - Pause/Resume functionality
-- Keyboard controls
-- Projector mode
-- Extendable language support
-- Produce a single HTML file for easy distribution
+- Keyboard controls (arrow keys or WASD)
+- Projector mode and interactive highlights
+- Extendable language support (English and French)
+- Installable progressive web app (PWA)
 
 ## Controls
 
@@ -33,7 +33,7 @@ An interactive simulation of the Doppler Effect, built with [SceneryStack](https
 
 - `S`: Select source
 - `O`: Select observer
-- Arrow keys: Move selected object
+- Arrow keys or `W`/`A`/`S`/`D`: Move selected object
 - Space: Pause/Resume simulation
 - `R`: Reset simulation
 - `T`: Toggle motion trails
@@ -70,7 +70,7 @@ where:
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js 22 or higher
 - npm
 
 ### Installation
@@ -100,18 +100,23 @@ npm start
 npm run build
 ```
 
+The production build outputs to `dist/` and includes the PWA service worker and web app manifest.
+
 ### Development Scripts
 
-- `npm start`: Start development server
-- `npm run build`: Build for production
-- `npm run preview`: Preview production build
-- `npm run lint`: Run ESLint
-- `npm run format`: Format code with Prettier
-- `npm run fix`: Fix linting and formatting issues
-- `npm run check`: Type-check TypeScript code
-- `npm run serve`: Serve production build
-- `npm run watch`: Watch TypeScript files
-- `npm run clean`: Clean build directory
+- `npm start` / `npm run dev`: Start the Vite development server
+- `npm run build`: Type-check and build for production
+- `npm run preview`: Preview the production build locally
+- `npm run lint`: Lint with [Biome](https://biomejs.dev/)
+- `npm run format`: Format code with Biome
+- `npm run fix`: Auto-fix lint and format issues with Biome
+- `npm run check`: Type-check TypeScript (app and scripts)
+- `npm run icons`: Regenerate PWA icons and favicon from `public/icons/icon.svg`
+- `npm run clean`: Remove the `dist/` directory
+
+### Continuous Integration
+
+Pull requests and pushes to `main` run linting, type checking, and a production build via GitHub Actions. Successful merges to `main` are deployed automatically to GitHub Pages.
 
 ## Contributing
 

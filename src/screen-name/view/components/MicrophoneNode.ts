@@ -6,19 +6,19 @@
  */
 
 import {
-  Bounds2,
+  type Bounds2,
   Circle,
   DragListener,
-  ModelViewTransform2,
+  type ModelViewTransform2,
   Node,
   Path,
-  Property,
+  type Property,
   Rectangle,
   Shape,
-  Vector2,
+  type Vector2,
 } from "scenerystack";
-import { Sound } from "../utils/Sound";
 import DopplerEffectColors from "../../../DopplerEffectColors";
+import { Sound } from "../utils/Sound";
 
 // Constants for microphone visualization and behavior
 const MICROPHONE = {
@@ -51,8 +51,7 @@ const MICROPHONE = {
   stemColorProperty: DopplerEffectColors.microphoneStemColorProperty,
   baseColotProperty: DopplerEffectColors.microphoneBaseColorProperty,
   gridColorProperty: DopplerEffectColors.microphoneGridColorProperty,
-  detectionRingColorProperty:
-    DopplerEffectColors.microphoneDetectionRingColorProperty,
+  detectionRingColorProperty: DopplerEffectColors.microphoneDetectionRingColorProperty,
 };
 
 /**
@@ -60,6 +59,9 @@ const MICROPHONE = {
  * plays a sound when a wave passes through it
  */
 export class MicrophoneNode extends Node {
+  private readonly modelViewTransform: ModelViewTransform2;
+  private readonly microphonePositionProperty: Property<Vector2>;
+  private readonly waveDetectedProperty: Property<boolean>;
   // Microphone visual elements
   private readonly detectionRing: Circle;
   private readonly clickSound: Sound;
@@ -73,14 +75,18 @@ export class MicrophoneNode extends Node {
    * @param dragBoundsProperty - Property that defines the allowed drag bounds
    */
   constructor(
-    private readonly modelViewTransform: ModelViewTransform2,
-    private readonly microphonePositionProperty: Property<Vector2>,
-    private readonly waveDetectedProperty: Property<boolean>,
+    modelViewTransform: ModelViewTransform2,
+    microphonePositionProperty: Property<Vector2>,
+    waveDetectedProperty: Property<boolean>,
     dragBoundsProperty: Property<Bounds2>,
   ) {
     super({
       cursor: "pointer",
     });
+
+    this.modelViewTransform = modelViewTransform;
+    this.microphonePositionProperty = microphonePositionProperty;
+    this.waveDetectedProperty = waveDetectedProperty;
 
     // Create microphone body - a circle with stem
     const micBody = new Circle(MICROPHONE.BODY_RADIUS, {
@@ -118,21 +124,13 @@ export class MicrophoneNode extends Node {
 
     // Draw horizontal grid lines
     const gridShape = new Shape();
-    for (
-      let y = -MICROPHONE.GRID_EXTENT;
-      y <= MICROPHONE.GRID_EXTENT;
-      y += MICROPHONE.GRID_SIZE
-    ) {
+    for (let y = -MICROPHONE.GRID_EXTENT; y <= MICROPHONE.GRID_EXTENT; y += MICROPHONE.GRID_SIZE) {
       gridShape.moveTo(-MICROPHONE.GRID_EXTENT, y);
       gridShape.lineTo(MICROPHONE.GRID_EXTENT, y);
     }
 
     // Draw vertical grid lines
-    for (
-      let x = -MICROPHONE.GRID_EXTENT;
-      x <= MICROPHONE.GRID_EXTENT;
-      x += MICROPHONE.GRID_SIZE
-    ) {
+    for (let x = -MICROPHONE.GRID_EXTENT; x <= MICROPHONE.GRID_EXTENT; x += MICROPHONE.GRID_SIZE) {
       gridShape.moveTo(x, -MICROPHONE.GRID_EXTENT);
       gridShape.lineTo(x, MICROPHONE.GRID_EXTENT);
     }
@@ -157,9 +155,7 @@ export class MicrophoneNode extends Node {
     this.clickSound = new Sound("./assets/click.wav", true);
 
     // Position microphone at initial position
-    this.center = this.modelViewTransform.modelToViewPosition(
-      this.microphonePositionProperty.value,
-    );
+    this.center = this.modelViewTransform.modelToViewPosition(this.microphonePositionProperty.value);
 
     // Add drag listener with proper offset handling
     const micDragListener = new DragListener({
@@ -199,8 +195,6 @@ export class MicrophoneNode extends Node {
    * Update the microphone position based on the model property
    */
   private updatePosition(): void {
-    this.center = this.modelViewTransform.modelToViewPosition(
-      this.microphonePositionProperty.value,
-    );
+    this.center = this.modelViewTransform.modelToViewPosition(this.microphonePositionProperty.value);
   }
 }

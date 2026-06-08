@@ -1,5 +1,5 @@
 import { Vector2 } from "scenerystack";
-import { Wave } from "./SimModel";
+import type { Wave } from "./SimModel";
 
 /**
  * DopplerCalculator handles the physics calculations for the Doppler effect.
@@ -45,17 +45,8 @@ export class DopplerCalculator {
    * @param soundSpeed Current speed of sound in meters per second (m/s)
    * @returns The observed frequency in Hertz (Hz)
    */
-  public calculateStationaryFrequency(
-    wave: Wave,
-    observerPosition: Vector2,
-    soundSpeed: number,
-  ): number {
-    return this.calculateObservedFrequency(
-      wave,
-      observerPosition,
-      new Vector2(0, 0),
-      soundSpeed,
-    );
+  public calculateStationaryFrequency(wave: Wave, observerPosition: Vector2, soundSpeed: number): number {
+    return this.calculateObservedFrequency(wave, observerPosition, new Vector2(0, 0), soundSpeed);
   }
 
   /**

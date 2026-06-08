@@ -1,4 +1,4 @@
-import { Screen, ScreenOptions } from "scenerystack/sim";
+import { Screen, type ScreenOptions } from "scenerystack/sim";
 import { SimModel } from "./model/SimModel.js";
 import { SimScreenView } from "./view/SimScreenView.js";
 

@@ -1,10 +1,6 @@
 import "./splash.js";
-import { brand } from "scenerystack/brand";
 import type { TBrand } from "scenerystack/brand";
-import {
-  madeWithSceneryStackOnDark,
-  madeWithSceneryStackOnLight,
-} from "scenerystack/brand";
+import { brand, madeWithSceneryStackOnDark, madeWithSceneryStackOnLight } from "scenerystack/brand";
 
 const Brand: TBrand = {
   // Nickname for the brand, which should match the brand subdirectory name, grunt option for --brand as well as the
@@ -24,9 +20,7 @@ const Brand: TBrand = {
    * Return any links to appear in the About dialog.  The sim name and locale can be used for customization if desired.
    * For example: { textStringProperty: new Property( "My Company Support" ), url: "https://www.mycompany.com/support" }
    */
-  getLinks: function () {
-    return [];
-  },
+  getLinks: () => [],
   logoOnBlackBackground: madeWithSceneryStackOnDark,
   logoOnWhiteBackground: madeWithSceneryStackOnLight,
 };

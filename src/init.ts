@@ -20,4 +20,7 @@ init({
   splashDataURI: madeWithSceneryStackSplashDataURI,
 
   allowLocaleSwitching: true,
+
+  // Dark theme by default, with a projector (light) profile selectable in Preferences.
+  colorProfiles: ["default", "projector"],
 });

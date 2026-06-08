@@ -40,8 +40,7 @@ export class Sound {
         this.isLoaded = true;
       });
 
-      this.audio.addEventListener("error", (e) => {
-        console.warn("Error loading sound:", e);
+      this.audio.addEventListener("error", () => {
         this.isLoaded = false;
       });
 
@@ -57,7 +56,9 @@ export class Sound {
   }
 
   play() {
-    if (this.isMuted) return;
+    if (this.isMuted) {
+      return;
+    }
 
     if (this.useGeneratedSound) {
       this.playGeneratedClick();
@@ -66,9 +67,9 @@ export class Sound {
       const sound = new Audio(this.audio.src);
       sound.volume = SOUND.DEFAULT_VOLUME; // Lower volume to prevent being too loud
 
-      // Play and handle errors
-      sound.play().catch((e) => {
-        console.warn("Error playing sound:", e);
+      // Play and swallow playback errors (e.g. browser autoplay policy); they are non-critical
+      sound.play().catch(() => {
+        // Intentionally ignored
       });
     }
   }
@@ -83,9 +84,7 @@ export class Sound {
       if (!this.audioContext) {
         // Type assertion for cross-browser compatibility
         const AudioContextClass =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: typeof AudioContext })
-            .webkitAudioContext;
+          window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         this.audioContext = new AudioContextClass();
       }
 
@@ -107,21 +106,15 @@ export class Sound {
       // Schedule the envelope - very short attack and decay
       const now = this.audioContext.currentTime;
       // Attack - quick fade in
-      gainNode.gain.linearRampToValueAtTime(
-        SOUND.PEAK_GAIN,
-        now + SOUND.ATTACK_TIME,
-      );
+      gainNode.gain.linearRampToValueAtTime(SOUND.PEAK_GAIN, now + SOUND.ATTACK_TIME);
       // Decay - quick fade out
-      gainNode.gain.linearRampToValueAtTime(
-        SOUND.FINAL_GAIN,
-        now + SOUND.DECAY_TIME,
-      );
+      gainNode.gain.linearRampToValueAtTime(SOUND.FINAL_GAIN, now + SOUND.DECAY_TIME);
 
       // Start and stop the oscillator
       oscillator.start(now);
       oscillator.stop(now + SOUND.DECAY_TIME); // Stop after decay time
-    } catch (e) {
-      console.warn("Error generating click sound:", e);
+    } catch {
+      // Intentionally ignored: generated-sound failures are non-critical
     }
   }
 

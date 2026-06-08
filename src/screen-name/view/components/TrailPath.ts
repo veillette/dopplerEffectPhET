@@ -6,17 +6,17 @@
  */
 
 import {
-  Path,
-  Shape,
   Color,
   LinearGradient,
-  ModelViewTransform2,
-  Property,
-  ProfileColorProperty,
+  type ModelViewTransform2,
+  Path,
+  type ProfileColorProperty,
+  type Property,
+  Shape,
 } from "scenerystack";
 
 // Import position history point interface from model
-import { PositionHistoryPoint } from "../../model/SimModel";
+import type { PositionHistoryPoint } from "../../model/SimModel";
 
 /**
  * Configuration options for the trail creator
@@ -31,6 +31,7 @@ type TrailPathOptions = {
  * Creates and manages motion trails for objects
  */
 export class TrailPath extends Path {
+  private readonly modelViewTransform: ModelViewTransform2;
   private trailColorValue: Color;
 
   /**
@@ -39,16 +40,15 @@ export class TrailPath extends Path {
    * @param modelViewTransform - Transform to convert model coordinates to view coordinates
    * @param options - Configuration options for the trail
    */
-  constructor(
-    private readonly modelViewTransform: ModelViewTransform2,
-    options: TrailPathOptions,
-  ) {
+  constructor(modelViewTransform: ModelViewTransform2, options: TrailPathOptions) {
     super(new Shape(), {
       stroke: options.trailColorProperty,
       lineWidth: options.trailWidth,
       visibleProperty: options.visibleProperty,
       tagName: null,
     });
+
+    this.modelViewTransform = modelViewTransform;
 
     // Store initial color value and listen for changes
     this.trailColorValue = options.trailColorProperty.value;
@@ -77,20 +77,26 @@ export class TrailPath extends Path {
       return;
     }
 
+    const firstPoint = trailPoints[0];
+    const lastPoint = trailPoints[trailPoints.length - 1];
+    if (firstPoint === undefined || lastPoint === undefined) {
+      return;
+    }
+
     // Create shape for the trail
     const trailShape = new Shape();
 
     // First, build a new path with all points
-    const oldestPoint = this.modelViewTransform.modelToViewPosition(
-      trailPoints[0].position,
-    );
+    const oldestPoint = this.modelViewTransform.modelToViewPosition(firstPoint.position);
     trailShape.moveToPoint(oldestPoint);
 
     // Add each subsequent point
     for (let i = 1; i < trailPoints.length; i++) {
-      const point = this.modelViewTransform.modelToViewPosition(
-        trailPoints[i].position,
-      );
+      const trailPoint = trailPoints[i];
+      if (trailPoint === undefined) {
+        continue;
+      }
+      const point = this.modelViewTransform.modelToViewPosition(trailPoint.position);
       trailShape.lineToPoint(point);
     }
 
@@ -98,49 +104,16 @@ export class TrailPath extends Path {
     this.shape = trailShape;
 
     // Calculate the gradient direction (from oldest to newest point)
-    const startPoint = this.modelViewTransform.modelToViewPosition(
-      trailPoints[0].position,
-    );
-    const endPoint = this.modelViewTransform.modelToViewPosition(
-      trailPoints[trailPoints.length - 1].position,
-    );
+    const startPoint = this.modelViewTransform.modelToViewPosition(firstPoint.position);
+    const endPoint = this.modelViewTransform.modelToViewPosition(lastPoint.position);
 
     // Create gradient from oldest to newest point
-    const gradient = new LinearGradient(
-      startPoint.x,
-      startPoint.y,
-      endPoint.x,
-      endPoint.y,
-    );
+    const gradient = new LinearGradient(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
 
     // Add color stops - transparent at oldest point, full color at newest
-    gradient.addColorStop(
-      0,
-      new Color(
-        this.trailColorValue.r,
-        this.trailColorValue.g,
-        this.trailColorValue.b,
-        0.1,
-      ),
-    );
-    gradient.addColorStop(
-      0.5,
-      new Color(
-        this.trailColorValue.r,
-        this.trailColorValue.g,
-        this.trailColorValue.b,
-        0.4,
-      ),
-    );
-    gradient.addColorStop(
-      1,
-      new Color(
-        this.trailColorValue.r,
-        this.trailColorValue.g,
-        this.trailColorValue.b,
-        0.8,
-      ),
-    );
+    gradient.addColorStop(0, new Color(this.trailColorValue.r, this.trailColorValue.g, this.trailColorValue.b, 0.1));
+    gradient.addColorStop(0.5, new Color(this.trailColorValue.r, this.trailColorValue.g, this.trailColorValue.b, 0.4));
+    gradient.addColorStop(1, new Color(this.trailColorValue.r, this.trailColorValue.g, this.trailColorValue.b, 0.8));
 
     // Apply the gradient
     this.stroke = gradient;

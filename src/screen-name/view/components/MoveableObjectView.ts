@@ -6,15 +6,15 @@
 
 import {
   Circle,
-  ModelViewTransform2,
+  type ModelViewTransform2,
   Node,
-  Property,
-  Vector2,
-  ProfileColorProperty,
+  type ProfileColorProperty,
+  type Property,
+  type Vector2,
 } from "scenerystack";
-import { VectorDisplay } from "./VectorDisplay";
+import type { PositionHistoryPoint } from "../../model/SimModel";
 import { TrailPath } from "./TrailPath";
-import { PositionHistoryPoint } from "../../model/SimModel";
+import { VectorDisplay } from "./VectorDisplay";
 
 /**
  * Configuration options for the moveable object view
@@ -37,6 +37,7 @@ type MoveableObjectViewOptions = {
  * Component that manages the view of a moveable object
  */
 export class MoveableObjectView extends Node {
+  private readonly modelViewTransform: ModelViewTransform2;
   private readonly objectNode: Circle;
   private readonly velocityVector: VectorDisplay;
   private readonly trailPath: TrailPath;
@@ -47,11 +48,10 @@ export class MoveableObjectView extends Node {
    * @param modelViewTransform - Transform between model and view coordinates
    * @param options - Configuration options for the moveable object view
    */
-  constructor(
-    private readonly modelViewTransform: ModelViewTransform2,
-    options: MoveableObjectViewOptions,
-  ) {
+  constructor(modelViewTransform: ModelViewTransform2, options: MoveableObjectViewOptions) {
     super();
+
+    this.modelViewTransform = modelViewTransform;
 
     // Create the object node
     this.objectNode = new Circle(options.radius, {
@@ -63,18 +63,14 @@ export class MoveableObjectView extends Node {
     this.addChild(this.objectNode);
 
     // Create the velocity vector display
-    this.velocityVector = new VectorDisplay(
-      this.modelViewTransform,
-      options.velocityScale,
-      {
-        visibleProperty: options.visibleVelocityArrowProperty,
-        fillColorProperty: options.velocityArrowColorProperty,
-        strokeColorProperty: options.velocityArrowColorProperty,
-        showVelocityValue: true,
-        textColorProperty: options.textColorProperty,
-        visibleValuesProperty: options.visibleValuesProperty,
-      },
-    );
+    this.velocityVector = new VectorDisplay(this.modelViewTransform, options.velocityScale, {
+      visibleProperty: options.visibleVelocityArrowProperty,
+      fillColorProperty: options.velocityArrowColorProperty,
+      strokeColorProperty: options.velocityArrowColorProperty,
+      showVelocityValue: true,
+      textColorProperty: options.textColorProperty,
+      visibleValuesProperty: options.visibleValuesProperty,
+    });
     this.addChild(this.velocityVector);
 
     // Create the trail creator
@@ -93,14 +89,9 @@ export class MoveableObjectView extends Node {
    * @param velocity - Current velocity of the object
    * @param trailPoints - History of position points for the trail
    */
-  public update(
-    position: Vector2,
-    velocity: Vector2,
-    trailPoints?: PositionHistoryPoint[],
-  ): void {
+  public update(position: Vector2, velocity: Vector2, trailPoints?: PositionHistoryPoint[]): void {
     // Update object position
-    this.objectNode.center =
-      this.modelViewTransform.modelToViewPosition(position);
+    this.objectNode.center = this.modelViewTransform.modelToViewPosition(position);
 
     // Update velocity vector
     this.velocityVector.updateVector(position, velocity);

@@ -1,11 +1,19 @@
-import { ObservableArray, Vector2 } from "scenerystack";
-import { Wave } from "./SimModel";
+import type { ObservableArray, Vector2 } from "scenerystack";
 import { WAVE } from "./SimConstants";
+import type { Wave } from "./SimModel";
 /**
  * WaveGenerator handles the creation, propagation, and lifecycle management of waves.
  * It encapsulates all wave-related functionality for the Doppler effect simulation.
  */
 export class WaveGenerator {
+  private readonly waves: ObservableArray<Wave>;
+  private readonly getSimulationTime: () => number; // returns time in seconds (s)
+  private readonly getSourcePosition: () => Vector2; // returns position in meters (m)
+  private readonly getSourceVelocity: () => Vector2; // returns velocity in meters/second (m/s)
+  private readonly getEmittedFrequency: () => number; // returns frequency in Hertz (Hz)
+  private readonly getSoundSpeed: () => number; // returns speed in meters/second (m/s)
+  private readonly getEmittedPhase: () => number; // returns phase in radians (rad)
+
   // Time tracking (in seconds)
   private lastWaveTime: number = 0; // in seconds (s)
   private waveHistory: Wave[] = []; // History of waves for time reversal
@@ -14,14 +22,22 @@ export class WaveGenerator {
    * Create a new WaveGenerator
    */
   constructor(
-    private readonly waves: ObservableArray<Wave>,
-    private readonly getSimulationTime: () => number, // returns time in seconds (s)
-    private readonly getSourcePosition: () => Vector2, // returns position in meters (m)
-    private readonly getSourceVelocity: () => Vector2, // returns velocity in meters/second (m/s)
-    private readonly getEmittedFrequency: () => number, // returns frequency in Hertz (Hz)
-    private readonly getSoundSpeed: () => number, // returns speed in meters/second (m/s)
-    private readonly getEmittedPhase: () => number, // returns phase in radians (rad)
-  ) {}
+    waves: ObservableArray<Wave>,
+    getSimulationTime: () => number, // returns time in seconds (s)
+    getSourcePosition: () => Vector2, // returns position in meters (m)
+    getSourceVelocity: () => Vector2, // returns velocity in meters/second (m/s)
+    getEmittedFrequency: () => number, // returns frequency in Hertz (Hz)
+    getSoundSpeed: () => number, // returns speed in meters/second (m/s)
+    getEmittedPhase: () => number, // returns phase in radians (rad)
+  ) {
+    this.waves = waves;
+    this.getSimulationTime = getSimulationTime;
+    this.getSourcePosition = getSourcePosition;
+    this.getSourceVelocity = getSourceVelocity;
+    this.getEmittedFrequency = getEmittedFrequency;
+    this.getSoundSpeed = getSoundSpeed;
+    this.getEmittedPhase = getEmittedPhase;
+  }
 
   /**
    * Generate new waves based on emitted frequency
@@ -64,7 +80,7 @@ export class WaveGenerator {
       const wave = this.waves.get(i);
 
       // Update radius based on modelDt and sound speed (in meters)
-      wave.radius = wave.radius + modelDt * this.getSoundSpeed(); // in meters (m)
+      wave.radius += modelDt * this.getSoundSpeed(); // in meters (m)
 
       // Calculate age in seconds (s)
       const age = simulationTime - wave.birthTime; // in seconds (s)
@@ -98,10 +114,7 @@ export class WaveGenerator {
     for (const wave of this.waveHistory) {
       // Only include waves that were born before the target time
       // and haven't exceeded their maximum age
-      if (
-        wave.birthTime <= targetTime &&
-        targetTime - wave.birthTime <= WAVE.MAX_AGE
-      ) {
+      if (wave.birthTime <= targetTime && targetTime - wave.birthTime <= WAVE.MAX_AGE) {
         // Create a copy of the wave with the correct radius for the target time
         const age = targetTime - wave.birthTime;
         const radius = age * this.getSoundSpeed();

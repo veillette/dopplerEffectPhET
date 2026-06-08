@@ -1,10 +1,9 @@
 import "./brand.js";
-import { onReadyToLaunch, Sim } from "scenerystack/sim";
-import { Tandem, Property, Bounds2 } from "scenerystack";
-import { SimScreen } from "./screen-name/SimScreen.js";
-import { StringManager } from "./i18n/StringManager";
-import { PreferencesModel } from "scenerystack/sim";
+import { Bounds2, Property, Tandem } from "scenerystack";
+import { onReadyToLaunch, PreferencesModel, Sim } from "scenerystack/sim";
 import DopplerEffectColors from "./DopplerEffectColors";
+import { StringManager } from "./i18n/StringManager";
+import { SimScreen } from "./screen-name/SimScreen.js";
 import { KeyboardShorcutsNode } from "./screen-name/view/components/KeyboardShorcutsNode.js";
 
 onReadyToLaunch(() => {

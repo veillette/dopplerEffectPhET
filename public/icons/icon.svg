@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#ffffff" />
+  <!-- Wavefronts emitted by a source moving to the right:
+       bunched (blueshift) on the leading right side, spread (redshift) on the trailing left side. -->
+  <g fill="none" stroke-width="14">
+    <circle cx="185" cy="256" r="170" stroke="#e53935" />
+    <circle cx="216" cy="256" r="132" stroke="#fb8c00" />
+    <circle cx="247" cy="256" r="94" stroke="#8e24aa" />
+    <circle cx="278" cy="256" r="58" stroke="#1e88e5" />
+  </g>
+  <!-- source -->
+  <circle cx="305" cy="256" r="24" fill="#102a43" />
+  <!-- velocity arrow -->
+  <g stroke="#102a43" stroke-width="14" stroke-linecap="round" fill="none">
+    <line x1="334" y1="256" x2="392" y2="256" />
+    <polyline points="372,234 394,256 372,278" stroke-linejoin="round" />
+  </g>
+</svg>

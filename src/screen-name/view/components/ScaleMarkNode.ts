@@ -8,15 +8,15 @@
 
 import {
   Line,
-  ModelViewTransform2,
+  type ModelViewTransform2,
   Node,
   PatternStringProperty,
   PhetFont,
-  Property,
+  type Property,
   Text,
 } from "scenerystack";
-import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
+import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the scale mark display
 type ScaleMarkOptions = {
@@ -31,6 +31,7 @@ type ScaleMarkOptions = {
  * Component that displays a scale marker for the simulation
  */
 export class ScaleMarkNode extends Node {
+  private readonly modelViewTransform: ModelViewTransform2;
   private readonly scaleMark: Line;
   private readonly topEndMark: Line;
   private readonly bottomEndMark: Line;
@@ -48,7 +49,7 @@ export class ScaleMarkNode extends Node {
    * @param options - Configuration options
    */
   constructor(
-    private readonly modelViewTransform: ModelViewTransform2,
+    modelViewTransform: ModelViewTransform2,
     visibleValuesProperty: Property<boolean>,
     options: ScaleMarkOptions,
   ) {
@@ -56,13 +57,13 @@ export class ScaleMarkNode extends Node {
       visibleProperty: visibleValuesProperty,
     });
 
+    this.modelViewTransform = modelViewTransform;
+
     // Default scale model length is 100 meters
     this.scaleModelLength = options.scaleModelLength || 100;
 
     // Calculate the view length that corresponds to the model length
-    const scaleViewLength = Math.abs(
-      this.modelViewTransform.modelToViewDeltaY(this.scaleModelLength),
-    );
+    const scaleViewLength = Math.abs(this.modelViewTransform.modelToViewDeltaY(this.scaleModelLength));
 
     // Create the main scale mark (vertical line)
     this.scaleMark = new Line(0, 0, 0, scaleViewLength, {
@@ -88,9 +89,7 @@ export class ScaleMarkNode extends Node {
 
     for (let i = 1; i <= numberOfTicks; i++) {
       const tickPosition = i * tickInterval;
-      const tickY = Math.abs(
-        this.modelViewTransform.modelToViewDeltaY(tickPosition),
-      );
+      const tickY = Math.abs(this.modelViewTransform.modelToViewDeltaY(tickPosition));
 
       // Create smaller intermediate tick marks
       const tickMark = new Line(-3, tickY, 3, tickY, {
@@ -101,17 +100,13 @@ export class ScaleMarkNode extends Node {
     }
 
     // Get the units.meters string from the string manager
-    const unitsStringProperty =
-      this.stringManager.getAllStringProperties().units.metersStringProperty;
+    const unitsStringProperty = this.stringManager.getAllStringProperties().units.metersStringProperty;
 
     // Create scale label with pattern string property for localization
 
-    const scaleLabelStringProperty = new PatternStringProperty(
-      unitsStringProperty,
-      {
-        value: this.scaleModelLength,
-      },
-    );
+    const scaleLabelStringProperty = new PatternStringProperty(unitsStringProperty, {
+      value: this.scaleModelLength,
+    });
 
     this.scaleLabel = new Text(scaleLabelStringProperty, {
       font: new PhetFont(14),

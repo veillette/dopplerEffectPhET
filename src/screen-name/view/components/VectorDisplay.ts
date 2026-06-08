@@ -6,15 +6,15 @@
 
 import {
   ArrowNode,
-  Vector2,
-  ModelViewTransform2,
+  type ModelViewTransform2,
   Node,
-  ProfileColorProperty,
   NumberDisplay,
-  Range,
   PhetFont,
+  type ProfileColorProperty,
   Property,
-  TReadOnlyProperty,
+  Range,
+  type TReadOnlyProperty,
+  type Vector2,
 } from "scenerystack";
 import { StringManager } from "../../../i18n/StringManager";
 
@@ -38,6 +38,8 @@ type VectorDisplayOptions = {
  * Component that displays a single velocity vector with optional velocity value
  */
 export class VectorDisplay extends Node {
+  private readonly modelViewTransform: ModelViewTransform2;
+  private readonly velocityScale: number;
   private readonly arrowNode: ArrowNode;
   private readonly velocityDisplay?: NumberDisplay;
   private readonly velocityProperty: Property<number>;
@@ -49,12 +51,11 @@ export class VectorDisplay extends Node {
    * @param velocityScale - Scale factor for velocity vectors
    * @param options - Configuration options for the vector display
    */
-  constructor(
-    private readonly modelViewTransform: ModelViewTransform2,
-    private readonly velocityScale: number,
-    options: VectorDisplayOptions,
-  ) {
+  constructor(modelViewTransform: ModelViewTransform2, velocityScale: number, options: VectorDisplayOptions) {
     super();
+
+    this.modelViewTransform = modelViewTransform;
+    this.velocityScale = velocityScale;
 
     // Create velocity property for the display
     this.velocityProperty = new Property<number>(0);
@@ -65,7 +66,7 @@ export class VectorDisplay extends Node {
       headWidth: options.headWidth ?? 10,
       tailWidth: options.tailWidth ?? 2,
       scaleTailToo: options.scaleTailToo ?? true,
-      visibleProperty: options.visibleProperty,
+      ...(options.visibleProperty ? { visibleProperty: options.visibleProperty } : {}),
       fill: options.fillColorProperty,
       stroke: options.strokeColorProperty,
     });
@@ -82,10 +83,8 @@ export class VectorDisplay extends Node {
             font: new PhetFont(14),
             fill: options.textColorProperty,
           },
-          visibleProperty: options.visibleValuesProperty,
-          valuePattern:
-            StringManager.getInstance().getAllStringProperties().units
-              .metersPerSecondStringProperty,
+          ...(options.visibleValuesProperty ? { visibleProperty: options.visibleValuesProperty } : {}),
+          valuePattern: StringManager.getInstance().getAllStringProperties().units.metersPerSecondStringProperty,
           backgroundFill: "transparent",
           backgroundStroke: null,
           xMargin: 0,
@@ -110,8 +109,7 @@ export class VectorDisplay extends Node {
     // First scale by the model-view transform to convert m/s to pixels/s
     // Then scale by velocityScale to make it more visible
     const scaledVelocity = velocity.timesScalar(this.velocityScale);
-    const viewVelocity =
-      this.modelViewTransform.modelToViewDelta(scaledVelocity);
+    const viewVelocity = this.modelViewTransform.modelToViewDelta(scaledVelocity);
 
     // Update arrow node
     this.arrowNode.setTailAndTip(

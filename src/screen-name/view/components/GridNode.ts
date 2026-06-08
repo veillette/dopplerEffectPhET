@@ -1,12 +1,12 @@
 import {
-  ModelViewTransform2,
+  type Bounds2,
+  type ModelViewTransform2,
   Node,
+  type NodeOptions,
   Path,
+  type Property,
   Shape,
-  NodeOptions,
-  TReadOnlyProperty,
-  Property,
-  Bounds2,
+  type TReadOnlyProperty,
 } from "scenerystack";
 
 import DopplerEffectColors from "../../../DopplerEffectColors";
@@ -95,26 +95,17 @@ export class GridNode extends Node {
   private updateGrid(bounds: Bounds2): void {
     // Calculate grid extents with some padding
     const padding = this.majorGridSize;
-    const xMin =
-      Math.floor((bounds.minX - padding) / this.majorGridSize) *
-      this.majorGridSize;
-    const xMax =
-      Math.ceil((bounds.maxX + padding) / this.majorGridSize) *
-      this.majorGridSize;
-    const yMin =
-      Math.floor((bounds.minY - padding) / this.majorGridSize) *
-      this.majorGridSize;
-    const yMax =
-      Math.ceil((bounds.maxY + padding) / this.majorGridSize) *
-      this.majorGridSize;
+    const xMin = Math.floor((bounds.minX - padding) / this.majorGridSize) * this.majorGridSize;
+    const xMax = Math.ceil((bounds.maxX + padding) / this.majorGridSize) * this.majorGridSize;
+    const yMin = Math.floor((bounds.minY - padding) / this.majorGridSize) * this.majorGridSize;
+    const yMax = Math.ceil((bounds.maxY + padding) / this.majorGridSize) * this.majorGridSize;
 
     // Create shapes for major and minor grids
     const majorGridShape = new Shape();
     const minorGridShape = new Shape();
 
     // Calculate minor grid spacing
-    const minorGridSize =
-      this.majorGridSize / (this.minorLinesPerMajorLine + 1);
+    const minorGridSize = this.majorGridSize / (this.minorLinesPerMajorLine + 1);
 
     // Draw vertical major grid lines
     for (let x = xMin; x <= xMax; x += this.majorGridSize) {

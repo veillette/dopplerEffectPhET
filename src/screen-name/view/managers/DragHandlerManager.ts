@@ -5,14 +5,14 @@
  */
 
 import {
-  DragListener,
-  ModelViewTransform2,
-  Vector2,
-  Node,
-  Property,
-  Bounds2,
-  ReadOnlyProperty,
+  type Bounds2,
   DerivedProperty,
+  DragListener,
+  type ModelViewTransform2,
+  type Node,
+  Property,
+  type ReadOnlyProperty,
+  Vector2,
 } from "scenerystack";
 import { PHYSICS } from "../../../screen-name/model/SimConstants";
 
@@ -20,6 +20,7 @@ import { PHYSICS } from "../../../screen-name/model/SimConstants";
  * Manager for creating and attaching a drag handler to a simulation object
  */
 export class DragHandlerManager {
+  private readonly modelViewTransform: ModelViewTransform2;
   private readonly dragBounds: Bounds2;
   private dragListener: DragListener | null = null;
   private dragOffset: Vector2 = new Vector2(0, 0);
@@ -32,11 +33,9 @@ export class DragHandlerManager {
    * @param layoutBounds - View bounds for constraining drag
    * @param soundSpeedProperty - Property containing the current sound speed
    */
-  constructor(
-    private readonly modelViewTransform: ModelViewTransform2,
-    layoutBounds: Bounds2,
-    soundSpeedProperty: Property<number>,
-  ) {
+  constructor(modelViewTransform: ModelViewTransform2, layoutBounds: Bounds2, soundSpeedProperty: Property<number>) {
+    this.modelViewTransform = modelViewTransform;
+
     // drag bounds are the same as the layout bounds
     this.dragBounds = layoutBounds;
 
@@ -72,25 +71,20 @@ export class DragHandlerManager {
         onSelected();
 
         // Store the initial offset between pointer and object position
-        const viewPosition = this.modelViewTransform.modelToViewPosition(
-          positionProperty.value,
-        );
+        const viewPosition = this.modelViewTransform.modelToViewPosition(positionProperty.value);
         this.dragOffset = viewPosition.minus(event.pointer.point);
       },
       drag: (event) => {
         // Convert view coordinates to model coordinates, accounting for initial offset
         const viewPoint = event.pointer.point.plus(this.dragOffset);
-        const modelPoint =
-          this.modelViewTransform.viewToModelPosition(viewPoint);
+        const modelPoint = this.modelViewTransform.viewToModelPosition(viewPoint);
 
         // Calculate position difference (direction to target)
         const positionDifference = modelPoint.minus(positionProperty.value);
 
         // Convert position difference to velocity using a scaling factor
         // This factor represents 1/time and converts distance to distance/time
-        const desiredVelocity = positionDifference.timesScalar(
-          PHYSICS.POSITION_TO_VELOCITY_FACTOR,
-        );
+        const desiredVelocity = positionDifference.timesScalar(PHYSICS.POSITION_TO_VELOCITY_FACTOR);
 
         // Limit velocity to maximum speed
         if (desiredVelocity.magnitude > this.maxSpeedProperty.value) {

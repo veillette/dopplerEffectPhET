@@ -6,17 +6,17 @@
  */
 
 import {
+  type Bounds2,
   DerivedProperty,
   Node,
   PhetFont,
-  ReadOnlyProperty,
-  Text,
-  ProfileColorProperty,
-  Bounds2,
+  type ProfileColorProperty,
   Range,
+  type ReadOnlyProperty,
+  Text,
 } from "scenerystack";
-import { StringManager } from "../../../i18n/StringManager";
 import { NumberDisplay } from "scenerystack/scenery-phet";
+import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the status text display
 type StatusTextOptions = {
@@ -70,24 +70,19 @@ export class StatusTextNode extends Node {
     const statusStringProperties = this.stringManager.getStatusTextStrings();
 
     // Create NumberDisplay for observed frequency
-    this.observedFrequencyDisplay = new NumberDisplay(
-      observedFrequencyProperty,
-      new Range(-100, 100),
-      {
-        decimalPlaces: 1,
-        textOptions: {
-          font: new PhetFont(14),
-          fill: options.textColorProperty,
-        },
-        visibleProperty: visibleValuesProperty,
-        valuePattern:
-          statusStringProperties.observedFrequencyPatternStringProperty.value,
-        backgroundFill: "transparent",
-        backgroundStroke: null,
-        xMargin: 0,
-        yMargin: 0,
+    this.observedFrequencyDisplay = new NumberDisplay(observedFrequencyProperty, new Range(-100, 100), {
+      decimalPlaces: 1,
+      textOptions: {
+        font: new PhetFont(14),
+        fill: options.textColorProperty,
       },
-    );
+      visibleProperty: visibleValuesProperty,
+      valuePattern: statusStringProperties.observedFrequencyPatternStringProperty.value,
+      backgroundFill: "transparent",
+      backgroundStroke: null,
+      xMargin: 0,
+      yMargin: 0,
+    });
 
     // Derived property for shift status text content
     const shiftStatusStringProperty = new DerivedProperty(

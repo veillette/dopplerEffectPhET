@@ -1,19 +1,27 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2024",
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "noUncheckedSideEffectImports": true,
+    "erasableSyntaxOnly": true,
+    "types": ["vite/client", "vite-plugin-pwa/client"]
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src"]
 }

@@ -4,8 +4,7 @@
  * Manages keyboard input handlers for the Doppler Effect simulation.
  */
 
-import { Vector2, Property, SceneryEvent } from "scenerystack";
-import { Node } from "scenerystack";
+import { type Node, type Property, type SceneryEvent, Vector2 } from "scenerystack";
 import { Scenario } from "../../model/SimModel";
 
 /**
@@ -23,11 +22,6 @@ type KeyboardCallbacks = {
  * Manager for handling keyboard input
  */
 export class KeyboardHandlerManager {
-  /**
-   * Constructor for the KeyboardHandlerManager
-   */
-  constructor() {}
-
   /**
    * Attach keyboard event handlers
    *
@@ -146,20 +140,14 @@ export class KeyboardHandlerManager {
       if (key === "+" || key === "=") {
         emittedFrequencyProperty.value += 0.1;
       } else if (key === "-" || key === "_") {
-        emittedFrequencyProperty.value = Math.max(
-          0.1,
-          emittedFrequencyProperty.value - 0.1,
-        );
+        emittedFrequencyProperty.value = Math.max(0.1, emittedFrequencyProperty.value - 0.1);
       }
 
       // Adjust sound speed
       if (key === "." || key === ">") {
         soundSpeedProperty.value += 1.0;
       } else if (key === "," || key === "<") {
-        soundSpeedProperty.value = Math.max(
-          1.0,
-          soundSpeedProperty.value - 1.0,
-        );
+        soundSpeedProperty.value = Math.max(1.0, soundSpeedProperty.value - 1.0);
       }
 
       // Handle microphone toggle with 'm' key
@@ -171,7 +159,9 @@ export class KeyboardHandlerManager {
     // Add key listeners to the view
     const keydownListener = {
       listener: (event: SceneryEvent<KeyboardEvent>) => {
-        if (!event.domEvent) return;
+        if (!event.domEvent) {
+          return;
+        }
         const key = event.domEvent.key.toLowerCase();
         handleKeydown(key);
       },

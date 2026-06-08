@@ -10,15 +10,15 @@ import {
   NumberControl,
   Panel,
   PhetFont,
-  Property,
-  Range,
-  ReadOnlyProperty,
+  type Property,
+  type Range,
+  type ReadOnlyProperty,
   Text,
   VerticalCheckboxGroup,
-  VerticalCheckboxGroupItem,
+  type VerticalCheckboxGroupItem,
 } from "scenerystack";
-import { StringManager } from "../../../i18n/StringManager";
 import DopplerEffectColors from "../../../DopplerEffectColors";
+import { StringManager } from "../../../i18n/StringManager";
 
 // Configuration options for the control panel
 type ControlPanelOptions = {
@@ -88,45 +88,28 @@ export class ControlPanelNode extends Node {
     // Create checkbox items
     const items: VerticalCheckboxGroupItem[] = [
       createCheckboxItem(visibleValuesProperty, strings.valuesStringProperty),
-      createCheckboxItem(
-        visibleVelocityArrowProperty,
-        strings.velocityArrowsStringProperty,
-      ),
-      createCheckboxItem(
-        visibleLineOfSightProperty,
-        strings.lineOfSightStringProperty,
-      ),
-      createCheckboxItem(
-        visibleTrailsProperty,
-        strings.motionTrailsStringProperty,
-      ),
+      createCheckboxItem(visibleVelocityArrowProperty, strings.velocityArrowsStringProperty),
+      createCheckboxItem(visibleLineOfSightProperty, strings.lineOfSightStringProperty),
+      createCheckboxItem(visibleTrailsProperty, strings.motionTrailsStringProperty),
       createCheckboxItem(visibleGridProperty, strings.gridStringProperty),
-      createCheckboxItem(
-        microphoneEnabledProperty,
-        strings.microphoneClicksStringProperty,
-      ),
+      createCheckboxItem(microphoneEnabledProperty, strings.microphoneClicksStringProperty),
     ];
 
     // Create vertical checkbox group
     const checkboxGroup = new VerticalCheckboxGroup(items);
 
     // Create sound speed control
-    const soundSpeedControl = new NumberControl(
-      strings.soundSpeedStringProperty,
-      soundSpeedProperty,
-      soundSpeedRange,
-      {
-        layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
-        numberDisplayOptions: {
-          valuePattern: strings.metersPerSecondStringProperty,
-        },
-        titleNodeOptions: {
-          font: new PhetFont(12),
-          maxWidth: 140,
-          fill: DopplerEffectColors.controlPanelTextColorProperty,
-        },
+    const soundSpeedControl = new NumberControl(strings.soundSpeedStringProperty, soundSpeedProperty, soundSpeedRange, {
+      layoutFunction: NumberControl.createLayoutFunction2({ ySpacing: 12 }),
+      numberDisplayOptions: {
+        valuePattern: strings.metersPerSecondStringProperty,
       },
-    );
+      titleNodeOptions: {
+        font: new PhetFont(12),
+        maxWidth: 140,
+        fill: DopplerEffectColors.controlPanelTextColorProperty,
+      },
+    });
     soundSpeedControl.top = checkboxGroup.bottom + 10;
 
     // Create frequency control

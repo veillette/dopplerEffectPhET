@@ -1,53 +1,45 @@
 {
   "name": "doppler-effect",
+  "private": true,
   "version": "0.0.7",
+  "type": "module",
   "description": "An interactive simulation of the Doppler Effect using SceneryStack.",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/veillette/dopplerEffectPhET.git"
-  },
-  "bugs": {
-    "url": "https://github.com/veillette/dopplerEffectPhET/issues"
-  },
-  "homepage": "https://github.com/veillette/dopplerEffectPhET#readme",
-  "type": "module",
   "keywords": [
     "Doppler Effect",
     "simulation",
     "SceneryStack",
     "interactive",
     "physics",
-    "education"
+    "education",
+    "pwa"
   ],
   "scripts": {
-    "start": "npx vite",
-    "build": "npx tsc && npx vite build",
-    "preview": "npx vite preview",
-    "lint": "npx eslint .",
-    "format": "npx prettier --write .",
-    "fix": "npx eslint --fix . && npx prettier --write .",
-    "release": "npm version patch && git push && git push --tags",
-    "check": "npx tsc --noEmit",
-    "serve": "npx serve -s dist",
-    "watch": "npx tsc --watch",
+    "start": "vite",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "fix": "biome check --write .",
+    "check": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
+    "icons": "tsx scripts/generate-icons.ts",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "scenerystack": "~3.0.0"
+    "scenerystack": "^3.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "@types/node": "^22.14.0",
-    "eslint": "^9.17.0",
-    "globals": "^15.14.0",
-    "prettier": "^3.4.2",
-    "typescript": "~5.7.2",
-    "typescript-eslint": "^8.18.2",
-    "vite": "^6.4.1",
-    "vite-plugin-singlefile": "^2.2.0"
+    "@biomejs/biome": "^2.4.16",
+    "@types/node": "^22.10.0",
+    "png-to-ico": "^3.0.1",
+    "sharp": "^0.34.5",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14",
+    "vite-plugin-pwa": "^1.3.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   }
 }

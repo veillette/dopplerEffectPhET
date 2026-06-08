@@ -90,8 +90,7 @@ export class MovableObject {
     // Prune trail
     while (
       this.positionHistory.length > TRAIL.MAX_POINTS ||
-      (this.positionHistory.length > 0 &&
-        this.positionHistory[0].timestamp < maxAge)
+      (this.positionHistory[0] !== undefined && this.positionHistory[0].timestamp < maxAge)
     ) {
       this.positionHistory.shift();
     }
@@ -133,19 +132,19 @@ export class MovableObject {
    * @param targetTime The time to find the closest history point for
    * @returns The closest position history point or null if none found
    */
-  public findClosestHistoryPoint(
-    targetTime: number,
-  ): PositionHistoryPoint | null {
-    if (this.positionHistory.length === 0) {
-      return null;
-    }
-
+  public findClosestHistoryPoint(targetTime: number): PositionHistoryPoint | null {
     // Find the closest point by timestamp
     let closestPoint = this.positionHistory[0];
+    if (closestPoint === undefined) {
+      return null;
+    }
     let minTimeDiff = Math.abs(closestPoint.timestamp - targetTime);
 
     for (let i = 1; i < this.positionHistory.length; i++) {
       const point = this.positionHistory[i];
+      if (point === undefined) {
+        continue;
+      }
       const timeDiff = Math.abs(point.timestamp - targetTime);
 
       if (timeDiff < minTimeDiff) {

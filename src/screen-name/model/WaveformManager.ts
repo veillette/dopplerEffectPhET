@@ -1,4 +1,4 @@
-import { WaveformPoint, WAVEFORM } from "./SimConstants";
+import { WAVEFORM, type WaveformPoint } from "./SimConstants";
 
 /**
  * WaveformManager handles the generation and updating of waveform data
@@ -25,9 +25,6 @@ export class WaveformManager {
   // Phase accumulators (in radians)
   private emittedPhase: number = 0; // in radians (rad)
   private observedPhase: number = 0; // in radians (rad)
-
-  // Time tracking for history
-  private lastUpdateTime: number = 0; // in seconds (s)
 
   /**
    * Create a new WaveformManager
@@ -68,11 +65,7 @@ export class WaveformManager {
    * @param dt Elapsed time in seconds (s)
    * @param timeSpeedFactor Simulation time speed factor (dimensionless)
    */
-  public updateEmittedWaveform(
-    emittedFrequency: number,
-    dt: number,
-    timeSpeedFactor: number,
-  ): void {
+  public updateEmittedWaveform(emittedFrequency: number, dt: number, timeSpeedFactor: number): void {
     // Calculate emitted waveform phase (in model time)
     this.emittedPhase += emittedFrequency * dt * Math.PI * 2; // in radians (rad)
 
@@ -85,9 +78,6 @@ export class WaveformManager {
       timeSpeedFactor,
       dt,
     );
-
-    // Update last update time
-    this.lastUpdateTime += dt;
   }
 
   /**
@@ -139,7 +129,7 @@ export class WaveformManager {
   ): void {
     if (dt > 0) {
       // Store shifted value in history buffer
-      const shiftedValue = soundData[0];
+      const shiftedValue = soundData[0] ?? 0;
       soundHistory.push(shiftedValue);
 
       // Maintain history buffer size
@@ -150,19 +140,17 @@ export class WaveformManager {
       // Update sound data with new value (shift off oldest value)
       soundData.push(newValue);
       soundData.shift();
-    } else {
+    } else if (soundHistory.length > 0) {
       // For time reversal, get value from history if available
-      if (soundHistory.length > 0) {
-        const historicalValue = soundHistory[soundHistory.length - 1];
-        soundHistory.pop();
-        soundData.pop();
-        soundData.unshift(historicalValue);
-      } else {
-        // If no history available, just move data as before
-        const lastValue = 0;
-        soundData.pop();
-        soundData.unshift(lastValue);
-      }
+      const historicalValue = soundHistory[soundHistory.length - 1] ?? 0;
+      soundHistory.pop();
+      soundData.pop();
+      soundData.unshift(historicalValue);
+    } else {
+      // If no history available, just move data as before
+      const lastValue = 0;
+      soundData.pop();
+      soundData.unshift(lastValue);
     }
     // Apply time speed factor to the waveform display
     this.updateWaveformData(soundData, waveformData, timeSpeedFactor);
@@ -175,16 +163,12 @@ export class WaveformManager {
    * @param waveformData Target waveform data array to update
    * @param timeSpeedFactor Time speed factor to apply
    */
-  private updateWaveformData(
-    soundData: number[],
-    waveformData: WaveformPoint[],
-    timeSpeedFactor: number,
-  ): void {
+  private updateWaveformData(soundData: number[], waveformData: WaveformPoint[], timeSpeedFactor: number): void {
     // Apply time speed factor to the waveform display
     for (let i = 0; i < soundData.length; i++) {
       waveformData[i] = {
         t: (i / soundData.length) * timeSpeedFactor, // in seconds (s)
-        y: soundData[i], // dimensionless amplitude
+        y: soundData[i] ?? 0, // dimensionless amplitude
       };
     }
   }
@@ -198,11 +182,7 @@ export class WaveformManager {
     this.observedSoundData.shift();
 
     // Update the waveform visualization data with default time speed factor
-    this.updateWaveformData(
-      this.observedSoundData,
-      this.observedWaveformData,
-      1,
-    );
+    this.updateWaveformData(this.observedSoundData, this.observedWaveformData, 1);
   }
 
   /**
@@ -221,7 +201,6 @@ export class WaveformManager {
   public reset(soundDataSize: number): void {
     this.emittedPhase = 0;
     this.observedPhase = 0;
-    this.lastUpdateTime = 0;
     this.initializeArrays(soundDataSize);
   }
 }

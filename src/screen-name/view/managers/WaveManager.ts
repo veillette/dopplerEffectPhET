@@ -4,16 +4,10 @@
  * Manages the visualization of propagating waves in the Doppler Effect simulation.
  */
 
-import {
-  Node,
-  Circle,
-  Color,
-  ModelViewTransform2,
-  ProfileColorProperty,
-} from "scenerystack";
-import { Wave } from "../../model/SimModel";
-import { WAVE } from "../../model/SimConstants";
+import { Circle, type Color, type ModelViewTransform2, type Node, type ProfileColorProperty } from "scenerystack";
 import DopplerEffectColors from "../../../DopplerEffectColors";
+import { WAVE } from "../../model/SimConstants";
+import type { Wave } from "../../model/SimModel";
 
 /**
  * Manages the visualization of sound waves
@@ -21,6 +15,8 @@ import DopplerEffectColors from "../../../DopplerEffectColors";
  * Creates and updates the circles representing propagating sound waves
  */
 export class WaveManager {
+  private readonly waveLayer: Node;
+  private readonly modelViewTransform: ModelViewTransform2;
   // Map to track wave nodes
   private readonly waveNodesMap: Map<Wave, Circle> = new Map();
   private readonly waveColorValue: Color;
@@ -33,17 +29,20 @@ export class WaveManager {
    * @param waveColorProperty - Color property for the wave circles
    */
   constructor(
-    private readonly waveLayer: Node,
-    private readonly modelViewTransform: ModelViewTransform2,
+    waveLayer: Node,
+    modelViewTransform: ModelViewTransform2,
     waveColorProperty: ProfileColorProperty = DopplerEffectColors.waveColorProperty,
   ) {
+    this.waveLayer = waveLayer;
+    this.modelViewTransform = modelViewTransform;
+
     // Store initial color value and listen for changes
     this.waveColorValue = waveColorProperty.value;
     waveColorProperty.link((newColor) => {
       // Update all wave nodes with the new color
-      this.waveNodesMap.forEach((waveNode) => {
+      for (const waveNode of this.waveNodesMap.values()) {
         waveNode.stroke = newColor;
-      });
+      }
     });
   }
 
@@ -84,9 +83,9 @@ export class WaveManager {
    * Clear all wave nodes
    */
   public clearWaveNodes(): void {
-    this.waveNodesMap.forEach((waveNode) => {
+    for (const waveNode of this.waveNodesMap.values()) {
       this.waveLayer.removeChild(waveNode);
-    });
+    }
     this.waveNodesMap.clear();
   }
 
@@ -100,9 +99,7 @@ export class WaveManager {
     const waveNode = this.waveNodesMap.get(wave);
     if (waveNode) {
       // Update position to match wave's origin (convert to view coordinates)
-      waveNode.center = this.modelViewTransform.modelToViewPosition(
-        wave.position,
-      );
+      waveNode.center = this.modelViewTransform.modelToViewPosition(wave.position);
 
       // Update radius to match wave's propagation (convert to view coordinates)
       waveNode.radius = this.modelViewTransform.modelToViewDeltaX(wave.radius);
@@ -123,13 +120,10 @@ export class WaveManager {
    * @param simulationTime - Current simulation time
    * @param maxAge - Maximum age for waves
    */
-  public updateWaves(
-    waves: { forEach: (callback: (wave: Wave) => void) => void },
-    simulationTime: number,
-  ): void {
-    waves.forEach((wave) => {
+  public updateWaves(waves: Iterable<Wave>, simulationTime: number): void {
+    for (const wave of waves) {
       this.updateWaveNode(wave, simulationTime);
-    });
+    }
   }
 
   /**
@@ -138,14 +132,12 @@ export class WaveManager {
    *
    * @param waves - Collection of wave objects
    */
-  public synchronizeWaveNodes(waves: {
-    forEach: (callback: (wave: Wave) => void) => void;
-  }): void {
+  public synchronizeWaveNodes(waves: Iterable<Wave>): void {
     // Create a set of waves to track which ones we've processed
     const processedWaves = new Set<Wave>();
 
     // Update existing nodes and track which waves we've processed
-    waves.forEach((wave) => {
+    for (const wave of waves) {
       if (this.waveNodesMap.has(wave)) {
         // Wave already has a node, just update it
         this.updateWaveNode(wave, wave.birthTime + wave.radius / WAVE.MAX_AGE);
@@ -155,7 +147,7 @@ export class WaveManager {
         this.addWaveNode(wave);
         processedWaves.add(wave);
       }
-    });
+    }
 
     // Remove nodes for waves that no longer exist
     for (const [wave, node] of this.waveNodesMap.entries()) {
