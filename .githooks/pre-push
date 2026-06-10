@@ -1,23 +1,29 @@
 #!/bin/sh
 # Pre-push hook: run lint and type-check before pushing.
-#
 # Activated by: npm install (prepare script sets core.hooksPath)
 
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
+
+if [ ! -x node_modules/.bin/biome ]; then
+  echo "pre-push: node_modules missing — run npm install before pushing."
+  exit 1
+fi
+
 echo "Running Biome lint check..."
-npm run lint --silent
+npm run lint
 LINT_STATUS=$?
 
-if [ $LINT_STATUS -ne 0 ]; then
+if [ "$LINT_STATUS" -ne 0 ]; then
   echo ""
   echo "Lint errors found. Run 'npm run fix' to auto-fix, then commit and push again."
   exit 1
 fi
 
 echo "Running TypeScript type check..."
-npm run check --silent
+npm run check
 TSC_STATUS=$?
 
-if [ $TSC_STATUS -ne 0 ]; then
+if [ "$TSC_STATUS" -ne 0 ]; then
   echo ""
   echo "TypeScript errors found. Fix the errors above before pushing."
   exit 1
