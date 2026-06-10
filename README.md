@@ -1,10 +1,12 @@
 # Doppler Effect Simulation
 
-An interactive simulation of the Doppler Effect, built with [SceneryStack](https://github.com/sceneryStack). This simulation allows users to explore how the frequency of sound waves changes when there is relative motion between a sound source and an observer.
+An interactive simulation of the Doppler Effect, built with [SceneryStack](https://scenerystack.org/).
+Explore how the frequency of sound waves changes when there is relative motion between a sound source and
+an observer.
 
 [![Interactive Doppler Effect simulation showing sound waves propagating from a moving green source to a purple observer. The visualization demonstrates frequency shifts with circular wave patterns and includes waveform displays showing the emitted and observed frequencies.](./assets/screenshot.png)](https://OpenPhysics.github.io/DopplerEffect)
 
-🎮 [Live Demo](https://OpenPhysics.github.io/DopplerEffect) 🌐
+[Live Demo](https://OpenPhysics.github.io/DopplerEffect)
 
 ## Features
 
@@ -19,7 +21,7 @@ An interactive simulation of the Doppler Effect, built with [SceneryStack](https
 - Pause/Resume functionality
 - Keyboard controls (arrow keys or WASD)
 - Projector mode and interactive highlights
-- Extendable language support (English and French)
+- English and French localization
 - Installable progressive web app (PWA)
 
 ## Controls
@@ -66,67 +68,48 @@ where:
 - vₒ is the observer's velocity component along the line of sight
 - vₛ is the source's velocity component along the line of sight
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 22 or higher
-- npm
-
-### Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/OpenPhysics/DopplerEffect.git
-cd DopplerEffect
-```
-
-2. Install dependencies:
+## Quick Start
 
 ```bash
 npm install
+npm run icons    # regenerate PWA icons and favicon from public/icons/icon.svg
+npm start        # dev server → http://localhost:5173
 ```
 
-3. Start the development server:
+## Scripts
 
-```bash
-npm start
-```
+| Command | Description |
+|---|---|
+| `npm start` / `npm run dev` | Start Vite dev server |
+| `npm run build` | Type-check + production build → `dist/` |
+| `npm run preview` | Preview the production build locally |
+| `npm run check` | TypeScript type check (`src` + `scripts`) |
+| `npm run lint` | Biome lint check |
+| `npm run format` | Auto-format all files |
+| `npm run fix` | Lint + auto-fix |
+| `npm run icons` | Regenerate PWA icons from `public/icons/icon.svg` |
+| `npm run clean` | Remove `dist/` |
 
-4. Build for production:
+## Tech Stack
 
-```bash
-npm run build
-```
-
-The production build outputs to `dist/` and includes the PWA service worker and web app manifest.
-
-### Development Scripts
-
-- `npm start` / `npm run dev`: Start the Vite development server
-- `npm run build`: Type-check and build for production
-- `npm run preview`: Preview the production build locally
-- `npm run lint`: Lint with [Biome](https://biomejs.dev/)
-- `npm run format`: Format code with Biome
-- `npm run fix`: Auto-fix lint and format issues with Biome
-- `npm run check`: Type-check TypeScript (app and scripts)
-- `npm run icons`: Regenerate PWA icons and favicon from `public/icons/icon.svg`
-- `npm run clean`: Remove the `dist/` directory
-
-### Continuous Integration
-
-Pull requests and pushes to `main` run linting, type checking, and a production build via GitHub Actions. Successful merges to `main` are deployed automatically to GitHub Pages.
-
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+| Tool | Version | Purpose |
+|---|---|---|
+| [SceneryStack](https://scenerystack.org/) | ^3.0.0 | Simulation framework |
+| [Vite](https://vitejs.dev/) | ^8 | Build tool + dev server |
+| [TypeScript](https://www.typescriptlang.org/) | ^6 | Type-safe JavaScript |
+| [Biome](https://biomejs.dev/) | ^2.4 | Linting + formatting |
+| [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) | ^1 | PWA + service worker |
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT
+
+## Contributing
+
+See [OpenPhysics contributing guidelines](https://github.com/OpenPhysics/.github/blob/main/CONTRIBUTING.md).
+Report bugs via GitHub Issues; use org issue templates.
 
 ## Acknowledgments
 
-- Built with [SceneryStack](https://github.com/sceneryStack)
+- Built with [SceneryStack](https://scenerystack.org/)
 - Inspired by [PhET](https://phet.colorado.edu) Interactive Simulations
