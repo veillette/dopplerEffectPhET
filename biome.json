@@ -132,7 +132,7 @@
   },
   "overrides": [
     {
-      "includes": ["src/**", "scripts/**"],
+      "includes": ["src/**"],
       "linter": {
         "rules": {
           "nursery": {
@@ -140,6 +140,22 @@
           },
           "suspicious": {
             "noConsole": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scripts/**"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useExplicitType": "off"
+          },
+          "suspicious": {
+            "noConsole": "off"
+          },
+          "style": {
+            "noCommonJs": "off"
           }
         }
       }
