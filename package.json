@@ -3,14 +3,20 @@
   "private": true,
   "version": "0.0.7",
   "type": "module",
-  "description": "An interactive simulation of the Doppler Effect using SceneryStack.",
+  "description": "Interactive simulation of the Doppler Effect — visualizes how the frequency of sound waves shifts with relative motion between source and observer.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenPhysics/DopplerEffect.git"
+  },
   "keywords": [
-    "Doppler Effect",
+    "doppler-effect",
     "simulation",
     "SceneryStack",
     "interactive",
     "physics",
+    "waves",
+    "sound",
     "education",
     "pwa"
   ],
@@ -36,7 +42,7 @@
     "sharp": "^0.34.5",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.14",
+    "vite": "^8.0.16",
     "vite-plugin-pwa": "^1.3.0"
   },
   "engines": {

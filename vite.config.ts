@@ -34,9 +34,10 @@ const securityHeaders: Record<string, string> = {
 
 // https://vite.dev/config/
 export default defineConfig({
-  // So the build can be served from an arbitrary path (e.g. a GitHub Pages project subpath).
+  // So the build can be served from an arbitrary path
   base: "./",
   build: {
+    // Requires Vite 8+ / esbuild ≥0.24. Run `npm ci` if build errors on ES2024.
     target: "es2024",
   },
   server: {
