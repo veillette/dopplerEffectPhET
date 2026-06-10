@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '30 2 * * 1'
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -14,3 +16,11 @@ concurrency:
 jobs:
   ci:
     uses: OpenPhysics/.github/.github/workflows/ci.yml@main
+
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    uses: OpenPhysics/.github/.github/workflows/shared-dependency-review.yml@main
+
+  codeql:
+    uses: OpenPhysics/.github/.github/workflows/shared-codeql.yml@main
+
