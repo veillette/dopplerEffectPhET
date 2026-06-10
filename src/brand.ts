@@ -1,26 +1,49 @@
+/**
+ * brand.ts
+ *
+ * Registers the SceneryStack brand for this simulation.
+ *
+ * Chain position: init.ts → assert.ts → splash.ts → [here] brand.ts
+ *
+ * !! THIS FILE MUST BE THE FIRST IMPORT IN src/main.ts !!
+ *
+ * The brand object controls what appears in the About dialog (Help → About),
+ * including the logo, copyright notice, and navigation links.
+ *
+ * ── How to customize ─────────────────────────────────────────────────────────
+ * - Set `name` to your organization name (shown in About dialog)
+ * - Set `copyright` to your copyright string, e.g. "© 2025 My Organization"
+ * - Implement `getLinks(simName, locale)` to return About-dialog links
+ * - Replace logo data URIs with your own if desired
+ *
+ * ── Note on the import path ──────────────────────────────────────────────────
+ * src/main.ts imports this file as `"./brand.js"`. TypeScript (in bundler mode)
+ * resolves `.js` extensions to `.ts` source files automatically — no renaming
+ * or extra config is needed.
+ */
+
+// splash.ts (and transitively assert.ts and init.ts) must run before brand registration
 import "./splash.js";
+
 import type { TBrand } from "scenerystack/brand";
 import { brand, madeWithSceneryStackOnDark, madeWithSceneryStackOnLight } from "scenerystack/brand";
 
 const Brand: TBrand = {
-  // Nickname for the brand, which should match the brand subdirectory name, grunt option for --brand as well as the
-  // query parameter for ?brand.  This is used in Joist to provide brand-specific logic, such as what to show in the
-  // About dialog, decorative text around the PhET button, and whether to check for updates.
+  // Must match the brand id passed to init() in src/init.ts
   id: "made-with-scenerystack",
 
-  // Optional string for the name of the brand.  If non-null, the brand name will appear in the top of the About dialog
-  // {string} For example: "My Company"
+  // Your organization name, or null to use the SceneryStack default
   name: null,
 
-  // Optional string for the copyright statement.  If non-null, it will appear in the About dialog
-  // {string} For example: "Copyright © 2014, My Company"
+  // Copyright string shown in the About dialog, or null to omit
   copyright: null,
 
-  /**
-   * Return any links to appear in the About dialog.  The sim name and locale can be used for customization if desired.
-   * For example: { textStringProperty: new Property( "My Company Support" ), url: "https://www.mycompany.com/support" }
-   */
+  // Returns About-dialog footer links for the given sim name and locale.
+  // LinkObject shape: { textStringProperty, url }
   getLinks: () => [],
+
+  // Logos shown on dark and light backgrounds respectively.
+  // Replace with your own data URIs to use a custom logo.
   logoOnBlackBackground: madeWithSceneryStackOnDark,
   logoOnWhiteBackground: madeWithSceneryStackOnLight,
 };
