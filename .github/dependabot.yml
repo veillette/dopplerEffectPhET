@@ -13,6 +13,11 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
+    # @types/node major versions track the Node.js runtime (see shared CI default).
+    # Bump TemplateSingleSim and repos together when CI node-version changes.
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       development-dependencies:
         dependency-type: "development"
