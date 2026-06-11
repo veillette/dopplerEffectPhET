@@ -1,5 +1,6 @@
 import { Screen, type ScreenOptions } from "scenerystack/sim";
 import { SimModel } from "./model/SimModel.js";
+import { DopplerEffectKeyboardHelpContent } from "./view/DopplerEffectKeyboardHelpContent.js";
 import { SimScreenView } from "./view/SimScreenView.js";
 
 export class SimScreen extends Screen<SimModel, SimScreenView> {
@@ -7,7 +8,10 @@ export class SimScreen extends Screen<SimModel, SimScreenView> {
     super(
       () => new SimModel(),
       (model) => new SimScreenView(model),
-      options,
+      {
+        ...options,
+        createKeyboardHelpNode: () => new DopplerEffectKeyboardHelpContent(),
+      },
     );
   }
 }

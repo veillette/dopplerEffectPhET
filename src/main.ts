@@ -15,26 +15,19 @@
 // brand.js MUST be first — triggers: init.ts → assert.ts → splash.ts → brand.ts
 import "./brand.js";
 
-import { Bounds2, Property, Tandem } from "scenerystack";
+import { Tandem } from "scenerystack";
 import { onReadyToLaunch, PreferencesModel, Sim } from "scenerystack/sim";
 import DopplerEffectColors from "./DopplerEffectColors.js";
 import { StringManager } from "./i18n/StringManager.js";
 import { SimScreen } from "./screen-name/SimScreen.js";
-import { KeyboardShorcutsNode } from "./screen-name/view/components/KeyboardShorcutsNode.js";
 
 onReadyToLaunch(() => {
   const stringManager = StringManager.getInstance();
-
-  const keyboardHelpNode = new KeyboardShorcutsNode({
-    visibleProperty: new Property(true),
-    layoutBounds: new Bounds2(0, 0, 1, 1),
-  });
 
   const screens = [
     new SimScreen({
       tandem: Tandem.ROOT.createTandem("simScreen"),
       backgroundColorProperty: DopplerEffectColors.backgroundColorProperty,
-      createKeyboardHelpNode: () => keyboardHelpNode,
     }),
   ];
 
