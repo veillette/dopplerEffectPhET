@@ -13,6 +13,15 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Caller must grant the scopes the reusable workflows request (CodeQL needs
+# security-events: write, dependency-review needs pull-requests: write). The repo
+# default token is read-only, so without this block reusable calls fail at startup.
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+  pull-requests: write
+
 jobs:
   ci:
     uses: OpenPhysics/.github/.github/workflows/ci.yml@main
