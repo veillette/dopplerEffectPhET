@@ -1,0 +1,104 @@
+{
+  "title": "Efecto Doppler",
+  "source": "Fuente",
+  "observer": "Observador",
+  "selectedObject": "Seleccionado: {{object}}",
+  "controls": {
+    "values": "Valores",
+    "velocityArrows": "Flechas de velocidad",
+    "lineOfSight": "Línea de visión",
+    "soundSpeed": "Velocidad del sonido",
+    "frequency": "Frecuencia",
+    "motionTrails": "Estelas de movimiento",
+    "grid": "Cuadrícula",
+    "microphoneClicks": "Clics del micrófono"
+  },
+  "units": {
+    "metersPerSecond": "{{value}} m/s",
+    "hertz": "{{value}} Hz",
+    "meters": "{{value}}m"
+  },
+  "graphs": {
+    "emittedSound": "Sonido emitido",
+    "observedSound": "Sonido observado",
+    "emittedFrequency": "Frec. emitida: {{value}} Hz",
+    "observedFrequency": "Frec. observada: {{value}} Hz"
+  },
+  "shift": {
+    "blueshift": "Desplazado al azul (acercándose)",
+    "redshift": "Desplazado al rojo (alejándose)"
+  },
+  "help": {
+    "dragAndDrop": "Haz clic y arrastra la fuente (roja) o el observador (verde) para moverlos",
+    "keyboardControls": "Controles de teclado:",
+    "sections": {
+      "navigation": "Navegación",
+      "simulationControls": "Controles de simulación",
+      "parameterAdjustment": "Ajuste de parámetros",
+      "scenarios": "Escenarios",
+      "visibilityOptions": "Opciones de visibilidad"
+    },
+    "objectSelection": {
+      "selectSource": "Seleccionar fuente",
+      "selectObserver": "Seleccionar observador",
+      "moveObject": "Teclas de flecha o WASD: Mover el objeto seleccionado"
+    },
+    "controls": {
+      "pauseResume": "Pausar/Reanudar",
+      "reset": "Reiniciar",
+      "toggleHelp": "Mostrar/ocultar ayuda"
+    },
+    "adjust": {
+      "frequency": "Ajustar la frecuencia emitida",
+      "soundSpeed": "Ajustar la velocidad del sonido"
+    },
+    "scenarioKeys": {
+      "freePlay": "Cargar escenarios predefinidos (0-6)",
+      "sourceApproaching": "Fuente acercándose al observador",
+      "sourceReceding": "Fuente alejándose del observador",
+      "observerApproaching": "Observador acercándose a la fuente",
+      "observerReceding": "Observador alejándose de la fuente",
+      "sameDirection": "Ambos moviéndose en la misma dirección",
+      "perpendicular": "Movimiento perpendicular"
+    },
+    "toggleMotionTrails": "Mostrar u ocultar las estelas de movimiento que muestran las trayectorias de los objetos.",
+    "toggleMicrophone": "Activar o desactivar el micrófono",
+    "dragMicrophone": "Arrastra el micrófono para colocarlo en cualquier lugar de la simulación.",
+    "a11y": {
+      "objectSelection": {
+        "selectSource": "Presiona la tecla S para seleccionar la fuente de sonido y moverla con las teclas de flecha o WASD.",
+        "selectObserver": "Presiona la tecla O para seleccionar el observador y moverlo con las teclas de flecha o WASD.",
+        "moveObject": "Usa las teclas de flecha o WASD para mover el objeto seleccionado en cualquier dirección."
+      },
+      "controls": {
+        "pauseResume": "Presiona Espacio o Enter para pausar o reanudar la simulación.",
+        "reset": "Presiona la tecla R para reiniciar toda la simulación a su estado inicial.",
+        "toggleHelp": "Presiona la tecla H para mostrar u ocultar este cuadro de ayuda."
+      },
+      "adjust": {
+        "frequency": "Presiona + o - para aumentar o disminuir la frecuencia del sonido emitido.",
+        "soundSpeed": "Presiona , (coma) o . (punto) para aumentar o disminuir la velocidad del sonido."
+      },
+      "scenarioKeys": {
+        "freePlay": "Usa las teclas numéricas 0-6 para cargar diferentes escenarios: 0 para juego libre, 1 para fuente acercándose, 2 para fuente alejándose, 3 para observador acercándose, 4 para observador alejándose, 5 para movimiento en la misma dirección y 6 para movimiento perpendicular.",
+        "sourceApproaching": "Presiona 1 para ver la fuente acercándose a un observador estacionario.",
+        "sourceReceding": "Presiona 2 para ver la fuente alejándose de un observador estacionario.",
+        "observerApproaching": "Presiona 3 para ver el observador acercándose a una fuente estacionaria.",
+        "observerReceding": "Presiona 4 para ver el observador alejándose de una fuente estacionaria.",
+        "sameDirection": "Presiona 5 para ver ambos objetos moviéndose en la misma dirección.",
+        "perpendicular": "Presiona 6 para ver los objetos moviéndose perpendicularmente entre sí."
+      },
+      "toggleMotionTrails": "Presiona la tecla T para mostrar u ocultar las estelas que registran el movimiento de los objetos.",
+      "toggleMicrophone": "Presiona la tecla M para activar o desactivar el micrófono que produce clics."
+    }
+  },
+  "scenarios": {
+    "freePlay": "Juego libre",
+    "sourceApproaching": "Fuente en movimiento, observador estacionario (acercándose)",
+    "sourceReceding": "Fuente en movimiento, observador estacionario (alejándose)",
+    "observerApproaching": "Fuente estacionaria, observador en movimiento (acercándose)",
+    "observerReceding": "Fuente estacionaria, observador en movimiento (alejándose)",
+    "sameDirection": "Movimiento en la misma dirección",
+    "perpendicular": "Movimiento perpendicular"
+  }
+}

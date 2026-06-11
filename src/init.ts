@@ -30,7 +30,7 @@ init({
   locale: "en",
 
   // All supported locales — must match the locale keys in src/i18n/StringManager.ts.
-  availableLocales: ["en", "fr"],
+  availableLocales: ["en", "es", "fr"],
 
   // Splash screen shown while the simulation loads.
   splashDataURI: madeWithSceneryStackSplashDataURI,
