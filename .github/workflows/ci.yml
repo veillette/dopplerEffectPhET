@@ -26,6 +26,11 @@ jobs:
   ci:
     uses: OpenPhysics/.github/.github/workflows/ci.yml@main
 
+  compliance:
+    uses: OpenPhysics/.github/.github/workflows/shared-compliance-check.yml@main
+    with:
+      repo-name: DopplerEffect
+
   dependency-review:
     if: github.event_name == 'pull_request'
     uses: OpenPhysics/.github/.github/workflows/shared-dependency-review.yml@main
