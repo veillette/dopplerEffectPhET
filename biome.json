@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -16,18 +16,12 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "nursery": {
-        "noShadow": "error",
-        "useExplicitType": "warn",
-        "noEqualsToNull": "error",
-        "noReturnAssign": "error",
-        "useArraySortCompare": "error",
-        "useFind": "warn",
-        "useSpread": "warn"
+        "useExplicitType": "warn"
       },
       "correctness": {
-        "recommended": true,
+        "preset": "recommended",
         "noUnusedImports": "error",
         "noUnusedVariables": "error",
         "noUnusedPrivateClassMembers": "error",
@@ -36,7 +30,7 @@
         "noInvalidUseBeforeDeclaration": "error"
       },
       "style": {
-        "recommended": true,
+        "preset": "recommended",
         "noDefaultExport": "off",
         "noParameterAssign": "error",
         "useBlockStatements": "error",
@@ -75,10 +69,11 @@
             "strictCase": false,
             "filenameCases": ["PascalCase", "camelCase", "kebab-case"]
           }
-        }
+        },
+        "useSpreadOverApply": "warn"
       },
       "suspicious": {
-        "recommended": true,
+        "preset": "recommended",
         "noConsole": "warn",
         "noEmptyBlockStatements": "error",
         "noExplicitAny": "error",
@@ -86,10 +81,14 @@
         "useErrorMessage": "error",
         "useGuardForIn": "error",
         "useIsArray": "error",
-        "noIrregularWhitespace": "off"
+        "noIrregularWhitespace": "off",
+        "noShadow": "error",
+        "noEqualsToNull": "error",
+        "noReturnAssign": "error",
+        "useArraySortCompare": "error"
       },
       "complexity": {
-        "recommended": true,
+        "preset": "recommended",
         "useLiteralKeys": "off",
         "noExcessiveCognitiveComplexity": {
           "level": "warn",
@@ -103,20 +102,21 @@
         "useArrowFunction": "warn",
         "useDateNow": "error",
         "useFlatMap": "warn",
-        "useSimplifiedLogicExpression": "warn"
+        "useSimplifiedLogicExpression": "warn",
+        "useArrayFind": "warn"
       },
       "performance": {
-        "recommended": true,
+        "preset": "recommended",
         "noAccumulatingSpread": "warn",
         "noBarrelFile": "off",
         "noDelete": "warn",
         "noReExportAll": "off"
       },
       "a11y": {
-        "recommended": true
+        "preset": "recommended"
       },
       "security": {
-        "recommended": true,
+        "preset": "recommended",
         "noGlobalEval": "error"
       }
     }
